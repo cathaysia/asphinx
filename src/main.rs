@@ -4,28 +4,36 @@ use tracing_subscriber;
 
 async fn generate_html(file_path: String) {
     let file_path = std::path::Path::new(&file_path);
-    let parent_path = Into::<String>::into(file_path.parent().unwrap().to_str().unwrap())
-        .replace("content", "public");
-    if let Err(e) = std::fs::create_dir_all(&parent_path) {
-        error!("创建 {} 时发生错误：{}", parent_path, e);
+    if !file_path.exists() {
+        warn!("路径 {} 不存在", file_path.display());
+        return;
+    }
+    if !file_path.is_file() {
+        warn!("路径 {} 指向的不是一个文件，忽略", file_path.display());
         return;
     }
 
-    debug!("为 {} 生成 html", file_path.display());
+    let file_cur_path: String = file_path.parent().unwrap().to_str().unwrap().into();
+    let file_cur_path = file_cur_path.replace("content", "public");
+    if let Err(err) = std::fs::create_dir_all(&file_cur_path) {
+        error!("创建 {} 时发生错误：{}", file_cur_path, err);
+        return;
+    }
 
+    info!("生成文件：{} -> {}", file_path.display(), file_cur_path);
     std::process::Command::new("asciidoctor")
         .arg(file_path)
         .arg("-D")
-        .arg(parent_path)
+        .arg(file_cur_path)
         .spawn()
         .unwrap()
         .wait()
         .unwrap();
 }
 
-fn handle_file(file_path: String) {
-    let file_path = std::path::Path::new(&file_path);
-    info!("处理文件：{}", file_path.display());
+fn handle_file(file_path_str: String) {
+    let file_path = std::path::Path::new(&file_path_str);
+    debug!("处理文件：{}", file_path.display());
     if !file_path.exists() {
         warn!("文件 {} 不存在", file_path.display());
         return;
@@ -34,7 +42,7 @@ fn handle_file(file_path: String) {
     let dir_path = file_path.parent().unwrap();
 
     if file_path.ends_with("index.adoc") {
-        tokio::spawn(generate_html(file_path.to_str().unwrap().into()));
+        tokio::spawn(generate_html(file_path_str.clone()));
         let content = std::fs::read_to_string(file_path).unwrap();
         let re = Regex::new(r"xref:(.*)\[.*\]").unwrap();
         for item in re.captures_iter(&content) {
@@ -49,6 +57,7 @@ fn handle_file(file_path: String) {
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
+    // TODO: 使用沙盒限制程序能够读取的路径
     tracing_subscriber::fmt::init();
     let file_path = "content/index.adoc";
 
