@@ -1,34 +1,48 @@
 use regex::Regex;
+use std::fs;
 use tracing::*;
 use tracing_subscriber;
 
 async fn generate_html(file_path: String) {
-    let file_path = std::path::Path::new(&file_path);
-    if !file_path.exists() {
-        warn!("路径 {} 不存在", file_path.display());
-        return;
-    }
-    if !file_path.is_file() {
-        warn!("路径 {} 指向的不是一个文件，忽略", file_path.display());
-        return;
+    let file_cwd: String;
+    let file_name: String;
+
+    {
+        let file_path = std::path::Path::new(&file_path);
+        if !file_path.exists() {
+            warn!("路径 {} 不存在", file_path.display());
+            return;
+        }
+        if !file_path.is_file() {
+            warn!("路径 {} 指向的不是一个文件，忽略", file_path.display());
+            return;
+        }
+        file_cwd = file_path.parent().unwrap().to_str().unwrap().into();
+        file_name = file_path.file_name().unwrap().to_str().unwrap().into();
     }
 
-    let file_cur_path: String = file_path.parent().unwrap().to_str().unwrap().into();
-    let file_cur_path = file_cur_path.replace("content", "public");
-    if let Err(err) = std::fs::create_dir_all(&file_cur_path) {
-        error!("创建 {} 时发生错误：{}", file_cur_path, err);
+    let des_dir = file_cwd.replace("content", "public");
+    if let Err(err) = std::fs::create_dir_all(&des_dir) {
+        error!("创建 {} 时发生错误：{}", des_dir, err);
         return;
     }
+    let file_des_path = file_path
+        .replace("content", "public")
+        .replace(".adoc", ".html");
 
-    info!("生成文件：{} -> {}", file_path.display(), file_cur_path);
-    std::process::Command::new("asciidoctor")
+    info!("生成文件：{} -> {}", file_path, file_des_path);
+    let output = std::process::Command::new("asciidoctor")
         .arg(file_path)
         .arg("-D")
-        .arg(file_cur_path)
-        .spawn()
-        .unwrap()
-        .wait()
+        .arg(&des_dir)
+        .arg("-o")
+        .arg("-")
+        .output()
         .unwrap();
+    let output = String::from_utf8_lossy(&output.stdout).to_string();
+    if let Err(err) = fs::write(file_des_path, output) {
+        eprintln!("写入文件失败：{}", err);
+    }
 }
 
 fn handle_file(file_path_str: String) {
