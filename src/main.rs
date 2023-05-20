@@ -1,14 +1,18 @@
 // use minijinja::{context, Environment};
 use regex::Regex;
+use tracing::*;
+use tracing_subscriber;
 
 fn generate_html(file_path: &str) {
     let file_path = std::path::Path::new(file_path);
     let parent_path = Into::<String>::into(file_path.parent().unwrap().to_str().unwrap())
         .replace("content", "public");
     if let Err(e) = std::fs::create_dir_all(&parent_path) {
-        println!("创建 {} 时发生错误：{}", parent_path, e);
+        error!("创建 {} 时发生错误：{}", parent_path, e);
         return;
     }
+
+    debug!("为 {} 生成 html", file_path.display());
 
     std::process::Command::new("asciidoctor")
         .arg(file_path)
@@ -22,8 +26,9 @@ fn generate_html(file_path: &str) {
 }
 
 fn handle_file(file_path: &std::path::Path) {
+    info!("处理文件：{}", file_path.display());
     if !file_path.exists() {
-        eprintln!("文件 {} 不存在", file_path.display());
+        warn!("文件 {} 不存在", file_path.display());
         return;
     }
 
@@ -46,6 +51,7 @@ fn handle_file(file_path: &std::path::Path) {
 }
 
 fn main() {
+    tracing_subscriber::fmt::init();
     let file_path = "content/index.adoc";
 
     handle_file(std::path::Path::new(file_path));
