@@ -1,14 +1,14 @@
 use regex::Regex;
-use std::fs;
+use std::path;
+use tokio::{fs, process};
 use tracing::*;
 use tracing_subscriber;
 
 async fn generate_html(file_path: String) {
     let file_cwd: String;
-    let file_name: String;
 
     {
-        let file_path = std::path::Path::new(&file_path);
+        let file_path = path::Path::new(&file_path);
         if !file_path.exists() {
             warn!("路径 {} 不存在", file_path.display());
             return;
@@ -18,11 +18,10 @@ async fn generate_html(file_path: String) {
             return;
         }
         file_cwd = file_path.parent().unwrap().to_str().unwrap().into();
-        file_name = file_path.file_name().unwrap().to_str().unwrap().into();
     }
 
     let des_dir = file_cwd.replace("content", "public");
-    if let Err(err) = std::fs::create_dir_all(&des_dir) {
+    if let Err(err) = fs::create_dir_all(&des_dir).await {
         error!("创建 {} 时发生错误：{}", des_dir, err);
         return;
     }
@@ -31,22 +30,23 @@ async fn generate_html(file_path: String) {
         .replace(".adoc", ".html");
 
     info!("生成文件：{} -> {}", file_path, file_des_path);
-    let output = std::process::Command::new("asciidoctor")
+    let output = process::Command::new("asciidoctor")
         .arg(file_path)
         .arg("-D")
         .arg(&des_dir)
         .arg("-o")
         .arg("-")
         .output()
+        .await
         .unwrap();
     let output = String::from_utf8_lossy(&output.stdout).to_string();
-    if let Err(err) = fs::write(file_des_path, output) {
+    if let Err(err) = fs::write(file_des_path, output).await {
         eprintln!("写入文件失败：{}", err);
     }
 }
 
 fn handle_file(file_path_str: String) {
-    let file_path = std::path::Path::new(&file_path_str);
+    let file_path = path::Path::new(&file_path_str);
     debug!("处理文件：{}", file_path.display());
     if !file_path.exists() {
         warn!("文件 {} 不存在", file_path.display());
