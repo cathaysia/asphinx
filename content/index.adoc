@@ -1,0 +1,4 @@
+# A note
+
+- xref:book1/index.adoc[book1]
+- xref:book2/index.adoc[book2]
