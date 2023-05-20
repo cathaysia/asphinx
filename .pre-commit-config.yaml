@@ -34,7 +34,7 @@ repos:
   - repo: local
     hooks:
       - id: rustfmt
-        entry: rustfmt
+        entry: rustfmt --edition 2021
         name: rustfmt
         language: system
         types: [rust]
