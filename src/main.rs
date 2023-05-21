@@ -1,10 +1,43 @@
-use regex::Regex;
+use lazy_static::lazy_static;
+use minijinja::{context, Environment};
+use regex::{Regex, RegexBuilder};
+use scraper::{Html, Selector};
+use serde::{Deserialize, Serialize};
 use std::path;
 use tokio::{fs, process};
 use tracing::*;
 use tracing_subscriber;
 
-async fn generate_html(file_path: String) {
+lazy_static! {
+    static ref RUNTIME: tokio::runtime::Runtime = tokio::runtime::Runtime::new().unwrap();
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Document {
+    title: String,
+    body: String,
+}
+
+fn get_body_of_html(html: &str) -> Option<String> {
+    let ht = Html::parse_document(html);
+    let selector = Selector::parse("body").unwrap();
+    for body in ht.select(&selector) {
+        return Some(body.inner_html().trim().into());
+    }
+    None
+}
+
+fn get_title_of_html(html: &str) -> Option<String> {
+    let content = include_str!("/home/tea/notes/public/index.html");
+    let ht = Html::parse_document(content);
+    let selector = Selector::parse("title").unwrap();
+    for body in ht.select(&selector) {
+        return Some(body.inner_html().trim().into());
+    }
+    None
+}
+
+fn generate_html(file_path: String) {
     let file_cwd: String;
 
     {
@@ -21,7 +54,7 @@ async fn generate_html(file_path: String) {
     }
 
     let des_dir = file_cwd.replace("content", "public");
-    if let Err(err) = fs::create_dir_all(&des_dir).await {
+    if let Err(err) = std::fs::create_dir_all(&des_dir) {
         error!("创建 {} 时发生错误：{}", des_dir, err);
         return;
     }
@@ -30,17 +63,30 @@ async fn generate_html(file_path: String) {
         .replace(".adoc", ".html");
 
     info!("生成文件：{} -> {}", file_path, file_des_path);
-    let output = process::Command::new("asciidoctor")
+    let output = std::process::Command::new("asciidoctor")
         .arg(file_path)
         .arg("-D")
         .arg(&des_dir)
         .arg("-o")
         .arg("-")
         .output()
-        .await
+        // .await
         .unwrap();
     let output = String::from_utf8_lossy(&output.stdout).to_string();
-    if let Err(err) = fs::write(file_des_path, output).await {
+
+    let data = Document {
+        title: get_title_of_html(&output).unwrap(),
+        body: get_body_of_html(&output).unwrap(),
+    };
+
+    let mut env = Environment::new();
+    env.add_template("single", include_str!("../layouts/single.html.jinja"))
+        .unwrap();
+    let tmpl = env.get_template("single").unwrap();
+    let ctx = minijinja::value::Value::from_serializable(&data);
+    let res = tmpl.render(ctx).unwrap();
+
+    if let Err(err) = std::fs::write(file_des_path, &res) {
         eprintln!("写入文件失败：{}", err);
     }
 }
@@ -56,7 +102,7 @@ fn handle_file(file_path_str: String) {
     let dir_path = file_path.parent().unwrap();
 
     if file_path.ends_with("index.adoc") {
-        tokio::spawn(generate_html(file_path_str.clone()));
+        generate_html(file_path_str.clone());
         let content = std::fs::read_to_string(file_path).unwrap();
         let re = Regex::new(r"xref:(.*)\[.*\]").unwrap();
         for item in re.captures_iter(&content) {
@@ -65,17 +111,17 @@ fn handle_file(file_path_str: String) {
             handle_file(file_path);
         }
     } else {
-        tokio::spawn(generate_html(file_path.to_str().unwrap().into()));
+        generate_html(file_path.to_str().unwrap().into());
     }
 }
 
-#[tokio::main]
-async fn main() -> Result<(), ()> {
-    // TODO: 使用沙盒限制程序能够读取的路径
-    tracing_subscriber::fmt::init();
-    let file_path = "content/index.adoc";
+fn main() {
+    RUNTIME.block_on(async {
+        // TODO: 使用沙盒限制程序能够读取的路径
 
-    handle_file(file_path.into());
+        tracing_subscriber::fmt::init();
+        let file_path = "content/index.adoc";
 
-    Ok(())
+        handle_file(file_path.into());
+    });
 }
