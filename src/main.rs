@@ -1,6 +1,6 @@
 use lazy_static::lazy_static;
-use minijinja::{context, Environment};
-use regex::{Regex, RegexBuilder};
+use minijinja::Environment;
+use regex::Regex;
 use scraper::{Html, Selector};
 use serde::{Deserialize, Serialize};
 use std::path;
@@ -28,8 +28,7 @@ fn get_body_of_html(html: &str) -> Option<String> {
 }
 
 fn get_title_of_html(html: &str) -> Option<String> {
-    let content = include_str!("/home/tea/notes/public/index.html");
-    let ht = Html::parse_document(content);
+    let ht = Html::parse_document(html);
     let selector = Selector::parse("title").unwrap();
     for body in ht.select(&selector) {
         return Some(body.inner_html().trim().into());
@@ -37,7 +36,7 @@ fn get_title_of_html(html: &str) -> Option<String> {
     None
 }
 
-fn generate_html(file_path: String) {
+async fn generate_html(file_path: String) {
     let file_cwd: String;
 
     {
@@ -63,14 +62,14 @@ fn generate_html(file_path: String) {
         .replace(".adoc", ".html");
 
     info!("生成文件：{} -> {}", file_path, file_des_path);
-    let output = std::process::Command::new("asciidoctor")
+    let output = process::Command::new("asciidoctor")
         .arg(file_path)
         .arg("-D")
         .arg(&des_dir)
         .arg("-o")
         .arg("-")
         .output()
-        // .await
+        .await
         .unwrap();
     let output = String::from_utf8_lossy(&output.stdout).to_string();
 
@@ -86,33 +85,36 @@ fn generate_html(file_path: String) {
     let ctx = minijinja::value::Value::from_serializable(&data);
     let res = tmpl.render(ctx).unwrap();
 
-    if let Err(err) = std::fs::write(file_des_path, &res) {
+    if let Err(err) = fs::write(file_des_path, &res).await {
         eprintln!("写入文件失败：{}", err);
     }
 }
 
-fn handle_file(file_path_str: String) {
+fn handle_file(file_path_str: String) -> Vec<String> {
+    let mut result = Vec::<String>::new();
+    debug!("处理文件：{}", file_path_str);
+
     let file_path = path::Path::new(&file_path_str);
-    debug!("处理文件：{}", file_path.display());
     if !file_path.exists() {
         warn!("文件 {} 不存在", file_path.display());
-        return;
+        return result;
     }
 
-    let dir_path = file_path.parent().unwrap();
-
     if file_path.ends_with("index.adoc") {
-        generate_html(file_path_str.clone());
-        let content = std::fs::read_to_string(file_path).unwrap();
+        let dir_path = file_path.parent().unwrap();
+        let content = std::fs::read_to_string(&file_path_str).unwrap();
+
         let re = Regex::new(r"xref:(.*)\[.*\]").unwrap();
         for item in re.captures_iter(&content) {
             let file_name: String = item.get(1).unwrap().as_str().into();
             let file_path: String = dir_path.join(file_name.as_str()).to_str().unwrap().into();
-            handle_file(file_path);
+            result.append(&mut handle_file(file_path));
         }
-    } else {
-        generate_html(file_path.to_str().unwrap().into());
     }
+
+    result.push(file_path_str);
+
+    return result;
 }
 
 fn main() {
@@ -122,6 +124,9 @@ fn main() {
         tracing_subscriber::fmt::init();
         let file_path = "content/index.adoc";
 
-        handle_file(file_path.into());
+        let mut files = handle_file(file_path.into());
+        let b = files.iter_mut().map(|item| generate_html(item.to_string()));
+
+        futures::future::join_all(b).await;
     });
 }
