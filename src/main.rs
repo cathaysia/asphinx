@@ -10,6 +10,12 @@ use tracing_subscriber;
 
 lazy_static! {
     static ref RUNTIME: tokio::runtime::Runtime = tokio::runtime::Runtime::new().unwrap();
+    static ref TPL_ENGINE: Environment<'static> = {
+        let mut env = Environment::new();
+        env.add_template("single", include_str!("../layouts/single.html.jinja"))
+            .unwrap();
+        env
+    };
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -78,10 +84,7 @@ async fn generate_html(file_path: String) {
         body: get_body_of_html(&output).unwrap(),
     };
 
-    let mut env = Environment::new();
-    env.add_template("single", include_str!("../layouts/single.html.jinja"))
-        .unwrap();
-    let tmpl = env.get_template("single").unwrap();
+    let tmpl = TPL_ENGINE.get_template("single").unwrap();
     let ctx = minijinja::value::Value::from_serializable(&data);
     let res = tmpl.render(ctx).unwrap();
 
