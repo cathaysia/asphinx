@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>套接字</title>
+    </head>
+    <body class="article">
+        <div id="header">套接字</div>
+        <div id="content">
+            <div class="sect1">
+                <div class="sectionbody">
+                    <div class="sect2">
+                        <div class="listingblock">
+                            <div class="content">
+                                <pre
+                                    class="highlight"
+                                ><code class="language-cpp" data-lang="cpp">static void SetSocketNonBlocking(int fd) {
+    int flags = fcntl(fd, F_GETFL, 0);
+    fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+
+    // activate TCP_NODELAY
+    int tcpNoDelay = 1;
+    setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char*)&amp;tcpNoDelay, sizeof(int));
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="footnotes">
+            <hr />
+            <div class="footnote" id="_footnotedef_1">
+                <a href="#_footnoteref_1">1</a>.
+                <a href="https://zhuanlan.zhihu.com/p/93609693"
+                    >深入理解 Epoll</a
+                >
+            </div>
+        </div>
+        <div id="footer">
+            <div id="footer-text">Last updated 1980-01-01 00:00:00 UTC</div>
+        </div>
+    </body>
+</html>
