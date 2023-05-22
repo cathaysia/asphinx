@@ -27,7 +27,23 @@ struct Document {
 }
 
 async fn move_assets(item: &str, source: &str, des: &str) {
-    todo!()
+    let source_file = path::Path::new(source).join(item);
+    if !source_file.exists() {
+        warn!("文件不存在：{}", source_file.display());
+        return;
+    }
+    let des_file = path::Path::new(des).join(item);
+    let des_path = des_file.parent().unwrap();
+    if !des_path.exists() {
+        fs::create_dir_all(des_path).await.unwrap();
+    }
+
+    info!(
+        "移动文件：{} -> {}",
+        source_file.display(),
+        des_file.display()
+    );
+    fs::copy(source_file, des_file).await.unwrap();
 }
 
 async fn generate_html(file_path: String) {
