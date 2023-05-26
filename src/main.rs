@@ -1,5 +1,4 @@
 use lazy_static::lazy_static;
-use minijinja::Environment;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::path;
@@ -8,16 +7,12 @@ use tracing::*;
 use tracing_subscriber;
 
 mod html;
+mod tmpl;
 use html::HtmlParser;
+use tmpl::Tmpl;
 
 lazy_static! {
     static ref RUNTIME: tokio::runtime::Runtime = tokio::runtime::Runtime::new().unwrap();
-    static ref TPL_ENGINE: Environment<'static> = {
-        let mut env = Environment::new();
-        env.add_template("single", include_str!("../layouts/single.html.jinja"))
-            .unwrap();
-        env
-    };
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -90,7 +85,7 @@ async fn generate_html(file_path: String) {
         body: html.get_body_of_html().unwrap(),
     };
 
-    let tmpl = TPL_ENGINE.get_template("single").unwrap();
+    let tmpl = Tmpl::get_engine().get_template("single").unwrap();
     let ctx = minijinja::value::Value::from_serializable(&data);
     let res = tmpl.render(ctx).unwrap();
 
