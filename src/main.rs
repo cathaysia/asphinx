@@ -1,7 +1,7 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
-use std::path;
+use std::{fmt::Display, path};
 use tokio::{fs, process};
 use tracing::*;
 use tracing_subscriber;
@@ -136,7 +136,32 @@ fn handle_file(file_path_str: String) -> Vec<String> {
     return result;
 }
 
+struct SelfDuration {
+    duration: u128,
+}
+
+impl Display for SelfDuration {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut res = Vec::<String>::new();
+        let t = self.duration / 60000;
+        if t > 0 {
+            res.push(format!("{}m", t));
+        }
+        let t = self.duration / 1000;
+        if t > 0 {
+            res.push(format!("{}s", t));
+        }
+        let t = self.duration % 1000;
+        if t > 0 {
+            res.push(format!("{}ms", t));
+        }
+
+        write!(f, "{}", res.join(" "))
+    }
+}
+
 fn main() {
+    let start_time = std::time::Instant::now();
     RUNTIME.block_on(async {
         // TODO: 使用沙盒限制程序能够读取的路径
 
@@ -148,4 +173,7 @@ fn main() {
 
         futures::future::join_all(b).await;
     });
+    let end_time = std::time::Instant::now();
+    let duration = (end_time - start_time).as_millis();
+    println!("构建花费了 {}", SelfDuration { duration });
 }
