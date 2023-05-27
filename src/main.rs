@@ -20,6 +20,7 @@ struct Document {
     title: String,
     content: Option<String>,
     toc: Option<String>,
+    footnotes: Option<String>,
 }
 
 async fn move_assets(item: &str, source: &str, des: &str) {
@@ -87,6 +88,7 @@ async fn generate_html(file_path: String) {
         title: html.get_title(),
         content: html.get_content(),
         toc: html.get_toc(),
+        footnotes: html.get_footnotes(),
     };
 
     let tmpl = Tmpl::get_engine().get_template("single").unwrap();

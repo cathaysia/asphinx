@@ -58,6 +58,17 @@ impl HtmlParser {
 
         return res;
     }
+    pub fn get_footnotes(self: &Self) -> Option<String> {
+        let selector = Selector::parse("#footnotes").unwrap();
+        for item in self.html.select(&selector) {
+            let res = minify(item.inner_html().as_bytes(), &self.cfg);
+            match String::from_utf8(res) {
+                Ok(v) => return Some(v),
+                Err(_) => return None,
+            }
+        }
+        None
+    }
 }
 
 #[cfg(test)]
@@ -86,6 +97,16 @@ mod test {
         assert_eq!(
             res,
             Some("<div id=toctitle>Table of Contents</div><ul class=sectlevel1><li><a href=#_注释>注释</a></ul>".to_string())
+        );
+    }
+    #[test]
+    fn test_get_footnotes() {
+        let html = HtmlParser::new(include_str!("index.html"));
+        let res = html.get_footnotes();
+
+        assert_eq!(
+            res,
+            Some("<hr><div class=footnote id=_footnotedef_1><a href=#_footnoteref_1>1</a>. <a href=https://zhuanlan.zhihu.com/p/93609693>深入理解 Epoll</a></div>".to_string())
         );
     }
 }
