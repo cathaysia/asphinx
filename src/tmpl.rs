@@ -1,47 +1,33 @@
 use lazy_static::lazy_static;
-use minijinja::Environment;
-use std::collections::btree_map::BTreeMap;
-use tracing::*;
-use walkdir::WalkDir;
+use minijinja::{Environment, Source};
 
 lazy_static! {
-    static ref TMPLS: BTreeMap<String, String> = {
-        let mut tmpls: BTreeMap<String, String> = Default::default();
-        WalkDir::new("layouts")
-            .into_iter()
-            .filter_map(Result::ok)
-            .filter_map(|entry| match entry.path().to_str() {
-                Some(v) => {
-                    if v.ends_with("html.jinja") {
-                        return Some(v.to_string());
-                    }
-                    None
-                }
-                None => None,
-            })
-            .for_each(|file_name| {
-                trace!("读取文件：{}", file_name);
-                let content = std::fs::read_to_string(&file_name).unwrap();
-                let tpl_name = file_name.replace("layouts/", "").replace(".html.jinja", "");
-                trace!("添加模板：{}", tpl_name);
-                tmpls.insert(tpl_name, content);
-            });
-        tmpls
-    };
-    static ref ENGINE: Environment<'static> = {
-        let mut engine = Environment::new();
-        TMPLS.iter().for_each(|(ref path, ref content)| {
-            engine.add_template(path, content).unwrap();
-        });
-        engine
-    };
+    static ref ENGINE: Tmpl<'static> = Tmpl::new();
 }
 
 #[derive(Debug)]
-pub struct Tmpl {}
+pub struct Tmpl<'a> {
+    engine: Environment<'a>,
+}
 
-impl Tmpl {
+impl Tmpl<'_> {
+    pub fn new() -> Self {
+        let mut engine = Environment::new();
+        engine.set_source(Source::with_loader(|name| {
+            let file_name = format!("layouts/{}.html.jinja", name);
+            match std::fs::read_to_string(file_name) {
+                Ok(v) => return Ok(Some(v)),
+                Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(None),
+                Err(err) => Err(minijinja::Error::new(
+                    minijinja::ErrorKind::InvalidOperation,
+                    "could not read template",
+                )
+                .with_source(err)),
+            }
+        }));
+        Self { engine }
+    }
     pub fn get_engine() -> &'static Environment<'static> {
-        &ENGINE
+        &ENGINE.engine
     }
 }
