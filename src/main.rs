@@ -18,7 +18,8 @@ lazy_static! {
 #[derive(Debug, Serialize, Deserialize)]
 struct Document {
     title: String,
-    body: String,
+    content: Option<String>,
+    toc: Option<String>,
 }
 
 async fn move_assets(item: &str, source: &str, des: &str) {
@@ -73,6 +74,8 @@ async fn generate_html(file_path: String) {
         .arg(&des_dir)
         .arg("-o")
         .arg("-")
+        .arg("-a")
+        .arg("toc=1")
         .output()
         .await
         .unwrap();
@@ -81,8 +84,9 @@ async fn generate_html(file_path: String) {
     let html = HtmlParser::new(&output);
 
     let data = Document {
-        title: html.get_title_of_html().unwrap(),
-        body: html.get_body_of_html().unwrap(),
+        title: html.get_title(),
+        content: html.get_content(),
+        toc: html.get_toc(),
     };
 
     let tmpl = Tmpl::get_engine().get_template("single").unwrap();
@@ -93,7 +97,7 @@ async fn generate_html(file_path: String) {
         eprintln!("写入文件失败：{}", err);
     }
 
-    let assets = html.get_image_url();
+    let assets = html.get_image_urls();
     let acts = assets
         .iter()
         .map(|item| move_assets(&item, &file_cwd, &des_dir));

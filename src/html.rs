@@ -1,33 +1,55 @@
+use minify_html::{minify, Cfg};
 use scraper::{Html, Selector};
 
 pub struct HtmlParser {
     html: Html,
+    cfg: Cfg,
 }
 
 impl HtmlParser {
     pub fn new(html: &str) -> Self {
+        let mut cfg = Cfg::new();
+        cfg.keep_comments = false;
+
         Self {
             html: Html::parse_document(html),
+            cfg,
         }
     }
 
-    pub fn get_body_of_html(self: &Self) -> Option<String> {
-        let selector = Selector::parse("body").unwrap();
+    pub fn get_content(self: &Self) -> Option<String> {
+        let selector = Selector::parse("#content").unwrap();
         for item in self.html.select(&selector) {
-            return Some(item.inner_html().trim().into());
+            let res = minify(item.inner_html().as_bytes(), &self.cfg);
+            match String::from_utf8(res) {
+                Ok(v) => return Some(v),
+                Err(_) => return None,
+            }
         }
         None
     }
 
-    pub fn get_title_of_html(self: &Self) -> Option<String> {
+    pub fn get_title(self: &Self) -> String {
         let selector = Selector::parse("title").unwrap();
         for item in self.html.select(&selector) {
-            return Some(item.inner_html().trim().into());
+            return item.inner_html().trim().into();
+        }
+        unreachable!()
+    }
+
+    pub fn get_toc(self: &Self) -> Option<String> {
+        let selector = Selector::parse("#toc").unwrap();
+        for item in self.html.select(&selector) {
+            let res = minify(item.inner_html().as_bytes(), &self.cfg);
+            match String::from_utf8(res) {
+                Ok(v) => return Some(v),
+                Err(_) => return None,
+            }
         }
         None
     }
 
-    pub fn get_image_url(self: &Self) -> Vec<String> {
+    pub fn get_image_urls(self: &Self) -> Vec<String> {
         let selector = Selector::parse("img").unwrap();
         let mut res = Vec::new();
         for item in self.html.select(&selector) {
@@ -45,7 +67,25 @@ mod test {
     #[test]
     fn test_get_image_url() {
         let html = HtmlParser::new(include_str!("index.html"));
-        let res = html.get_image_url();
+        let res = html.get_image_urls();
         assert_eq!(res, vec![String::from("assets/UDP_CS模型.png")]);
+    }
+
+    #[test]
+    fn test_get_title() {
+        let html = HtmlParser::new(include_str!("index.html"));
+        let res = html.get_title();
+        assert_eq!(res, "套接字");
+    }
+
+    #[test]
+    fn test_get_toc() {
+        let html = HtmlParser::new(include_str!("index.html"));
+        let res = html.get_toc();
+
+        assert_eq!(
+            res,
+            Some("<div id=toctitle>Table of Contents</div><ul class=sectlevel1><li><a href=#_注释>注释</a></ul>".to_string())
+        );
     }
 }
