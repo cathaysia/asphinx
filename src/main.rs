@@ -6,6 +6,7 @@ use tokio::{fs, process};
 use tracing::*;
 use tracing_subscriber;
 
+mod git;
 mod html;
 mod tmpl;
 use html::HtmlParser;
@@ -21,6 +22,7 @@ struct Document {
     content: Option<String>,
     toc: Option<String>,
     footnotes: Option<String>,
+    last_modify_date: Option<String>,
 }
 
 async fn move_assets(item: &str, source: &str, des: &str) {
@@ -89,6 +91,7 @@ async fn generate_html(file_path: String) {
         content: html.get_content(),
         toc: html.get_toc(),
         footnotes: html.get_footnotes(),
+        last_modify_date: git::get_last_commit_time(&file_path).await,
     };
 
     let tmpl = Tmpl::get_engine().get_template("single").unwrap();

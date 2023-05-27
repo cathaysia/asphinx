@@ -20,5 +20,13 @@
     {{ footnotes }}
     </div>
     {% endif %}
+    {% if last_modify_date %}
+    <div id="footer">
+    <div id="footer-text">
+        最后修改于 {{ last_modify_date }}
+    </div>
+    </div>
+    </div>
+    {% endif %}
 </body>
 </html>
