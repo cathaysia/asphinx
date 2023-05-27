@@ -1,5 +1,5 @@
 [package]
-name = "asciidoc_theme"
+name = "asphinx"
 version = "0.1.0"
 edition = "2021"
 
