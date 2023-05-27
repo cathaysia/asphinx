@@ -4,12 +4,14 @@
     {% include "head" %}
 </head>
 <body class="article">
-    <div id="header">{{ title }}</div>
-    {% if toc %}
-    <div id="toc" class="toc">
-        {{ toc }}
+    <div id="header">
+        <h1>{{ title }}</h1>
+        {% if toc %}
+        <div id="toc" class="toc">
+            {{ toc }}
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
     {% if content %}
     <div id="content">
     {{ content }}
