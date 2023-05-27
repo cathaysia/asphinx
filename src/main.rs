@@ -6,9 +6,11 @@ use tokio::{fs, process};
 use tracing::*;
 use tracing_subscriber;
 
+mod duration;
 mod git;
 mod html;
 mod tmpl;
+use duration::SelfDuration;
 use html::HtmlParser;
 use tmpl::Tmpl;
 
@@ -136,30 +138,6 @@ fn handle_file(file_path_str: String) -> Vec<String> {
     return result;
 }
 
-struct SelfDuration {
-    duration: u128,
-}
-
-impl Display for SelfDuration {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut res = Vec::<String>::new();
-        let t = self.duration / 60000;
-        if t > 0 {
-            res.push(format!("{}m", t));
-        }
-        let t = self.duration / 1000;
-        if t > 0 {
-            res.push(format!("{}s", t));
-        }
-        let t = self.duration % 1000;
-        if t > 0 {
-            res.push(format!("{}ms", t));
-        }
-
-        write!(f, "{}", res.join(" "))
-    }
-}
-
 fn main() {
     let start_time = std::time::Instant::now();
     RUNTIME.block_on(async {
@@ -175,5 +153,5 @@ fn main() {
     });
     let end_time = std::time::Instant::now();
     let duration = (end_time - start_time).as_millis();
-    println!("构建花费了 {}", SelfDuration { duration });
+    println!("构建花费了 {}", SelfDuration::new(duration));
 }
