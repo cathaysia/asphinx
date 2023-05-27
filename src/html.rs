@@ -53,7 +53,13 @@ impl HtmlParser {
         let selector = Selector::parse("img").unwrap();
         let mut res = Vec::new();
         for item in self.html.select(&selector) {
-            res.push(item.value().attr("src").unwrap().into());
+            let val = item
+                .value()
+                .attr("src")
+                .unwrap()
+                .to_string()
+                .replace("%20", " ");
+            res.push(val);
         }
 
         return res;
