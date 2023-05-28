@@ -1,7 +1,7 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
-use std::{fmt::Display, path};
+use std::path;
 use tokio::{fs, process};
 use tracing::*;
 use tracing_subscriber;
@@ -13,6 +13,8 @@ mod tmpl;
 use duration::SelfDuration;
 use html::HtmlParser;
 use tmpl::Tmpl;
+
+use clap::Parser;
 
 lazy_static! {
     static ref RUNTIME: tokio::runtime::Runtime = tokio::runtime::Runtime::new().unwrap();
@@ -138,12 +140,20 @@ fn handle_file(file_path_str: String) -> Vec<String> {
     return result;
 }
 
+#[derive(Debug, Parser)]
+struct Args {
+    #[arg(long, default_value_t=Level::WARN)]
+    level: Level,
+}
+
 fn main() {
+    let args = Args::parse();
+    tracing_subscriber::fmt().with_max_level(args.level).init();
+
     let start_time = std::time::Instant::now();
     RUNTIME.block_on(async {
         // TODO: 使用沙盒限制程序能够读取的路径
 
-        tracing_subscriber::fmt::init();
         let file_path = "content/index.adoc";
 
         let mut files = handle_file(file_path.into());
