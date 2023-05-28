@@ -80,7 +80,6 @@ async fn generate_html(file_path: String) {
     let output = asciidoctor::Asciidoctor::new(file_path.clone(), des_dir.clone())
         .enable_toc()
         .enable_diagram()
-        .attr("imagesdir=assets_mermaid".into())
         .build()
         .await;
 
@@ -108,7 +107,7 @@ async fn generate_html(file_path: String) {
     let assets = html.get_image_urls();
     let acts = assets
         .iter()
-        .filter(|item| item.ends_with("_mermaid"))
+        .filter(|item| !item.starts_with("diag-"))
         .map(|item| move_assets(&item, &file_cwd, &des_dir));
     futures::future::join_all(acts).await;
 }
