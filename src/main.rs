@@ -6,6 +6,7 @@ use tokio::{fs, process};
 use tracing::*;
 use tracing_subscriber;
 
+mod asciidoctor;
 mod duration;
 mod git;
 mod html;
@@ -76,24 +77,12 @@ async fn generate_html(file_path: String) {
         .replace(".adoc", ".html");
 
     info!("生成文件：{} -> {}", file_path, file_des_path);
-    let output = process::Command::new("asciidoctor")
-        .arg(&file_path)
-        .arg("-D")
-        .arg(&des_dir)
-        .arg("-o")
-        .arg("-")
-        .arg("-a")
-        .arg("toc=1")
-        .arg("-a")
-        .arg(format!("outdir={}", &des_dir))
-        .arg("-a")
-        .arg("imagesdir=assets_mermaid")
-        .arg("-r")
-        .arg("asciidoctor-diagram")
-        .output()
-        .await
-        .unwrap();
-    let output = String::from_utf8_lossy(&output.stdout).to_string();
+    let output = asciidoctor::Asciidoctor::new(file_path.clone(), des_dir.clone())
+        .enable_toc()
+        .enable_diagram()
+        .attr("imagesdir=assets_mermaid".into())
+        .build()
+        .await;
 
     let html = HtmlParser::new(&output);
 
