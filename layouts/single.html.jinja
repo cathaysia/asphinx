@@ -25,7 +25,9 @@
     {% if last_modify_date %}
     <div id="footer">
     <div id="footer-text">
-        最后修改于 {{ last_modify_date }}
+        <div>最后修改于 {{ last_modify_date }}</div>
+        <div>构建时间：{{ build_date }}</div>
+        <div>Powered By <a href="https://github.com/cathaysia/asphinx">asphinx</a></div>
     </div>
     </div>
     </div>

@@ -27,6 +27,7 @@ struct Document {
     toc: Option<String>,
     footnotes: Option<String>,
     last_modify_date: Option<String>,
+    build_date: String,
 }
 
 async fn move_assets(item: &str, source: &str, des: &str) {
@@ -90,12 +91,15 @@ async fn generate_html(file_path: String) {
 
     let html = HtmlParser::new(&output);
 
+    let now = chrono::Utc::now();
+
     let data = Document {
         title: html.get_title(),
         content: html.get_content(),
         toc: html.get_toc(),
         footnotes: html.get_footnotes(),
         last_modify_date: git::get_last_commit_time(&file_path).await,
+        build_date: format!("{}", now.format("%Y-%m-%d %H:%M:%S")),
     };
 
     let tmpl = Tmpl::get_engine().get_template("single").unwrap();
