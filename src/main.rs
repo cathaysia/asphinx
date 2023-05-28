@@ -84,6 +84,12 @@ async fn generate_html(file_path: String) {
         .arg("-")
         .arg("-a")
         .arg("toc=1")
+        .arg("-a")
+        .arg(format!("outdir={}", &des_dir))
+        .arg("-a")
+        .arg("imagesdir=assets_mermaid")
+        .arg("-r")
+        .arg("asciidoctor-diagram")
         .output()
         .await
         .unwrap();
@@ -113,6 +119,7 @@ async fn generate_html(file_path: String) {
     let assets = html.get_image_urls();
     let acts = assets
         .iter()
+        .filter(|item| item.ends_with("_mermaid"))
         .map(|item| move_assets(&item, &file_cwd, &des_dir));
     futures::future::join_all(acts).await;
 }
