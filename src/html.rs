@@ -1,30 +1,20 @@
-use minify_html::{minify, Cfg};
 use scraper::{Html, Selector};
 
 pub struct HtmlParser {
     html: Html,
-    cfg: Cfg,
 }
 
 impl HtmlParser {
     pub fn new(html: &str) -> Self {
-        let mut cfg = Cfg::new();
-        cfg.keep_comments = false;
-
         Self {
             html: Html::parse_document(html),
-            cfg,
         }
     }
 
     pub fn get_content(self: &Self) -> Option<String> {
         let selector = Selector::parse("#content").unwrap();
         for item in self.html.select(&selector) {
-            let res = minify(item.inner_html().as_bytes(), &self.cfg);
-            match String::from_utf8(res) {
-                Ok(v) => return Some(v),
-                Err(_) => return None,
-            }
+            return Some(item.inner_html());
         }
         None
     }
@@ -40,11 +30,7 @@ impl HtmlParser {
     pub fn get_toc(self: &Self) -> Option<String> {
         let selector = Selector::parse("#toc").unwrap();
         for item in self.html.select(&selector) {
-            let res = minify(item.inner_html().as_bytes(), &self.cfg);
-            match String::from_utf8(res) {
-                Ok(v) => return Some(v),
-                Err(_) => return None,
-            }
+            return Some(item.inner_html());
         }
         None
     }
@@ -67,11 +53,7 @@ impl HtmlParser {
     pub fn get_footnotes(self: &Self) -> Option<String> {
         let selector = Selector::parse("#footnotes").unwrap();
         for item in self.html.select(&selector) {
-            let res = minify(item.inner_html().as_bytes(), &self.cfg);
-            match String::from_utf8(res) {
-                Ok(v) => return Some(v),
-                Err(_) => return None,
-            }
+            return Some(item.inner_html());
         }
         None
     }
@@ -80,6 +62,17 @@ impl HtmlParser {
 #[cfg(test)]
 mod test {
     use super::*;
+    use minify_html::Cfg;
+
+    fn minify(data: &str) -> String {
+        let mut cfg = Cfg::new();
+        cfg.minify_js = true;
+        cfg.minify_css = true;
+        cfg.keep_comments = false;
+
+        let res = minify_html::minify(data.as_bytes(), &cfg);
+        String::from_utf8(res).unwrap()
+    }
 
     #[test]
     fn test_get_image_url() {
@@ -98,21 +91,21 @@ mod test {
     #[test]
     fn test_get_toc() {
         let html = HtmlParser::new(include_str!("index.html"));
-        let res = html.get_toc();
+        let res = html.get_toc().unwrap();
 
         assert_eq!(
-            res,
-            Some("<div id=toctitle>Table of Contents</div><ul class=sectlevel1><li><a href=#_注释>注释</a></ul>".to_string())
+            minify(&res),
+            "<div id=toctitle>Table of Contents</div><ul class=sectlevel1><li><a href=#_注释>注释</a></ul>".to_string()
         );
     }
     #[test]
     fn test_get_footnotes() {
         let html = HtmlParser::new(include_str!("index.html"));
-        let res = html.get_footnotes();
+        let res = html.get_footnotes().unwrap();
 
         assert_eq!(
-            res,
-            Some("<hr><div class=footnote id=_footnotedef_1><a href=#_footnoteref_1>1</a>. <a href=https://zhuanlan.zhihu.com/p/93609693>深入理解 Epoll</a></div>".to_string())
+            minify(&res),
+            "<hr><div class=footnote id=_footnotedef_1><a href=#_footnoteref_1>1</a>. <a href=https://zhuanlan.zhihu.com/p/93609693>深入理解 Epoll</a></div>".to_string()
         );
     }
 }

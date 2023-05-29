@@ -1,8 +1,10 @@
+#![allow(dead_code)]
+
 use lazy_static::lazy_static;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::path;
-use tokio::{fs, process};
+use tokio::fs;
 use tracing::*;
 use tracing_subscriber;
 
@@ -10,6 +12,7 @@ mod asciidoctor;
 mod duration;
 mod git;
 mod html;
+mod jinjaext;
 mod tmpl;
 use duration::SelfDuration;
 use html::HtmlParser;

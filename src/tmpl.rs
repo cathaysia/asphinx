@@ -1,6 +1,8 @@
 use lazy_static::lazy_static;
 use minijinja::{Environment, Source};
 
+use crate::jinjaext;
+
 lazy_static! {
     static ref ENGINE: Tmpl<'static> = Tmpl::new();
 }
@@ -25,6 +27,8 @@ impl Tmpl<'_> {
                 .with_source(err)),
             }
         }));
+
+        engine.add_filter("minify", jinjaext::minify);
         Self { engine }
     }
     pub fn get_engine() -> &'static Environment<'static> {
