@@ -29,6 +29,10 @@ impl Tmpl<'_> {
         }));
 
         engine.add_filter("minify", jinjaext::minify);
+
+        let resource = jinjaext::Resource::new();
+        engine.add_global("resource", minijinja::value::Value::from_object(resource));
+
         Self { engine }
     }
     pub fn get_engine() -> &'static Environment<'static> {
