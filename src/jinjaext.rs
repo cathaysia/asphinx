@@ -1,6 +1,6 @@
 use minijinja::{value::Value, Error, ErrorKind, State};
 
-pub fn minify(_state: &State, value: &Value) -> Result<Value, Error> {
+pub(crate) fn minify_inner(value: &str) -> Result<Value, Error> {
     let mut cfg = minify_html::Cfg::new();
     cfg.minify_css = true;
     cfg.minify_js = true;
@@ -14,4 +14,8 @@ pub fn minify(_state: &State, value: &Value) -> Result<Value, Error> {
             ))
         }
     }
+}
+
+pub fn minify(_state: &State, value: &Value) -> Result<Value, Error> {
+    minify_inner(&value.to_string())
 }

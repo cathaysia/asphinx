@@ -54,7 +54,7 @@ async fn move_assets(item: &str, source: &str, des: &str) {
     fs::copy(source_file, des_file).await.unwrap();
 }
 
-async fn generate_html(file_path: String) {
+async fn generate_html(file_path: String, need_minify: bool) {
     let file_cwd: String;
 
     {
@@ -102,7 +102,10 @@ async fn generate_html(file_path: String) {
 
     let tmpl = Tmpl::get_engine().get_template("single").unwrap();
     let ctx = minijinja::value::Value::from_serializable(&data);
-    let res = tmpl.render(ctx).unwrap();
+    let mut res = tmpl.render(ctx).unwrap();
+    if need_minify {
+        res = jinjaext::minify_inner(&res).unwrap().to_string();
+    }
 
     if let Err(err) = fs::write(&file_des_path, &res).await {
         eprintln!("写入文件失败：{}", err);
@@ -147,6 +150,8 @@ fn handle_file(file_path_str: String) -> Vec<String> {
 struct Args {
     #[arg(long, default_value_t=Level::WARN)]
     level: Level,
+    #[arg(long, default_value_t = false)]
+    minify: bool,
 }
 
 fn main() {
@@ -160,7 +165,9 @@ fn main() {
         let file_path = "content/index.adoc";
 
         let mut files = handle_file(file_path.into());
-        let b = files.iter_mut().map(|item| generate_html(item.to_string()));
+        let b = files
+            .iter_mut()
+            .map(|item| generate_html(item.to_string(), args.minify));
 
         futures::future::join_all(b).await;
     });
