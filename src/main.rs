@@ -80,6 +80,7 @@ async fn generate_html(file_path: String) {
     let output = asciidoctor::Asciidoctor::new(file_path.clone(), des_dir.clone())
         .enable_toc()
         .enable_diagram()
+        .attr("icons=font".into())
         .build()
         .await;
 
