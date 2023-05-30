@@ -30,7 +30,10 @@ impl HtmlParser {
     pub fn get_toc(self: &Self) -> Option<String> {
         let selector = Selector::parse("#toc").unwrap();
         for item in self.html.select(&selector) {
-            return Some(item.inner_html());
+            return Some(
+                item.inner_html()
+                    .replace(r#"<div id="toctitle">Table of Contents</div>"#, ""),
+            );
         }
         None
     }
@@ -95,7 +98,7 @@ mod test {
 
         assert_eq!(
             minify(&res),
-            "<div id=toctitle>Table of Contents</div><ul class=sectlevel1><li><a href=#_注释>注释</a></ul>".to_string()
+            "<ul class=sectlevel1><li><a href=#_注释>注释</a></ul>".to_string()
         );
     }
     #[test]
