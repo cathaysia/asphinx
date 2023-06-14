@@ -11,13 +11,16 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs
+          {
+            inherit system;
+          };
       in
       {
         devShell = pkgs.mkShell {
           buildInputs = [
-            pkgs.openssl
-            pkgs.zlib
+            pkgs.pkgsStatic.openssl
+            pkgs.pkgsStatic.zlib
           ];
           shellHook = ''
             export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${pkgs.openssl.out}/lib
