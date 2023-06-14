@@ -16,8 +16,14 @@
       {
         devShell = pkgs.mkShell {
           buildInputs = [
-            pkgs.asciidoctor-with-extensions
+            pkgs.openssl
+            pkgs.zlib
           ];
+          shellHook = ''
+            export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${pkgs.openssl.out}/lib
+            export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${pkgs.zlib.out}/lib
+          '';
+
         };
       });
 }

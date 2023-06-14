@@ -20,6 +20,8 @@ use tmpl::Tmpl;
 
 use clap::Parser;
 
+use crate::git::GitInfo;
+
 lazy_static! {
     static ref RUNTIME: tokio::runtime::Runtime = tokio::runtime::Runtime::new().unwrap();
 }
@@ -54,7 +56,7 @@ async fn move_assets(item: &str, source: &str, des: &str) {
     fs::copy(source_file, des_file).await.unwrap();
 }
 
-async fn generate_html(file_path: String, need_minify: bool) {
+async fn generate_html(gitinfo: &GitInfo, file_path: String, need_minify: bool) {
     let file_cwd: String;
 
     {
@@ -96,7 +98,8 @@ async fn generate_html(file_path: String, need_minify: bool) {
         content: html.get_content(),
         toc: html.get_toc(),
         footnotes: html.get_footnotes(),
-        last_modify_date: git::get_last_commit_time(&file_path).await,
+        // last_modify_date: git::get_last_commit_time(&file_path).await,
+        last_modify_date: gitinfo.get_last_commit_time_of_file(&file_path),
         build_date: format!("{}", now.format("%Y-%m-%d %H:%M:%S")),
     };
 
@@ -158,6 +161,8 @@ fn main() {
     let args = Args::parse();
     tracing_subscriber::fmt().with_max_level(args.level).init();
 
+    let gitinfo = GitInfo::new(".").unwrap();
+
     let start_time = std::time::Instant::now();
     RUNTIME.block_on(async {
         // TODO: 使用沙盒限制程序能够读取的路径
@@ -167,7 +172,7 @@ fn main() {
         let mut files = handle_file(file_path.into());
         let b = files
             .iter_mut()
-            .map(|item| generate_html(item.to_string(), args.minify));
+            .map(|item| generate_html(&gitinfo, item.to_string(), args.minify));
 
         futures::future::join_all(b).await;
     });
