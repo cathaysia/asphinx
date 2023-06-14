@@ -45,12 +45,20 @@ impl GitInfo {
     }
 
     pub fn get_last_commit_time_of_file(&self, file_name: &str) -> Option<String> {
-        let time = self.mtimes.get(file_name)?;
-        let systime = std::time::SystemTime::UNIX_EPOCH
-            .checked_add(Duration::new(*time as u64, 0))
-            .unwrap();
-        let time: chrono::DateTime<Utc> = systime.into();
-        trace!("文件 {file_name} 最后一次时间为：{:?}", systime);
-        Some(time.format("%Y-%m-%d %H:%M:%S").to_string())
+        info!("获取文件日期：{}", file_name);
+        match self.mtimes.get(file_name) {
+            Some(time) => {
+                let systime = std::time::SystemTime::UNIX_EPOCH
+                    .checked_add(Duration::new(*time as u64, 0))
+                    .unwrap();
+                let time: chrono::DateTime<Utc> = systime.into();
+                trace!("文件 {file_name} 最后一次时间为：{:?}", systime);
+                Some(time.format("%Y-%m-%d %H:%M:%S").to_string())
+            }
+            None => {
+                warn!("文件日期获取失败：{}", file_name);
+                None
+            }
+        }
     }
 }

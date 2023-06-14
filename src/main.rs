@@ -158,12 +158,12 @@ struct Args {
 }
 
 fn main() {
+    let start_time = std::time::Instant::now();
     let args = Args::parse();
     tracing_subscriber::fmt().with_max_level(args.level).init();
 
     let gitinfo = GitInfo::new(".").unwrap();
 
-    let start_time = std::time::Instant::now();
     RUNTIME.block_on(async {
         // TODO: 使用沙盒限制程序能够读取的路径
 
