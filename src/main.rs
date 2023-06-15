@@ -158,11 +158,16 @@ struct Args {
 }
 
 fn main() {
-    let start_time = std::time::Instant::now();
+    let start_time = std::time::SystemTime::now();
     let args = Args::parse();
     tracing_subscriber::fmt().with_max_level(args.level).init();
 
     let gitinfo = GitInfo::new(".").unwrap();
+    let elapsed = start_time.elapsed().unwrap();
+    println!(
+        "检查 Git 内容花费了 {}",
+        SelfDuration::new(elapsed.as_millis())
+    );
 
     RUNTIME.block_on(async {
         // TODO: 使用沙盒限制程序能够读取的路径
@@ -176,7 +181,7 @@ fn main() {
 
         futures::future::join_all(b).await;
     });
-    let end_time = std::time::Instant::now();
-    let duration = (end_time - start_time).as_millis();
-    println!("构建花费了 {}", SelfDuration::new(duration));
+
+    let elapsed = start_time.elapsed().unwrap();
+    println!("构建花费了 {}", SelfDuration::new(elapsed.as_millis()));
 }
