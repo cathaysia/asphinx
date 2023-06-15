@@ -1,47 +1,53 @@
-use std::{cmp::max, collections::HashMap, time::Duration};
+use std::collections::{HashMap, HashSet};
+use std::time::Duration;
+
+use gix::{bstr::ByteSlice, path::Utf8Error, Commit, Id, ThreadSafeRepository};
+
+use gix::object::tree::diff::change::Event;
+use gix::object::tree::diff::Action;
 
 use chrono::Utc;
-use git2::Repository;
 use tracing::*;
 
 pub struct GitInfo {
-    mtimes: HashMap<String, i64>,
+    mtimes: HashMap<String, u32>,
+    default_time: u32,
 }
 
 impl GitInfo {
-    // COPYRIGHT: modify by https://github.com/rust-lang/git2-rs/issues/588#issuecomment-856757971
-    // FIXME:head 上的文件会丢失
     pub fn new(repo_dir: &str) -> Option<Self> {
-        let mut mtimes: HashMap<String, i64> = HashMap::new();
-        let repo = Repository::open(repo_dir).ok()?;
-        let mut revwalk = repo.revwalk().ok()?;
-        revwalk.set_sorting(git2::Sort::TIME).ok()?;
-        revwalk.push_head().ok()?;
-        for commit_id in revwalk {
-            let commit_id = commit_id.ok()?;
-            let commit = repo.find_commit(commit_id).ok()?;
-            // Ignore merge commits (2+ parents) because that's what 'git whatchanged' does.
-            // Ignore commit with 0 parents (initial commit) because there's nothing to diff against
-            if commit.parent_count() == 1 {
-                let prev_commit = commit.parent(0).ok()?;
-                let tree = commit.tree().ok()?;
-                let prev_tree = prev_commit.tree().ok()?;
-                let diff = repo
-                    .diff_tree_to_tree(Some(&prev_tree), Some(&tree), None)
-                    .ok()?;
-                for delta in diff.deltas() {
-                    let file_path = delta.new_file().path().unwrap();
-                    let file_mod_time = commit.time();
-                    let unix_time = file_mod_time.seconds();
-                    mtimes
-                        .entry(file_path.to_owned().to_string_lossy().to_string())
-                        .and_modify(|t| *t = max(*t, unix_time))
-                        .or_insert(unix_time);
+        let repo = ThreadSafeRepository::discover(repo_dir)
+            .ok()?
+            .to_thread_local();
+        let rewalk = repo.rev_walk(Some(repo.head_id().unwrap().detach()));
+        let mut changes = rewalk
+            .all()
+            .ok()?
+            .filter_map(Result::ok)
+            .map(|info| Self::id_to_commit(info.id()))
+            .filter(Option::is_some)
+            .map(|item| item.unwrap());
+        let mut last = changes.next()?;
+        let mut mtimes: HashMap<String, u32> = HashMap::new();
+        for next in changes {
+            match Self::change_from_commit(&last, Some(&next)) {
+                Some((time, set)) => {
+                    set.iter().for_each(|filename| {
+                        mtimes.entry(filename.into()).or_insert_with(|| time);
+                    });
                 }
+                None => {}
             }
+            last = next;
         }
+
+        let default_time = last.time().unwrap().seconds_since_unix_epoch;
+
         debug!("获取的文件修改时间为：{:?}", mtimes);
-        Some(Self { mtimes })
+        Some(Self {
+            mtimes,
+            default_time,
+        })
     }
 
     pub fn get_last_commit_time_of_file(&self, file_name: &str) -> Option<String> {
@@ -56,9 +62,51 @@ impl GitInfo {
                 Some(time.format("%Y-%m-%d %H:%M:%S").to_string())
             }
             None => {
-                warn!("文件日期获取失败：{}", file_name);
-                None
+                let systime = std::time::SystemTime::UNIX_EPOCH
+                    .checked_add(Duration::new(self.default_time as u64, 0))
+                    .unwrap();
+                let time: chrono::DateTime<Utc> = systime.into();
+                warn!("获取 {file_name} 时间失败，回退到默认时间");
+                Some(time.format("%Y-%m-%d %H:%M:%S").to_string())
             }
         }
+    }
+
+    fn id_to_commit(id: Id) -> Option<Commit> {
+        let object = id.try_object().ok()?;
+        let object = object.expect("empty");
+        let commit = object.try_into_commit().ok()?;
+        Some(commit)
+    }
+
+    fn change_from_commit(last: &Commit, next: Option<&Commit>) -> Option<(u32, HashSet<String>)> {
+        let tree = last.tree().ok()?;
+        let mut changes = tree.changes().ok()?;
+        let changes = changes.track_path();
+        let last_tree = next?.tree().ok()?;
+        let mut filenames = HashSet::new();
+        changes
+            .for_each_to_obtain_tree(
+                &last_tree,
+                |change| -> Result<gix::object::tree::diff::Action, _> {
+                    let is_file_change = match change.event {
+                        Event::Deletion {
+                            entry_mode: _,
+                            id: _,
+                        } => false,
+                        _ => true,
+                    };
+                    if is_file_change {
+                        let path = change.location.to_os_str().unwrap().to_string_lossy();
+                        filenames.insert(format!("{}", path));
+                    }
+
+                    Ok::<Action, Utf8Error>(Action::Continue)
+                },
+            )
+            .ok()?;
+
+        let time = last.time().ok()?;
+        Some((time.seconds_since_unix_epoch, filenames))
     }
 }
