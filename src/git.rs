@@ -11,7 +11,7 @@ use tracing::*;
 
 pub struct GitInfo {
     mtimes: HashMap<String, u32>,
-    default_time: u32,
+    default_time: String,
 }
 
 impl GitInfo {
@@ -20,17 +20,12 @@ impl GitInfo {
             .ok()?
             .to_thread_local();
         let rewalk = repo.rev_walk(Some(repo.head_id().unwrap().detach()));
-        let mut changes = rewalk
-            .all()
-            .ok()?
-            .filter_map(Result::ok)
-            .map(|info| Self::id_to_commit(info.id()))
-            .filter(Option::is_some)
-            .map(|item| item.unwrap());
-        let mut last = changes.next()?;
+        let mut changes = rewalk.all().ok()?.filter_map(Result::ok);
         let mut mtimes: HashMap<String, u32> = HashMap::new();
+        let mut last = Self::id_to_commit(changes.next()?.id())?;
         for next in changes {
-            match Self::change_from_commit(&last, Some(&next)) {
+            let next_shad = Self::id_to_commit(next.id()).unwrap();
+            match Self::change_from_commit(&last, Some(&next_shad)) {
                 Some((time, set)) => {
                     set.iter().for_each(|filename| {
                         mtimes.entry(filename.into()).or_insert_with(|| time);
@@ -38,10 +33,17 @@ impl GitInfo {
                 }
                 None => {}
             }
-            last = next;
+            last = next_shad;
         }
 
-        let default_time = last.time().unwrap().seconds_since_unix_epoch;
+        let systime = std::time::SystemTime::UNIX_EPOCH
+            .checked_add(Duration::new(
+                last.time().ok()?.seconds_since_unix_epoch as u64,
+                0,
+            ))
+            .unwrap();
+        let default_time: chrono::DateTime<Utc> = systime.into();
+        let default_time = default_time.format("%Y-%m-%d %H:%M:%S").to_string();
 
         debug!("获取的文件修改时间为：{:?}", mtimes);
         Some(Self {
@@ -61,14 +63,7 @@ impl GitInfo {
                 trace!("文件 {file_name} 最后一次时间为：{:?}", systime);
                 Some(time.format("%Y-%m-%d %H:%M:%S").to_string())
             }
-            None => {
-                let systime = std::time::SystemTime::UNIX_EPOCH
-                    .checked_add(Duration::new(self.default_time as u64, 0))
-                    .unwrap();
-                let time: chrono::DateTime<Utc> = systime.into();
-                warn!("获取 {file_name} 时间失败，回退到默认时间");
-                Some(time.format("%Y-%m-%d %H:%M:%S").to_string())
-            }
+            None => Some(self.default_time.clone()),
         }
     }
 
