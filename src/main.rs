@@ -14,9 +14,12 @@ mod html;
 mod jinjaext;
 mod tmpl;
 use clap::Parser;
-use duration::PrintableDuration;
+use mimalloc::MiMalloc;
 
 use crate::{duration::Counter, generator::AdocGenerator, git::GitInfo};
+
+#[global_allocator]
+static GLOBAL: MiMalloc = MiMalloc;
 
 fn parse_index_file(file_path_str: String) -> Vec<String> {
     let mut result = Vec::<String>::new();
