@@ -7,7 +7,7 @@ use gix::object::tree::diff::change::Event;
 use gix::object::tree::diff::Action;
 
 use chrono::Utc;
-use tracing::*;
+use log::*;
 
 pub struct GitInfo {
     mtimes: HashMap<String, u32>,

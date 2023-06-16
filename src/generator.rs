@@ -1,9 +1,11 @@
+use log::*;
 use serde::{Deserialize, Serialize};
 use std::path;
 use tokio::fs;
-use tracing::*;
 
-use crate::{asciidoctor, git::GitInfo, html::HtmlParser, jinjaext, tmpl::Tmpl};
+use crate::{
+    asciidoctor_builder::AsciidoctorBuilder, git::GitInfo, html::HtmlParser, jinjaext, tmpl::Tmpl,
+};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub(crate) struct Document {
@@ -53,7 +55,7 @@ impl AdocGenerator {
             .replace(".adoc", ".html");
 
         info!("生成文件：{} -> {}", file_path, file_des_path);
-        let output = asciidoctor::Asciidoctor::new(file_path.clone(), des_dir.clone())
+        let output = AsciidoctorBuilder::new(file_path.clone(), des_dir.clone())
             .enable_toc()
             .enable_diagram()
             .attr("icons=font".into())

@@ -1,27 +1,22 @@
 #![allow(dead_code)]
 
-use lazy_static::lazy_static;
+use env_logger::Env;
+use log::*;
 use regex::Regex;
 use std::path;
-use tracing::*;
-use tracing_subscriber;
 
-mod asciidoctor;
+mod asciidoctor_builder;
 mod duration;
 mod generator;
 mod git;
 mod html;
 mod jinjaext;
 mod tmpl;
-use duration::SelfDuration;
+use duration::PrintableDuration;
 
 use clap::Parser;
 
 use crate::{generator::AdocGenerator, git::GitInfo};
-
-lazy_static! {
-    static ref RUNTIME: tokio::runtime::Runtime = tokio::runtime::Runtime::new().unwrap();
-}
 
 fn parse_index_file(file_path_str: String) -> Vec<String> {
     let mut result = Vec::<String>::new();
@@ -52,29 +47,28 @@ fn parse_index_file(file_path_str: String) -> Vec<String> {
 
 #[derive(Debug, Parser)]
 struct Args {
-    #[arg(long, default_value_t=Level::WARN)]
-    level: Level,
     #[arg(long, default_value_t = false)]
     minify: bool,
+    #[arg(long, default_value_t = String::from("layouts"))]
+    theme: String,
 }
 
 fn main() {
+    env_logger::Builder::from_env(Env::default().default_filter_or("warn")).init();
     let start_time = std::time::SystemTime::now();
     let args = Args::parse();
-    tracing_subscriber::fmt().with_max_level(args.level).init();
+    assert!(std::path::Path::new(&args.theme).exists());
 
     let gitinfo = GitInfo::new(".").unwrap();
     let elapsed = start_time.elapsed().unwrap();
-    println!(
-        "检查 Git 内容花费了 {}",
-        SelfDuration::new(elapsed.as_millis())
-    );
+    println!("检查 Git 内容花费了 {}", PrintableDuration::from(elapsed));
 
-    RUNTIME.block_on(async {
+    let runtime = tokio::runtime::Runtime::new().unwrap();
+    runtime.block_on(async {
         // TODO: 使用沙盒限制程序能够读取的路径
 
         let file_path = "content/index.adoc";
-        let generator = AdocGenerator::new("layouts".into());
+        let generator = AdocGenerator::new(args.theme);
 
         let mut files = parse_index_file(file_path.into());
         let b = files
@@ -85,5 +79,5 @@ fn main() {
     });
 
     let elapsed = start_time.elapsed().unwrap();
-    println!("构建花费了 {}", SelfDuration::new(elapsed.as_millis()));
+    println!("构建花费了 {}", PrintableDuration::from(elapsed));
 }

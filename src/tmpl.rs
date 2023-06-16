@@ -1,4 +1,4 @@
-use minijinja::{Environment, Source};
+use minijinja::Environment;
 
 use crate::jinjaext;
 
@@ -10,7 +10,7 @@ pub struct Tmpl {
 impl Tmpl {
     pub fn new(layout_dir: String) -> Self {
         let mut engine = Box::new(Environment::new());
-        engine.set_source(Source::with_loader(move |name| {
+        engine.set_loader(move |name| {
             let file_name = format!("{}/{}.html.jinja", layout_dir, name);
             match std::fs::read_to_string(file_name) {
                 Ok(v) => return Ok(Some(v)),
@@ -21,7 +21,7 @@ impl Tmpl {
                 )
                 .with_source(err)),
             }
-        }));
+        });
 
         engine.add_filter("minify", jinjaext::minify);
 

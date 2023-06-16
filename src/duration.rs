@@ -1,17 +1,25 @@
 use std::fmt::Display;
 
-pub struct SelfDuration {
+pub struct PrintableDuration {
     duration: u128,
 }
 
-impl SelfDuration {
+impl PrintableDuration {
     pub fn new(duration: u128) -> Self {
         assert!(duration != 0);
-        SelfDuration { duration }
+        PrintableDuration { duration }
     }
 }
 
-impl Display for SelfDuration {
+impl From<std::time::Duration> for PrintableDuration {
+    fn from(value: std::time::Duration) -> Self {
+        PrintableDuration {
+            duration: value.as_millis(),
+        }
+    }
+}
+
+impl Display for PrintableDuration {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut res = Vec::<String>::new();
         let t = self.duration / 60000;
@@ -37,37 +45,37 @@ mod test {
 
     #[test]
     fn test_fmt_1min() {
-        let res = format!("{}", SelfDuration::new(60 * 1000));
+        let res = format!("{}", PrintableDuration::new(60 * 1000));
         assert_eq!(&res, "1m")
     }
 
     #[test]
     fn test_fmt_1min20s() {
-        let res = format!("{}", SelfDuration::new(60 * 1000 + 20 * 1000));
+        let res = format!("{}", PrintableDuration::new(60 * 1000 + 20 * 1000));
         assert_eq!(&res, "1m 20s")
     }
 
     #[test]
     fn test_fmt_1min20s30ms() {
-        let res = format!("{}", SelfDuration::new(60 * 1000 + 20 * 1000 + 30));
+        let res = format!("{}", PrintableDuration::new(60 * 1000 + 20 * 1000 + 30));
         assert_eq!(&res, "1m 20s 30ms")
     }
 
     #[test]
     fn test_fmt_20s() {
-        let res = format!("{}", SelfDuration::new(20 * 1000));
+        let res = format!("{}", PrintableDuration::new(20 * 1000));
         assert_eq!(&res, "20s")
     }
 
     #[test]
     fn test_fmt_20s30ms() {
-        let res = format!("{}", SelfDuration::new(20 * 1000 + 30));
+        let res = format!("{}", PrintableDuration::new(20 * 1000 + 30));
         assert_eq!(&res, "20s 30ms")
     }
 
     #[test]
     fn test_fmt_30ms() {
-        let res = format!("{}", SelfDuration::new(30));
+        let res = format!("{}", PrintableDuration::new(30));
         assert_eq!(&res, "30ms")
     }
 }

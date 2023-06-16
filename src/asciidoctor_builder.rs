@@ -1,13 +1,13 @@
 use tokio::process;
 
-pub struct Asciidoctor {
+pub struct AsciidoctorBuilder {
     input_file: String,
     destination_dir: String,
     attrs: Vec<String>,
     plugins: Vec<String>,
 }
 
-impl Asciidoctor {
+impl AsciidoctorBuilder {
     pub fn new(input_file: String, destination_dir: String) -> Self {
         Self {
             input_file,
