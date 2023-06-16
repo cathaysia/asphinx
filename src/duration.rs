@@ -1,4 +1,31 @@
-use std::fmt::Display;
+use std::{fmt::Display, time::SystemTime};
+
+pub struct Counter {
+    start_time: SystemTime,
+    time: SystemTime,
+}
+
+impl Counter {
+    pub fn new() -> Self {
+        let time = SystemTime::now();
+        Self {
+            start_time: time.clone(),
+            time,
+        }
+    }
+
+    pub fn elapsed(&self) -> Option<PrintableDuration> {
+        Some(self.time.elapsed().ok()?.into())
+    }
+
+    pub fn reset(&mut self) {
+        self.time = SystemTime::now();
+    }
+
+    pub fn from_start(&self) -> Option<PrintableDuration> {
+        Some(self.start_time.elapsed().ok()?.into())
+    }
+}
 
 pub struct PrintableDuration {
     duration: u128,

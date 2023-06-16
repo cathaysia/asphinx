@@ -16,7 +16,7 @@ mod tmpl;
 use clap::Parser;
 use duration::PrintableDuration;
 
-use crate::{generator::AdocGenerator, git::GitInfo};
+use crate::{duration::Counter, generator::AdocGenerator, git::GitInfo};
 
 fn parse_index_file(file_path_str: String) -> Vec<String> {
     let mut result = Vec::<String>::new();
@@ -53,31 +53,27 @@ struct Args {
     theme: String,
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     env_logger::Builder::from_env(Env::default().default_filter_or("warn")).init();
-    let start_time = std::time::SystemTime::now();
     let args = Args::parse();
     assert!(std::path::Path::new(&args.theme).exists());
 
+    let mut counter = Counter::new();
     let gitinfo = GitInfo::new(".").unwrap();
-    let elapsed = start_time.elapsed().unwrap();
-    println!("检查 Git 内容花费了 {}", PrintableDuration::from(elapsed));
+    println!("检查 Git 内容花费了 {}", counter.elapsed().unwrap());
 
-    let runtime = tokio::runtime::Runtime::new().unwrap();
-    runtime.block_on(async {
-        // TODO: 使用沙盒限制程序能够读取的路径
+    let file_path = "content/index.adoc";
+    let generator = AdocGenerator::new(args.theme);
 
-        let file_path = "content/index.adoc";
-        let generator = AdocGenerator::new(args.theme);
+    counter.reset();
+    let mut files = parse_index_file(file_path.into());
+    println!("解析 index 文件花费了 {}", counter.elapsed().unwrap());
+    let b = files
+        .iter_mut()
+        .map(|item| generator.generate_html(&gitinfo, item.to_string(), args.minify));
 
-        let mut files = parse_index_file(file_path.into());
-        let b = files
-            .iter_mut()
-            .map(|item| generator.generate_html(&gitinfo, item.to_string(), args.minify));
+    futures::future::join_all(b).await;
 
-        futures::future::join_all(b).await;
-    });
-
-    let elapsed = start_time.elapsed().unwrap();
-    println!("构建花费了 {}", PrintableDuration::from(elapsed));
+    println!("构建花费了 {}", counter.from_start().unwrap());
 }
