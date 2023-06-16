@@ -1,22 +1,17 @@
-use lazy_static::lazy_static;
 use minijinja::{Environment, Source};
 
 use crate::jinjaext;
 
-lazy_static! {
-    static ref ENGINE: Tmpl<'static> = Tmpl::new();
-}
-
 #[derive(Debug)]
-pub struct Tmpl<'a> {
-    engine: Environment<'a>,
+pub struct Tmpl {
+    pub engine: Box<Environment<'static>>,
 }
 
-impl Tmpl<'_> {
-    pub fn new() -> Self {
-        let mut engine = Environment::new();
-        engine.set_source(Source::with_loader(|name| {
-            let file_name = format!("layouts/{}.html.jinja", name);
+impl Tmpl {
+    pub fn new(layout_dir: String) -> Self {
+        let mut engine = Box::new(Environment::new());
+        engine.set_source(Source::with_loader(move |name| {
+            let file_name = format!("{}/{}.html.jinja", layout_dir, name);
             match std::fs::read_to_string(file_name) {
                 Ok(v) => return Ok(Some(v)),
                 Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(None),
@@ -34,8 +29,5 @@ impl Tmpl<'_> {
         engine.add_global("resource", minijinja::value::Value::from_object(resource));
 
         Self { engine }
-    }
-    pub fn get_engine() -> &'static Environment<'static> {
-        &ENGINE.engine
     }
 }
