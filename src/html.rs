@@ -53,6 +53,7 @@ impl HtmlParser {
 
         return res;
     }
+
     pub fn get_footnotes(self: &Self) -> Option<String> {
         let selector = Selector::parse("#footnotes").unwrap();
         for item in self.html.select(&selector) {
@@ -64,8 +65,9 @@ impl HtmlParser {
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use minify_html::Cfg;
+
+    use super::*;
 
     fn minify(data: &str) -> String {
         let mut cfg = Cfg::new();

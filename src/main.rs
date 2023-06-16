@@ -1,9 +1,10 @@
 #![allow(dead_code)]
 
+use std::path;
+
 use env_logger::Env;
 use log::*;
 use regex::Regex;
-use std::path;
 
 mod asciidoctor_builder;
 mod duration;
@@ -12,9 +13,8 @@ mod git;
 mod html;
 mod jinjaext;
 mod tmpl;
-use duration::PrintableDuration;
-
 use clap::Parser;
+use duration::PrintableDuration;
 
 use crate::{generator::AdocGenerator, git::GitInfo};
 

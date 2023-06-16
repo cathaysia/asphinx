@@ -1,7 +1,10 @@
 use core::fmt;
 use std::io;
 
-use minijinja::{value::Object, value::Value, Error, ErrorKind, State};
+use minijinja::{
+    value::{Object, Value},
+    Error, ErrorKind, State,
+};
 
 pub(crate) fn minify_inner(value: &str) -> Result<Value, Error> {
     let mut cfg = minify_html::Cfg::new();
@@ -52,6 +55,7 @@ impl Resource {
     pub fn new() -> Self {
         Self {}
     }
+
     fn get(name: &str) -> io::Result<String> {
         std::fs::read_to_string("assets/".to_string() + name)
     }

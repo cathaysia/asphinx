@@ -1,12 +1,15 @@
-use std::collections::{HashMap, HashSet};
-use std::time::Duration;
-
-use gix::{bstr::ByteSlice, path::Utf8Error, Commit, Id, ThreadSafeRepository};
-
-use gix::object::tree::diff::change::Event;
-use gix::object::tree::diff::Action;
+use std::{
+    collections::{HashMap, HashSet},
+    time::Duration,
+};
 
 use chrono::Utc;
+use gix::{
+    bstr::ByteSlice,
+    object::tree::diff::{change::Event, Action},
+    path::Utf8Error,
+    Commit, Id, ThreadSafeRepository,
+};
 use log::*;
 
 pub struct GitInfo {

@@ -16,23 +16,28 @@ impl AsciidoctorBuilder {
             plugins: Default::default(),
         }
     }
+
     pub fn attr(self: &mut Self, attr: String) -> &mut Self {
         self.attrs.push(attr);
         self
     }
+
     pub fn plugin(self: &mut Self, plugin: String) -> &mut Self {
         self.plugins.push(plugin);
         self
     }
+
     pub fn enable_toc(self: &mut Self) -> &mut Self {
         self.attrs.push("toc=1".into());
         self
     }
+
     pub fn enable_diagram(self: &mut Self) -> &mut Self {
         self.attrs.push(format!("outdir={}", self.destination_dir));
         self.plugins.push("asciidoctor-diagram".into());
         self
     }
+
     pub async fn build(self: &Self) -> String {
         let mut cmd_ = process::Command::new("asciidoctor");
         let cmd = cmd_
