@@ -37,7 +37,7 @@ fn parse_index_file(file_path_str: String) -> Vec<String> {
 
         let re = Regex::new(r"xref:(.*)\[.*\]").unwrap();
         for item in re.captures_iter(&content) {
-            let file_name: String = item.get(1).unwrap().as_str().into();
+            let file_name: String = item.get(1).unwrap().as_str().replace("{cpp}", "c++").into();
             let file_path: String = dir_path.join(file_name.as_str()).to_str().unwrap().into();
             result.append(&mut parse_index_file(file_path));
         }
@@ -72,9 +72,13 @@ async fn main() {
     counter.reset();
     let mut files = parse_index_file(file_path.into());
     println!("解析 index 文件花费了 {}", counter.elapsed().unwrap());
-    let b = files
-        .iter_mut()
-        .map(|item| generator.generate_html(&gitinfo, item.to_string(), args.minify));
+    let b = files.iter_mut().map(|item| {
+        generator.generate_html(
+            &gitinfo,
+            std::mem::replace(item, Default::default()),
+            args.minify,
+        )
+    });
 
     futures::future::join_all(b).await;
 
