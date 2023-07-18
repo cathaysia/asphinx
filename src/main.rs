@@ -74,13 +74,9 @@ async fn main() {
     counter.reset();
     let mut files = parse_index_file(file_path.into());
     println!("解析 index 文件花费了 {}", counter.elapsed().unwrap());
-    let b = files.iter_mut().map(|item| {
-        generator.generate_html(
-            &gitinfo,
-            std::mem::replace(item, Default::default()),
-            args.minify,
-        )
-    });
+    let b = files
+        .into_iter()
+        .map(|item| generator.generate_html(&gitinfo, item, args.minify));
 
     futures::future::join_all(b).await;
 
