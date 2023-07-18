@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+mod config;
+
 use std::path;
 
 use env_logger::Env;
