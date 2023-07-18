@@ -40,10 +40,7 @@ impl GitInfo {
         }
 
         let systime = std::time::SystemTime::UNIX_EPOCH
-            .checked_add(Duration::new(
-                last.time().ok()?.seconds_since_unix_epoch as u64,
-                0,
-            ))
+            .checked_add(Duration::new(last.time().ok()?.seconds as u64, 0))
             .unwrap();
         let default_time: chrono::DateTime<Utc> = systime.into();
         let default_time = default_time.format("%Y-%m-%d %H:%M:%S").to_string();
@@ -105,6 +102,6 @@ impl GitInfo {
             .ok()?;
 
         let time = last.time().ok()?;
-        Some((time.seconds_since_unix_epoch, filenames))
+        Some((time.seconds.try_into().unwrap(), filenames))
     }
 }
