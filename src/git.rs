@@ -24,23 +24,33 @@ impl GitInfo {
             .to_thread_local();
         let rewalk = repo.rev_walk(Some(repo.head_id().unwrap().detach()));
         let mut changes = rewalk.all().ok()?.filter_map(Result::ok);
-        let mut mtimes: HashMap<String, u32> = HashMap::new();
-        let mut last = Self::id_to_commit(changes.next()?.id())?;
+        let mut last = changes.next()?.id();
+        let mut cont: Vec<_> = Default::default();
         for next in changes {
-            let next_shad = Self::id_to_commit(next.id()).unwrap();
-            match Self::change_from_commit(&last, Some(&next_shad)) {
-                Some((time, set)) => {
-                    set.iter().for_each(|filename| {
-                        mtimes.entry(filename.into()).or_insert_with(|| time);
-                    });
-                }
-                None => {}
-            }
-            last = next_shad;
+            cont.push((last, next.id()));
+            last = next.id();
         }
 
+        let lastcomm = Self::id_to_commit(cont.last().unwrap().0).unwrap();
+
+        let mtimes: HashMap<String, u32> = cont
+            .into_iter()
+            .map(|(last, next_shad)| {
+                let last = Self::id_to_commit(last).unwrap();
+                let next_shad = Self::id_to_commit(next_shad).unwrap();
+                let mut res: Vec<(String, u32)> = Default::default();
+                if let Some((time, set)) = Self::change_from_commit(&last, Some(&next_shad)) {
+                    res = set.into_iter().map(|filename| (filename, time)).collect();
+                }
+
+                res
+            })
+            .flatten()
+            .rev()
+            .collect();
+
         let systime = std::time::SystemTime::UNIX_EPOCH
-            .checked_add(Duration::new(last.time().ok()?.seconds as u64, 0))
+            .checked_add(Duration::new(lastcomm.time().ok()?.seconds as u64, 0))
             .unwrap();
         let default_time: chrono::DateTime<Utc> = systime.into();
         let default_time = default_time.format("%Y-%m-%d %H:%M:%S").to_string();
