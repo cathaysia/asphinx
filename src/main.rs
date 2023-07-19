@@ -5,8 +5,8 @@ mod config;
 use std::path;
 
 use env_logger::Env;
+use lazy_regex::regex;
 use log::*;
-use regex::Regex;
 
 mod asciidoctor_builder;
 mod duration;
@@ -37,7 +37,7 @@ fn parse_index_file(file_path_str: String) -> Vec<String> {
         let dir_path = file_path.parent().unwrap();
         let content = std::fs::read_to_string(&file_path_str).unwrap();
 
-        let re = Regex::new(r"xref:(.*)\[.*\]").unwrap();
+        let re = regex!(r"xref:(.*)\[.*\]");
         for item in re.captures_iter(&content) {
             let file_name: String = item.get(1).unwrap().as_str().replace("{cpp}", "c++").into();
             let file_path: String = dir_path.join(file_name.as_str()).to_str().unwrap().into();
