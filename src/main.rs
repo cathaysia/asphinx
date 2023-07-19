@@ -69,10 +69,13 @@ async fn main() {
     println!("检查 Git 内容花费了 {}", counter.elapsed().unwrap());
 
     let file_path = "content/index.adoc";
-    let generator = AdocGenerator::new(args.theme);
+
+    let config: config::Config =
+        toml::from_str(std::fs::read_to_string("config.toml").unwrap().as_str()).unwrap();
+    let generator = AdocGenerator::new(args.theme, config.asciidoc);
 
     counter.reset();
-    let mut files = parse_index_file(file_path.into());
+    let files = parse_index_file(file_path.into());
     println!("解析 index 文件花费了 {}", counter.elapsed().unwrap());
     let b = files
         .into_iter()

@@ -5,7 +5,8 @@ use serde::{Deserialize, Serialize};
 use tokio::fs;
 
 use crate::{
-    asciidoctor_builder::AsciidoctorBuilder, git::GitInfo, html::HtmlParser, jinjaext, tmpl::Tmpl,
+    asciidoctor_builder::AsciidoctorBuilder, config, git::GitInfo, html::HtmlParser, jinjaext,
+    tmpl::Tmpl,
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -21,13 +22,14 @@ pub(crate) struct Document {
 #[derive(Debug)]
 pub struct AdocGenerator {
     engine: Tmpl,
+    config: config::Asciidoc,
 }
 
 impl AdocGenerator {
-    pub fn new(theme_dir: String) -> Self {
+    pub fn new(theme_dir: String, config: config::Asciidoc) -> Self {
         let engine = Tmpl::new(theme_dir);
 
-        Self { engine }
+        Self { engine, config }
     }
 
     pub async fn generate_html(&self, gitinfo: &GitInfo, file_path: String, need_minify: bool) {
@@ -56,12 +58,14 @@ impl AdocGenerator {
             .replace(".adoc", ".html");
 
         info!("生成文件：{} -> {}", file_path, file_des_path);
-        let output = AsciidoctorBuilder::new(file_path.clone(), des_dir.clone())
-            .enable_toc()
-            .enable_diagram()
-            .attr("icons=font".into())
-            .build()
-            .await;
+        let mut output = AsciidoctorBuilder::new(file_path.clone(), des_dir.clone());
+        self.config.attributes.iter().for_each(|(key, value)| {
+            output.attr(format!("{}={}", key, value));
+        });
+        self.config.extensions.iter().for_each(|value| {
+            output.plugin(value.clone());
+        });
+        let output = output.build().await;
 
         let html = HtmlParser::new(&output);
 

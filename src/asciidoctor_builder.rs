@@ -23,18 +23,10 @@ impl AsciidoctorBuilder {
     }
 
     pub fn plugin(self: &mut Self, plugin: String) -> &mut Self {
+        if plugin == "asciidoctor-diagram" {
+            self.attrs.push(format!("outdir={}", self.destination_dir));
+        }
         self.plugins.push(plugin);
-        self
-    }
-
-    pub fn enable_toc(self: &mut Self) -> &mut Self {
-        self.attrs.push("toc=1".into());
-        self
-    }
-
-    pub fn enable_diagram(self: &mut Self) -> &mut Self {
-        self.attrs.push(format!("outdir={}", self.destination_dir));
-        self.plugins.push("asciidoctor-diagram".into());
         self
     }
 

@@ -1,10 +1,11 @@
 mod asciidoc;
 
+pub use asciidoc::Asciidoc;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Config {
-    asciidoc: asciidoc::Asciidoc,
+pub struct Config {
+    pub asciidoc: asciidoc::Asciidoc,
 }
 
 #[test]
