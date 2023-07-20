@@ -31,13 +31,24 @@ impl GitInfo {
             last = next.id();
         }
 
-        let lastcomm = Self::id_to_commit(cont.last().unwrap().0).unwrap();
+        let systime = std::time::SystemTime::UNIX_EPOCH
+            .checked_add(Duration::new(
+                Self::id_to_commit(&cont.last().unwrap().0)
+                    .unwrap()
+                    .time()
+                    .ok()?
+                    .seconds as u64,
+                0,
+            ))
+            .unwrap();
+        let default_time: chrono::DateTime<Utc> = systime.into();
+        let default_time = default_time.format("%Y-%m-%d %H:%M:%S").to_string();
 
         let mtimes: HashMap<String, u32> = cont
             .into_iter()
             .map(|(last, next_shad)| {
-                let last = Self::id_to_commit(last).unwrap();
-                let next_shad = Self::id_to_commit(next_shad).unwrap();
+                let last = Self::id_to_commit(&last).unwrap();
+                let next_shad = Self::id_to_commit(&next_shad).unwrap();
                 let mut res: Vec<(String, u32)> = Default::default();
                 if let Some((time, set)) = Self::change_from_commit(&last, Some(&next_shad)) {
                     res = set.into_iter().map(|filename| (filename, time)).collect();
@@ -48,12 +59,6 @@ impl GitInfo {
             .flatten()
             .rev()
             .collect();
-
-        let systime = std::time::SystemTime::UNIX_EPOCH
-            .checked_add(Duration::new(lastcomm.time().ok()?.seconds as u64, 0))
-            .unwrap();
-        let default_time: chrono::DateTime<Utc> = systime.into();
-        let default_time = default_time.format("%Y-%m-%d %H:%M:%S").to_string();
 
         debug!("获取的文件修改时间为：{:?}", mtimes);
         Some(Self {
@@ -77,11 +82,14 @@ impl GitInfo {
         }
     }
 
-    fn id_to_commit(id: Id) -> Option<Commit> {
-        let object = id.try_object().ok()?;
-        let object = object.expect("empty");
-        let commit = object.try_into_commit().ok()?;
-        Some(commit)
+    fn id_to_commit<'a>(id: &'a Id<'a>) -> Option<Commit<'a>> {
+        Some(
+            id.try_object()
+                .ok()?
+                .expect("empty")
+                .try_into_commit()
+                .ok()?,
+        )
     }
 
     fn change_from_commit(last: &Commit, next: Option<&Commit>) -> Option<(u32, HashSet<String>)> {
