@@ -1,5 +1,6 @@
 use std::path;
 
+use chrono::FixedOffset;
 use log::*;
 use serde::{Deserialize, Serialize};
 use tokio::fs;
@@ -70,6 +71,7 @@ impl AdocGenerator {
         let html = HtmlParser::new(&output);
 
         let now = chrono::Utc::now();
+        now.with_timezone(&FixedOffset::east_opt(8 * 3600).unwrap());
 
         let data = Document {
             title: html.get_title(),
