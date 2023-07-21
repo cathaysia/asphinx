@@ -3,4 +3,4 @@ extensions = ["asciidoctor-mathematical", "asciidoctor-diagram"]
 
 [asciidoc.attributes]
 icons = "font"
-toc = "1"
+toc = 1
