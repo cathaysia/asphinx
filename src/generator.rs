@@ -1,4 +1,4 @@
-use std::path;
+use std::{collections::HashMap, path, str::FromStr};
 
 use chrono::FixedOffset;
 use log::*;
@@ -18,6 +18,7 @@ pub(crate) struct Document {
     footnotes: Option<String>,
     last_modify_date: Option<String>,
     build_date: String,
+    ancestors: Vec<(String, String)>,
 }
 
 #[derive(Debug)]
@@ -73,6 +74,22 @@ impl AdocGenerator {
         let now = chrono::Utc::now();
         now.with_timezone(&FixedOffset::east_opt(8 * 3600).unwrap());
 
+        let pathes: Vec<String> = file_des_path
+            .replace("public/", "")
+            .split("/")
+            .map(|item| item.to_string())
+            .collect();
+        let mut res: Vec<(String, String)> = Default::default();
+        for idx in 1..pathes.len() {
+            let a = &pathes[0..idx];
+            let mut v = a.join("/").to_string();
+            v.insert(0, '/');
+            res.push((pathes[idx - 1].clone(), v));
+        }
+        // let mut v = pathes.join("/").to_string();
+        // v.insert(0, '/');
+        // res.push((pathes.last().unwrap().to_owned(), v));
+
         let data = Document {
             title: html.get_title(),
             content: html.get_content(),
@@ -81,6 +98,7 @@ impl AdocGenerator {
             // last_modify_date: git::get_last_commit_time(&file_path).await,
             last_modify_date: gitinfo.get_last_commit_time_of_file(&file_path),
             build_date: format!("{}", now.format("%Y-%m-%d %H:%M:%S")),
+            ancestors: res,
         };
 
         let tmpl = self.engine.engine.get_template("single").unwrap();
