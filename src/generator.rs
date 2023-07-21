@@ -1,4 +1,4 @@
-use std::{collections::HashMap, path, str::FromStr};
+use std::path;
 
 use chrono::FixedOffset;
 use log::*;
@@ -72,7 +72,7 @@ impl AdocGenerator {
         let html = HtmlParser::new(&output);
 
         let now = chrono::Utc::now();
-        now.with_timezone(&FixedOffset::east_opt(8 * 3600).unwrap());
+        let now = now.with_timezone(&FixedOffset::east_opt(8 * 3600).unwrap());
 
         let pathes: Vec<String> = file_des_path
             .replace("public/", "")

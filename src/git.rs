@@ -42,8 +42,10 @@ impl GitInfo {
             ))
             .unwrap();
         let default_time: chrono::DateTime<Utc> = systime.into();
-        default_time.with_timezone(&FixedOffset::east_opt(8 * 3600).unwrap());
-        let default_time = default_time.format("%Y-%m-%d %H:%M:%S").to_string();
+        let default_time = default_time
+            .with_timezone(&FixedOffset::east_opt(8 * 3600).unwrap())
+            .format("%Y-%m-%d %H:%M:%S")
+            .to_string();
 
         let mtimes: HashMap<String, u32> = cont
             .into_iter()
