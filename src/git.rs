@@ -18,13 +18,11 @@ pub struct GitInfo {
 }
 
 impl GitInfo {
-    pub fn new(repo_dir: &str) -> Option<Self> {
-        let repo = ThreadSafeRepository::discover(repo_dir)
-            .ok()?
-            .to_thread_local();
-        let rewalk = repo.rev_walk(Some(repo.head_id().unwrap().detach()));
-        let mut changes = rewalk.all().ok()?.filter_map(Result::ok);
-        let mut last = changes.next()?.id();
+    pub fn new(repo_dir: &str) -> anyhow::Result<Self> {
+        let repo = ThreadSafeRepository::discover(repo_dir)?.to_thread_local();
+        let rewalk = repo.rev_walk(Some(repo.head_id()?.detach()));
+        let mut changes = rewalk.all()?.filter_map(Result::ok);
+        let mut last = changes.next().unwrap().id();
         let mut cont: Vec<_> = Default::default();
         for next in changes {
             cont.push((last, next.id()));
@@ -33,11 +31,7 @@ impl GitInfo {
 
         let systime = std::time::SystemTime::UNIX_EPOCH
             .checked_add(Duration::new(
-                Self::id_to_commit(&cont.last().unwrap().0)
-                    .unwrap()
-                    .time()
-                    .ok()?
-                    .seconds as u64,
+                Self::id_to_commit(&cont.last().unwrap().0)?.time()?.seconds as u64,
                 0,
             ))
             .unwrap();
@@ -49,22 +43,23 @@ impl GitInfo {
 
         let mtimes: HashMap<String, u32> = cont
             .into_iter()
-            .map(|(last, next_shad)| {
-                let last = Self::id_to_commit(&last).unwrap();
-                let next_shad = Self::id_to_commit(&next_shad).unwrap();
+            .map(|(last, next_shad)| -> anyhow::Result<_> {
+                let last = Self::id_to_commit(&last)?;
+                let next_shad = Self::id_to_commit(&next_shad)?;
                 let mut res: Vec<(String, u32)> = Default::default();
-                if let Some((time, set)) = Self::change_from_commit(&last, Some(&next_shad)) {
+                if let Ok((time, set)) = Self::change_from_commit(&last, Some(&next_shad)) {
                     res = set.into_iter().map(|filename| (filename, time)).collect();
                 }
 
-                res
+                Ok(res)
             })
+            .filter_map(|item| item.ok())
             .flatten()
             .rev()
             .collect();
 
         debug!("获取的文件修改时间为：{:?}", mtimes);
-        Some(Self {
+        Ok(Self {
             mtimes,
             default_time,
         })
@@ -85,44 +80,39 @@ impl GitInfo {
         }
     }
 
-    fn id_to_commit<'a>(id: &'a Id<'a>) -> Option<Commit<'a>> {
-        Some(
-            id.try_object()
-                .ok()?
-                .expect("empty")
-                .try_into_commit()
-                .ok()?,
-        )
+    fn id_to_commit<'a>(id: &'a Id<'a>) -> anyhow::Result<Commit<'a>> {
+        Ok(id.try_object()?.expect("empty").try_into_commit()?)
     }
 
-    fn change_from_commit(last: &Commit, next: Option<&Commit>) -> Option<(u32, HashSet<String>)> {
-        let tree = last.tree().ok()?;
-        let mut changes = tree.changes().ok()?;
+    fn change_from_commit(
+        last: &Commit,
+        next: Option<&Commit>,
+    ) -> anyhow::Result<(u32, HashSet<String>)> {
+        let tree = last.tree()?;
+        let mut changes = tree.changes()?;
         let changes = changes.track_path();
-        let last_tree = next?.tree().ok()?;
+        let last_tree = next.unwrap().tree()?;
         let mut filenames = HashSet::new();
-        changes
-            .for_each_to_obtain_tree(
-                &last_tree,
-                |change| -> Result<gix::object::tree::diff::Action, _> {
-                    let is_file_change = match change.event {
-                        Event::Deletion {
-                            entry_mode: _,
-                            id: _,
-                        } => false,
-                        _ => true,
-                    };
-                    if is_file_change {
-                        let path = change.location.to_os_str().unwrap().to_string_lossy();
-                        filenames.insert(format!("{}", path));
-                    }
+        changes.for_each_to_obtain_tree(
+            &last_tree,
+            |change| -> Result<gix::object::tree::diff::Action, _> {
+                let is_file_change = match change.event {
+                    Event::Deletion {
+                        entry_mode: _,
+                        id: _,
+                    } => false,
+                    _ => true,
+                };
+                if is_file_change {
+                    let path = change.location.to_os_str().unwrap().to_string_lossy();
+                    filenames.insert(format!("{}", path));
+                }
 
-                    Ok::<Action, Utf8Error>(Action::Continue)
-                },
-            )
-            .ok()?;
+                Ok::<Action, Utf8Error>(Action::Continue)
+            },
+        )?;
 
-        let time = last.time().ok()?;
-        Some((time.seconds.try_into().unwrap(), filenames))
+        let time = last.time()?;
+        Ok((time.seconds.try_into()?, filenames))
     }
 }
