@@ -21,7 +21,12 @@ icons = "font"
 
     assert_eq!(
         "font",
-        res.asciidoc.attributes.get("icons").unwrap().as_str()
+        res.asciidoc
+            .attributes
+            .get("icons")
+            .unwrap()
+            .as_str()
+            .unwrap()
     );
     assert_eq!(
         &["asciidoctor-mathematical", "asciidoctor-diagram"],

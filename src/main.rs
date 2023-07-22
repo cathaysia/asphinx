@@ -1,24 +1,21 @@
 #![allow(dead_code)]
 
 mod config;
+mod generator;
+mod utils;
 
 use std::path;
 
+use clap::Parser;
 use env_logger::Env;
 use lazy_regex::regex;
 use log::*;
-
-mod asciidoctor_builder;
-mod duration;
-mod generator;
-mod git;
-mod html;
-mod jinjaext;
-mod tmpl;
-use clap::Parser;
 use mimalloc::MiMalloc;
 
-use crate::{duration::Counter, generator::AdocGenerator, git::GitInfo};
+use crate::{
+    generator::AdocGenerator,
+    utils::{Counter, GitInfo},
+};
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;

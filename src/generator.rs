@@ -6,8 +6,8 @@ use serde::{Deserialize, Serialize};
 use tokio::fs;
 
 use crate::{
-    asciidoctor_builder::AsciidoctorBuilder, config, git::GitInfo, html::HtmlParser, jinjaext,
-    tmpl::Tmpl,
+    config,
+    utils::{jinjaext, AsciidoctorBuilder, GitInfo, HtmlParser, Tmpl},
 };
 
 #[derive(Debug, Serialize, Deserialize)]

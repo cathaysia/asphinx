@@ -1,6 +1,6 @@
 use minijinja::Environment;
 
-use crate::jinjaext;
+use super::jinjaext;
 
 #[derive(Debug)]
 pub struct Tmpl {
