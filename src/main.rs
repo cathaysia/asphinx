@@ -7,7 +7,6 @@ mod utils;
 use std::path;
 
 use clap::Parser;
-use env_logger::Env;
 use lazy_regex::regex;
 use log::*;
 use mimalloc::MiMalloc;
@@ -57,7 +56,7 @@ struct Args {
 
 #[tokio::main]
 async fn main() {
-    env_logger::Builder::from_env(Env::default().default_filter_or("warn")).init();
+    tracing_subscriber::fmt().init();
     let args = Args::parse();
     assert!(std::path::Path::new(&args.theme).exists());
 

@@ -17,8 +17,13 @@ clap = { version = '4.3.15', features = ["derive"] }
 chrono = '0.4.26'
 gix = '0.48'
 log = '0.4.19'
-env_logger = '0.10.0'
+tracing-subscriber = { version = "0.3.17", default_features = true, features = [
+  "local-time",
+  "time",
+  "env-filter",
+] }
 mimalloc = { version = '0.1.37', default_features = false }
 toml = "0.7.6"
 lazy-regex = "3.0.0"
 anyhow = "1.0.72"
+time = { version = "0.3.23", features = ["macros"] }
