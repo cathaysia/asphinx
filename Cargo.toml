@@ -10,12 +10,12 @@ regex = { version = "1.9.1" }
 tokio = { version = "1.29.1", features = ["full"] }
 minijinja = { version = '1.0.5', features = ["loader"] }
 scraper = '0.17.1'
-serde = { version = '1.0.171', features = ["derive"] }
+serde = { version = '1.0.175', features = ["derive"] }
 futures = '0.3.28'
 minify-html = '0.11.1'
-clap = { version = '4.3.15', features = ["derive"] }
+clap = { version = '4.3.19', features = ["derive"] }
 chrono = '0.4.26'
-gix = '0.48'
+gix = '0.50.1'
 log = '0.4.19'
 tracing-subscriber = { version = "0.3.17", default_features = true, features = [
   "local-time",
