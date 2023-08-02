@@ -96,13 +96,13 @@ impl GitInfo {
         changes.for_each_to_obtain_tree(
             &last_tree,
             |change| -> Result<gix::object::tree::diff::Action, _> {
-                let is_file_change = match change.event {
+                let is_file_change = !matches!(
+                    change.event,
                     Event::Deletion {
                         entry_mode: _,
                         id: _,
-                    } => false,
-                    _ => true,
-                };
+                    }
+                );
                 if is_file_change {
                     let path = change.location.to_os_str().unwrap().to_string_lossy();
                     filenames.insert(format!("{}", path));

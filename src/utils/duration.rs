@@ -9,7 +9,7 @@ impl Counter {
     pub fn new() -> Self {
         let time = SystemTime::now();
         Self {
-            start_time: time.clone(),
+            start_time: time,
             time,
         }
     }
@@ -22,7 +22,7 @@ impl Counter {
         self.time = SystemTime::now();
     }
 
-    pub fn from_start(&self) -> Option<PrintableDuration> {
+    pub fn since_start(&self) -> Option<PrintableDuration> {
         Some(self.start_time.elapsed().ok()?.into())
     }
 }

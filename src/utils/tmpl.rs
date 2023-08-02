@@ -13,7 +13,7 @@ impl Tmpl {
         engine.set_loader(move |name| {
             let file_name = format!("{}/{}.html.jinja", layout_dir, name);
             match std::fs::read_to_string(file_name) {
-                Ok(v) => return Ok(Some(v)),
+                Ok(v) => Ok(Some(v)),
                 Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(None),
                 Err(err) => Err(minijinja::Error::new(
                     minijinja::ErrorKind::InvalidOperation,

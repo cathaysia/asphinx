@@ -17,12 +17,12 @@ impl AsciidoctorBuilder {
         }
     }
 
-    pub fn attr(self: &mut Self, attr: String) -> &mut Self {
+    pub fn attr(&mut self, attr: String) -> &mut Self {
         self.attrs.push(attr);
         self
     }
 
-    pub fn plugin(self: &mut Self, plugin: String) -> &mut Self {
+    pub fn plugin(&mut self, plugin: String) -> &mut Self {
         if plugin == "asciidoctor-diagram" {
             self.attrs.push(format!("outdir={}", self.destination_dir));
         }
@@ -30,7 +30,7 @@ impl AsciidoctorBuilder {
         self
     }
 
-    pub async fn build(self: &Self) -> String {
+    pub async fn build(&self) -> String {
         let mut cmd_ = process::Command::new("asciidoctor");
         let cmd = cmd_
             .arg(&self.input_file)
@@ -40,7 +40,7 @@ impl AsciidoctorBuilder {
             .arg("-");
 
         for attr in &self.attrs {
-            cmd.arg("-a").arg(&attr);
+            cmd.arg("-a").arg(attr);
         }
         for plugin in &self.plugins {
             cmd.arg("-r").arg(plugin);

@@ -35,7 +35,7 @@ fn parse_index_file(file_path_str: String) -> Vec<String> {
 
         let re = regex!(r"xref:(.*)\[.*\]");
         for item in re.captures_iter(&content) {
-            let file_name: String = item.get(1).unwrap().as_str().replace("{cpp}", "c++").into();
+            let file_name: String = item.get(1).unwrap().as_str().replace("{cpp}", "c++");
             let file_path: String = dir_path.join(file_name.as_str()).to_str().unwrap().into();
             result.append(&mut parse_index_file(file_path));
         }
@@ -43,7 +43,7 @@ fn parse_index_file(file_path_str: String) -> Vec<String> {
 
     result.push(file_path_str);
 
-    return result;
+    result
 }
 
 #[derive(Debug, Parser)]
@@ -79,5 +79,5 @@ async fn main() {
 
     futures::future::join_all(b).await;
 
-    println!("构建花费了 {}", counter.from_start().unwrap());
+    println!("构建花费了 {}", counter.since_start().unwrap());
 }

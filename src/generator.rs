@@ -79,7 +79,7 @@ impl AdocGenerator {
 
         let pathes: Vec<String> = file_des_path
             .replace("public/", "")
-            .split("/")
+            .split('/')
             .map(|item| item.to_string())
             .collect();
         let mut res: Vec<(String, String)> = Default::default();
@@ -119,7 +119,7 @@ impl AdocGenerator {
         let acts = assets
             .iter()
             .filter(|item| !item.starts_with("diag-"))
-            .map(|item| Self::move_assets(&item, &file_cwd, &des_dir));
+            .map(|item| Self::move_assets(item, &file_cwd, &des_dir));
         futures::future::join_all(acts).await;
     }
 

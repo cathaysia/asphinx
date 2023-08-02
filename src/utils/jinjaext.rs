@@ -12,13 +12,11 @@ pub(crate) fn minify_inner(value: &str) -> Result<Value, Error> {
     cfg.minify_js = true;
     let res = minify_html::minify(value.to_string().as_bytes(), &cfg);
     match String::from_utf8(res) {
-        Ok(v) => return Ok(Value::from(v)),
-        Err(err) => {
-            return Err(Error::new(
-                ErrorKind::InvalidOperation,
-                format!("minify failed: {}", err),
-            ))
-        }
+        Ok(v) => Ok(Value::from(v)),
+        Err(err) => Err(Error::new(
+            ErrorKind::InvalidOperation,
+            format!("minify failed: {}", err),
+        )),
     }
 }
 
@@ -39,10 +37,8 @@ impl Object for Resource {
     fn call_method(&self, _state: &State, name: &str, args: &[Value]) -> Result<Value, Error> {
         match name {
             "Get" => match Resource::get(&args.first().unwrap().to_string()) {
-                Ok(v) => {
-                    return Ok(Value::from(v));
-                }
-                Err(e) => return Err(Error::new(ErrorKind::InvalidOperation, e.to_string())),
+                Ok(v) => Ok(Value::from(v)),
+                Err(e) => Err(Error::new(ErrorKind::InvalidOperation, e.to_string())),
             },
             &_ => {
                 todo!()
