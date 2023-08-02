@@ -62,7 +62,10 @@ impl AdocGenerator {
         info!("生成文件：{} -> {}", file_path, file_des_path);
         let mut output = AsciidoctorBuilder::new(file_path.clone(), des_dir.clone());
         self.config.attributes.iter().for_each(|(key, value)| {
-            output.attr(format!("{}={}", key, value));
+            match value {
+                toml::Value::String(value) => output.attr(format!("{}={}", key, value)),
+                _ => output.attr(format!("{}={}", key, value)),
+            };
         });
         self.config.extensions.iter().for_each(|value| {
             output.plugin(value.clone());
