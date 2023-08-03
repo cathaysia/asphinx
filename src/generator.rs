@@ -1,4 +1,4 @@
-use std::path;
+use std::path::{self, PathBuf};
 
 use chrono::FixedOffset;
 use log::*;
@@ -10,15 +10,15 @@ use crate::{
     utils::{jinjaext, AsciidoctorBuilder, GitInfo, HtmlParser, Tmpl},
 };
 
-#[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct Document {
-    title: String,
-    content: Option<String>,
-    toc: Option<String>,
-    footnotes: Option<String>,
-    last_modify_date: Option<String>,
-    build_date: String,
-    ancestors: Vec<(String, String)>,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Document {
+    pub title: String,
+    pub content: Option<String>,
+    pub toc: Option<String>,
+    pub footnotes: Option<String>,
+    pub last_modify_date: Option<String>,
+    pub build_date: String,
+    pub ancestors: Vec<(String, String)>,
 }
 
 #[derive(Debug)]
@@ -34,84 +34,48 @@ impl AdocGenerator {
         Self { engine, config }
     }
 
-    pub async fn generate_html(&self, gitinfo: &GitInfo, file_path: String, need_minify: bool) {
-        let file_cwd: String;
-
-        {
-            let file_path = path::Path::new(&file_path);
-            if !file_path.exists() {
-                warn!("路径 {} 不存在", file_path.display());
-                return;
-            }
-            if !file_path.is_file() {
-                warn!("路径 {} 指向的不是一个文件，忽略", file_path.display());
-                return;
-            }
-            file_cwd = file_path.parent().unwrap().to_str().unwrap().into();
+    pub async fn generate_html(&self, gitinfo: &GitInfo, source_file: PathBuf, need_minify: bool) {
+        if source_file.exists() {
+            warn!("路径 {} 不存在", source_file.display());
+            return;
+        }
+        if !source_file.is_file() {
+            warn!("路径 {} 指向的不是一个文件，忽略", source_file.display());
+            return;
         }
 
-        let des_dir = file_cwd.replace("content", "public");
+        let source_dir: String = source_file.parent().unwrap().to_str().unwrap().into();
+        let des_dir = source_dir.replace("content", "public");
         if let Err(err) = std::fs::create_dir_all(&des_dir) {
             error!("创建 {} 时发生错误：{}", des_dir, err);
             return;
         }
-        let file_des_path = file_path
+
+        let source_file: String = source_file.to_str().unwrap().into();
+        let dest_file = source_file
             .replace("content", "public")
             .replace(".adoc", ".html");
 
-        info!("生成文件：{} -> {}", file_path, file_des_path);
-        let mut output = AsciidoctorBuilder::new(file_path.clone(), des_dir.clone());
-        self.config.attributes.iter().for_each(|(key, value)| {
-            match value {
-                toml::Value::String(value) => output.attr(format!("{}={}", key, value)),
-                _ => output.attr(format!("{}={}", key, value)),
-            };
-        });
-        self.config.extensions.iter().for_each(|value| {
-            output.plugin(value.clone());
-        });
-        let output = output.build().await;
+        info!("生成文件：{} -> {}", source_file, dest_file);
+        let output =
+            Self::generate_raw_page(self.config.clone(), source_file.clone(), des_dir.clone())
+                .await;
 
         let html = HtmlParser::new(&output);
-
-        let now = chrono::Utc::now();
-        let now = now.with_timezone(&FixedOffset::east_opt(8 * 3600).unwrap());
-
-        let pathes: Vec<String> = file_des_path
-            .replace("public/", "")
-            .split('/')
-            .map(|item| item.to_string())
-            .collect();
-        let mut res: Vec<(String, String)> = Default::default();
-        for idx in 1..pathes.len() {
-            let a = &pathes[0..idx];
-            let mut v = a.join("/").to_string();
-            v.insert(0, '/');
-            res.push((pathes[idx - 1].clone(), v));
-        }
-        // let mut v = pathes.join("/").to_string();
-        // v.insert(0, '/');
-        // res.push((pathes.last().unwrap().to_owned(), v));
+        let now = chrono::Utc::now().with_timezone(&FixedOffset::east_opt(8 * 3600).unwrap());
 
         let data = Document {
             title: html.get_title(),
             content: html.get_content(),
             toc: html.get_toc(),
             footnotes: html.get_footnotes(),
-            // last_modify_date: git::get_last_commit_time(&file_path).await,
-            last_modify_date: gitinfo.get_last_commit_time_of_file(&file_path),
+            last_modify_date: gitinfo.get_last_commit_time_of_file(&source_file),
             build_date: format!("{}", now.format("%Y-%m-%d %H:%M:%S")),
-            ancestors: res,
+            ancestors: Self::generate_pathes(&dest_file),
         };
 
-        let tmpl = self.engine.engine.get_template("single").unwrap();
-        let ctx = minijinja::value::Value::from_serializable(&data);
-        let mut res = tmpl.render(ctx).unwrap();
-        if need_minify {
-            res = jinjaext::minify_inner(&res).unwrap().to_string();
-        }
-
-        if let Err(err) = fs::write(&file_des_path, &res).await {
+        let res = self.render(&data, need_minify);
+        if let Err(err) = fs::write(&dest_file, &res).await {
             eprintln!("写入文件失败：{}", err);
         }
 
@@ -119,7 +83,7 @@ impl AdocGenerator {
         let acts = assets
             .iter()
             .filter(|item| !item.starts_with("diag-"))
-            .map(|item| Self::move_assets(item, &file_cwd, &des_dir));
+            .map(|item| Self::move_assets(item, &source_dir, &des_dir));
         futures::future::join_all(acts).await;
     }
 
@@ -141,5 +105,51 @@ impl AdocGenerator {
             des_file.display()
         );
         fs::copy(source_file, des_file).await.unwrap();
+    }
+
+    pub async fn generate_raw_page(
+        config: config::Asciidoc,
+        source_file: String,
+        des: String,
+    ) -> String {
+        let mut output = AsciidoctorBuilder::new(source_file, des);
+        config.attributes.iter().for_each(|(key, value)| {
+            match value {
+                toml::Value::String(value) => output.attr(format!("{}={}", key, value)),
+                _ => output.attr(format!("{}={}", key, value)),
+            };
+        });
+        config.extensions.iter().for_each(|value| {
+            output.plugin(value.clone());
+        });
+        output.build().await
+    }
+
+    pub fn generate_pathes(dest_file: &str) -> Vec<(String, String)> {
+        let pathes: Vec<String> = dest_file
+            .replace("public/", "")
+            .split('/')
+            .map(|item| item.to_string())
+            .collect();
+        let mut res: Vec<(String, String)> = Default::default();
+        for idx in 1..pathes.len() {
+            let a = &pathes[0..idx];
+            let mut v = a.join("/").to_string();
+            v.insert(0, '/');
+            res.push((pathes[idx - 1].clone(), v));
+        }
+
+        res
+    }
+
+    pub fn render(&self, context: &Document, need_minify: bool) -> String {
+        let tmpl = self.engine.engine.get_template("single").unwrap();
+        let ctx = minijinja::value::Value::from_serializable(&context);
+        let mut res = tmpl.render(ctx).unwrap();
+        if need_minify {
+            res = jinjaext::minify_inner(&res).unwrap().to_string();
+        }
+
+        res
     }
 }
