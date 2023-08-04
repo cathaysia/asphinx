@@ -75,7 +75,7 @@ async fn main() {
     println!("解析 index 文件花费了 {}", counter.elapsed().unwrap());
     let b = files
         .into_iter()
-        .map(|item| generator.generate_html(&gitinfo, item, args.minify));
+        .map(|item| generator.generate_html(&gitinfo, item.into(), args.minify));
 
     futures::future::join_all(b).await;
 

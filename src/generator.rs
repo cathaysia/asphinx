@@ -35,7 +35,7 @@ impl AdocGenerator {
     }
 
     pub async fn generate_html(&self, gitinfo: &GitInfo, source_file: PathBuf, need_minify: bool) {
-        if source_file.exists() {
+        if !source_file.exists() {
             warn!("路径 {} 不存在", source_file.display());
             return;
         }
