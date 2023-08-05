@@ -10,7 +10,7 @@ use crate::{
     utils::{jinjaext, AsciidoctorBuilder, GitInfo, HtmlParser, Tmpl},
 };
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Document {
     pub title: String,
     pub content: Option<String>,
@@ -19,6 +19,14 @@ pub struct Document {
     pub last_modify_date: Option<String>,
     pub build_date: String,
     pub ancestors: Vec<(String, String)>,
+}
+
+#[derive(Debug)]
+pub struct BuildContext {
+    pub source_dir: String,
+    pub source_file: String,
+    pub dest_dir: String,
+    pub dest_file: String,
 }
 
 #[derive(Debug)]
@@ -35,30 +43,13 @@ impl AdocGenerator {
     }
 
     pub async fn generate_html(&self, gitinfo: &GitInfo, source_file: PathBuf, need_minify: bool) {
-        if !source_file.exists() {
-            warn!("路径 {} 不存在", source_file.display());
+        let Ok(BuildContext { source_dir, source_file, dest_dir, dest_file } )= Self::generate_build_context(source_file)else{
             return;
-        }
-        if !source_file.is_file() {
-            warn!("路径 {} 指向的不是一个文件，忽略", source_file.display());
-            return;
-        }
-
-        let source_dir: String = source_file.parent().unwrap().to_str().unwrap().into();
-        let des_dir = source_dir.replace("content", "public");
-        if let Err(err) = std::fs::create_dir_all(&des_dir) {
-            error!("创建 {} 时发生错误：{}", des_dir, err);
-            return;
-        }
-
-        let source_file: String = source_file.to_str().unwrap().into();
-        let dest_file = source_file
-            .replace("content", "public")
-            .replace(".adoc", ".html");
+        };
 
         info!("生成文件：{} -> {}", source_file, dest_file);
         let output =
-            Self::generate_raw_page(self.config.clone(), source_file.clone(), des_dir.clone())
+            Self::generate_raw_page(self.config.clone(), source_file.clone(), dest_dir.clone())
                 .await;
 
         let html = HtmlParser::new(&output);
@@ -83,8 +74,38 @@ impl AdocGenerator {
         let acts = assets
             .iter()
             .filter(|item| !item.starts_with("diag-"))
-            .map(|item| Self::move_assets(item, &source_dir, &des_dir));
+            .map(|item| Self::move_assets(item, &source_dir, &dest_dir));
         futures::future::join_all(acts).await;
+    }
+
+    pub fn generate_build_context(source_file: PathBuf) -> Result<BuildContext, ()> {
+        if !source_file.exists() {
+            warn!("路径 {} 不存在", source_file.display());
+            return Err(());
+        }
+        if !source_file.is_file() {
+            warn!("路径 {} 指向的不是一个文件，忽略", source_file.display());
+            return Err(());
+        }
+
+        let source_dir: String = source_file.parent().unwrap().to_str().unwrap().into();
+        let dest_dir = source_dir.replace("content", "public");
+        if let Err(err) = std::fs::create_dir_all(&dest_dir) {
+            error!("创建 {} 时发生错误：{}", dest_dir, err);
+            return Err(());
+        }
+
+        let source_file: String = source_file.to_str().unwrap().into();
+        let dest_file = source_file
+            .replace("content", "public")
+            .replace(".adoc", ".html");
+
+        Ok(BuildContext {
+            source_dir,
+            source_file,
+            dest_dir,
+            dest_file,
+        })
     }
 
     pub async fn move_assets(item: &str, source: &str, des: &str) {
