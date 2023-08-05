@@ -45,7 +45,13 @@ impl AdocGenerator {
     }
 
     pub fn generate_html(&self, gitinfo: &GitInfo, source_file: PathBuf, need_minify: bool) {
-        let Ok(BuildContext { source_dir, source_file, dest_dir, dest_file } )= Self::generate_build_context(source_file)else{
+        let Ok(BuildContext {
+            source_dir,
+            source_file,
+            dest_dir,
+            dest_file,
+        }) = Self::generate_build_context(source_file)
+        else {
             return;
         };
 
