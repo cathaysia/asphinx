@@ -1,9 +1,11 @@
-use std::path::{self, PathBuf};
+use std::{
+    fs,
+    path::{self, PathBuf},
+};
 
 use chrono::FixedOffset;
 use log::*;
 use serde::{Deserialize, Serialize};
-use tokio::fs;
 
 use crate::{
     config,
@@ -42,15 +44,14 @@ impl AdocGenerator {
         Self { engine, config }
     }
 
-    pub async fn generate_html(&self, gitinfo: &GitInfo, source_file: PathBuf, need_minify: bool) {
+    pub fn generate_html(&self, gitinfo: &GitInfo, source_file: PathBuf, need_minify: bool) {
         let Ok(BuildContext { source_dir, source_file, dest_dir, dest_file } )= Self::generate_build_context(source_file)else{
             return;
         };
 
         info!("生成文件：{} -> {}", source_file, dest_file);
         let output =
-            Self::generate_raw_page(self.config.clone(), source_file.clone(), dest_dir.clone())
-                .await;
+            Self::generate_raw_page(self.config.clone(), source_file.clone(), dest_dir.clone());
 
         let html = HtmlParser::new(&output);
         let now = chrono::Utc::now().with_timezone(&FixedOffset::east_opt(8 * 3600).unwrap());
@@ -66,16 +67,17 @@ impl AdocGenerator {
         };
 
         let res = self.render(&data, need_minify);
-        if let Err(err) = fs::write(&dest_file, &res).await {
+        if let Err(err) = fs::write(&dest_file, res) {
             eprintln!("写入文件失败：{}", err);
         }
 
         let assets = html.get_image_urls();
-        let acts = assets
+        assets
             .iter()
             .filter(|item| !item.starts_with("diag-"))
-            .map(|item| Self::move_assets(item, &source_dir, &dest_dir));
-        futures::future::join_all(acts).await;
+            .for_each(|item| {
+                Self::move_assets(item, &source_dir, &dest_dir);
+            });
     }
 
     pub fn generate_build_context(source_file: PathBuf) -> Result<BuildContext, ()> {
@@ -108,7 +110,7 @@ impl AdocGenerator {
         })
     }
 
-    pub async fn move_assets(item: &str, source: &str, des: &str) {
+    pub fn move_assets(item: &str, source: &str, des: &str) {
         let source_file = path::Path::new(source).join(item);
         if !source_file.exists() {
             warn!("文件不存在：{}", source_file.display());
@@ -117,7 +119,7 @@ impl AdocGenerator {
         let des_file = path::Path::new(des).join(item);
         let des_path = des_file.parent().unwrap();
         if !des_path.exists() {
-            fs::create_dir_all(des_path).await.unwrap();
+            fs::create_dir_all(des_path).unwrap();
         }
 
         info!(
@@ -125,14 +127,10 @@ impl AdocGenerator {
             source_file.display(),
             des_file.display()
         );
-        fs::copy(source_file, des_file).await.unwrap();
+        fs::copy(source_file, des_file).unwrap();
     }
 
-    pub async fn generate_raw_page(
-        config: config::Asciidoc,
-        source_file: String,
-        des: String,
-    ) -> String {
+    pub fn generate_raw_page(config: config::Asciidoc, source_file: String, des: String) -> String {
         let mut output = AsciidoctorBuilder::new(source_file, des);
         config.attributes.iter().for_each(|(key, value)| {
             match value {
@@ -143,7 +141,7 @@ impl AdocGenerator {
         config.extensions.iter().for_each(|value| {
             output.plugin(value.clone());
         });
-        output.build().await
+        output.build()
     }
 
     pub fn generate_pathes(dest_file: &str) -> Vec<(String, String)> {

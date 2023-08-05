@@ -10,6 +10,7 @@ use clap::Parser;
 use lazy_regex::regex;
 use log::*;
 use mimalloc::MiMalloc;
+use rayon::prelude::*;
 
 use crate::{
     generator::AdocGenerator,
@@ -54,8 +55,7 @@ struct Args {
     theme: String,
 }
 
-#[tokio::main]
-async fn main() {
+fn main() {
     tracing_subscriber::fmt().init();
     let args = Args::parse();
     assert!(std::path::Path::new(&args.theme).exists());
@@ -73,11 +73,9 @@ async fn main() {
     counter.reset();
     let files = parse_index_file(file_path.into());
     println!("解析 index 文件花费了 {}", counter.elapsed().unwrap());
-    let b = files
-        .into_iter()
-        .map(|item| generator.generate_html(&gitinfo, item.into(), args.minify));
-
-    futures::future::join_all(b).await;
+    files.into_par_iter().for_each(|item| {
+        generator.generate_html(&gitinfo, item.into(), args.minify);
+    });
 
     println!("构建花费了 {}", counter.since_start().unwrap());
 }
