@@ -3,7 +3,6 @@ use std::{
     path::{self, PathBuf},
 };
 
-use chrono::FixedOffset;
 use log::*;
 use serde::{Deserialize, Serialize};
 
@@ -19,7 +18,6 @@ pub struct Document {
     pub toc: Option<String>,
     pub footnotes: Option<String>,
     pub last_modify_date: Option<String>,
-    pub build_date: String,
     pub ancestors: Vec<(String, String)>,
 }
 
@@ -60,7 +58,6 @@ impl AdocGenerator {
             Self::generate_raw_page(self.config.clone(), source_file.clone(), dest_dir.clone());
 
         let html = HtmlParser::new(&output);
-        let now = chrono::Utc::now().with_timezone(&FixedOffset::east_opt(8 * 3600).unwrap());
 
         let data = Document {
             title: html.get_title(),
@@ -68,7 +65,6 @@ impl AdocGenerator {
             toc: html.get_toc(),
             footnotes: html.get_footnotes(),
             last_modify_date: gitinfo.get_last_commit_time_of_file(&source_file),
-            build_date: format!("{}", now.format("%Y-%m-%d %H:%M:%S")),
             ancestors: Self::generate_pathes(&dest_file),
         };
 

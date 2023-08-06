@@ -1,6 +1,6 @@
 use minijinja::Environment;
 
-use super::jinjaext;
+use super::jinjaext::{self, LocalTime};
 
 #[derive(Debug)]
 pub struct Tmpl {
@@ -27,6 +27,10 @@ impl Tmpl {
 
         let resource = jinjaext::Resource::new();
         engine.add_global("resource", minijinja::value::Value::from_object(resource));
+        engine.add_global(
+            "now",
+            minijinja::value::Value::from_object(LocalTime::default()),
+        );
 
         Self { engine }
     }
