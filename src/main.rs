@@ -10,6 +10,9 @@ use clap::Parser;
 use lazy_regex::regex;
 use log::*;
 use mimalloc::MiMalloc;
+use tracing_subscriber::{
+    fmt, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, EnvFilter,
+};
 
 use crate::{
     generator::AdocGenerator,
@@ -56,13 +59,13 @@ struct Args {
 
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::fmt().init();
+    init_logger();
     let args = Args::parse();
     assert!(std::path::Path::new(&args.theme).exists());
 
     let mut counter = Counter::new();
     let gitinfo = GitInfo::new(".").unwrap();
-    println!("检查 Git 内容花费了 {}", counter.elapsed().unwrap());
+    println!("Checking Git took {}.", counter.elapsed().unwrap());
 
     let file_path = "content/index.adoc";
 
@@ -72,12 +75,27 @@ async fn main() {
 
     counter.reset();
     let files = parse_index_file(file_path.into());
-    println!("解析 index 文件花费了 {}", counter.elapsed().unwrap());
+    println!("Parsing index took {}.", counter.elapsed().unwrap());
     let b = files
         .into_iter()
         .map(|item| generator.generate_html(&gitinfo, item.into(), args.minify));
 
     futures::future::join_all(b).await;
 
-    println!("构建花费了 {}", counter.since_start().unwrap());
+    println!("Build took {}.", counter.since_start().unwrap());
+}
+
+fn init_logger() {
+    let log_level = std::env::var("RUST_LOG")
+        .unwrap_or("INFO".into())
+        .to_lowercase();
+
+    let env_filter = EnvFilter::builder()
+        .parse(format!("RUST_LOG=OFF,asphinx={}", log_level))
+        .unwrap();
+
+    tracing_subscriber::registry()
+        .with(fmt::layer())
+        .with(env_filter)
+        .init();
 }
