@@ -1,4 +1,4 @@
-use std::process;
+use tokio::process;
 
 pub struct AsciidoctorBuilder {
     input_file: String,
@@ -30,7 +30,7 @@ impl AsciidoctorBuilder {
         self
     }
 
-    pub fn build(&self) -> String {
+    pub async fn build(&self) -> String {
         let mut cmd_ = process::Command::new("asciidoctor");
         let cmd = cmd_
             .arg(&self.input_file)
@@ -46,7 +46,7 @@ impl AsciidoctorBuilder {
             cmd.arg("-r").arg(plugin);
         }
 
-        let res = cmd.output().unwrap();
+        let res = cmd.output().await.unwrap();
         String::from_utf8_lossy(&res.stdout).to_string()
     }
 }
