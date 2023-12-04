@@ -10,6 +10,7 @@ use clap::Parser;
 use lazy_regex::regex;
 use log::*;
 use mimalloc::MiMalloc;
+use tokio::fs;
 use tracing_subscriber::{
     fmt, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, EnvFilter,
 };
@@ -79,6 +80,29 @@ async fn main() {
         .map(|item| generator.generate_html(&gitinfo, item.into(), args.minify));
 
     futures::future::join_all(b).await;
+
+    let _ = fs::create_dir_all("public/assets/").await;
+    let _ = fs::write(
+        "public/assets/breadcrumb.css",
+        utils::jinjaext::minify_inner(include_str!("../assets/breadcrumb.css"))
+            .unwrap()
+            .to_string(),
+    )
+    .await;
+    let _ = fs::write(
+        "public/assets/index.css",
+        utils::jinjaext::minify_inner(include_str!("../assets/index.css"))
+            .unwrap()
+            .to_string(),
+    )
+    .await;
+    let _ = fs::write(
+        "public/assets/prism.css",
+        utils::jinjaext::minify_inner(include_str!("../assets/prism.css"))
+            .unwrap()
+            .to_string(),
+    )
+    .await;
 
     println!("Build took {}.", counter.since_start().unwrap());
 }
