@@ -72,7 +72,7 @@ impl fmt::Display for LocalTime {
 impl Default for LocalTime {
     fn default() -> Self {
         Self {
-            local_time: OffsetDateTime::now_local().unwrap(),
+            local_time: OffsetDateTime::now_local().unwrap_or(OffsetDateTime::now_utc()),
         }
     }
 }
