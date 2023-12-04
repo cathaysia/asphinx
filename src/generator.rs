@@ -34,7 +34,7 @@ pub struct AdocGenerator {
 }
 
 impl AdocGenerator {
-    pub fn new(theme_dir: String, config: config::Asciidoc) -> Self {
+    pub fn new(theme_dir: Option<String>, config: config::Asciidoc) -> Self {
         let engine = Tmpl::new(theme_dir);
 
         Self { engine, config }

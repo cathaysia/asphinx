@@ -2,10 +2,23 @@ mod asciidoc;
 
 pub use asciidoc::Asciidoc;
 use serde::{Deserialize, Serialize};
+use tokio::fs;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Config {
     pub asciidoc: asciidoc::Asciidoc,
+}
+
+impl Config {
+    pub async fn from_file(path: impl AsRef<std::path::Path>) -> Self {
+        match fs::read_to_string(path).await {
+            Ok(config) => match toml::from_str(&config) {
+                Ok(config) => config,
+                Err(_) => Self::default(),
+            },
+            Err(_) => Self::default(),
+        }
+    }
 }
 
 #[test]

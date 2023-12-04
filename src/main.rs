@@ -15,6 +15,7 @@ use tracing_subscriber::{
 };
 
 use crate::{
+    config::Config,
     generator::AdocGenerator,
     utils::{Counter, GitInfo},
 };
@@ -53,15 +54,13 @@ fn parse_index_file(file_path_str: String) -> Vec<String> {
 struct Args {
     #[arg(long, default_value_t = false)]
     minify: bool,
-    #[arg(long, default_value_t = String::from("layouts"))]
-    theme: String,
+    theme: Option<String>,
 }
 
 #[tokio::main]
 async fn main() {
-    init_logger();
     let args = Args::parse();
-    assert!(std::path::Path::new(&args.theme).exists());
+    init_logger();
 
     let mut counter = Counter::new();
     let gitinfo = GitInfo::new(".").unwrap();
@@ -69,8 +68,7 @@ async fn main() {
 
     let file_path = "content/index.adoc";
 
-    let config: config::Config =
-        toml::from_str(std::fs::read_to_string("config.toml").unwrap().as_str()).unwrap();
+    let config: config::Config = Config::from_file("config.toml").await;
     let generator = AdocGenerator::new(args.theme, config.asciidoc);
 
     counter.reset();

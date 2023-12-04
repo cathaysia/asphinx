@@ -1,6 +1,11 @@
 use minijinja::Environment;
+use rust_embed::RustEmbed;
 
 use super::jinjaext::{self, LocalTime};
+
+#[derive(RustEmbed)]
+#[folder = "layouts"]
+struct Asset;
 
 #[derive(Debug)]
 pub struct Tmpl {
@@ -8,20 +13,37 @@ pub struct Tmpl {
 }
 
 impl Tmpl {
-    pub fn new(layout_dir: String) -> Self {
+    pub fn new(layout_dir: Option<String>) -> Self {
         let mut engine = Box::new(Environment::new());
-        engine.set_loader(move |name| {
-            let file_name = format!("{}/{}.html.jinja", layout_dir, name);
-            match std::fs::read_to_string(file_name) {
-                Ok(v) => Ok(Some(v)),
-                Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(None),
-                Err(err) => Err(minijinja::Error::new(
-                    minijinja::ErrorKind::InvalidOperation,
-                    "could not read template",
-                )
-                .with_source(err)),
+        match layout_dir {
+            Some(layout_dir) => {
+                engine.set_loader(move |name| {
+                    let file_name = format!("{}/{}.html.jinja", layout_dir, name);
+                    match std::fs::read_to_string(file_name) {
+                        Ok(v) => Ok(Some(v)),
+                        Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(None),
+                        Err(err) => Err(minijinja::Error::new(
+                            minijinja::ErrorKind::InvalidOperation,
+                            "could not read template",
+                        )
+                        .with_source(err)),
+                    }
+                });
             }
-        });
+            None => {
+                engine.set_loader(move |name| {
+                    let content = String::from_utf8(
+                        Asset::get(&format!("{name}.html.jinja"))
+                            .unwrap()
+                            .data
+                            .to_vec(),
+                    )
+                    .unwrap();
+
+                    Ok(Some(content))
+                });
+            }
+        }
 
         engine.add_filter("minify", jinjaext::minify);
 
