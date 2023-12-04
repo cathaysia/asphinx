@@ -58,7 +58,7 @@ impl GitInfo {
             .rev()
             .collect();
 
-        debug!("获取的文件修改时间为：{:?}", mtimes);
+        debug!("Get modify datetime for the file is: {:?}", mtimes);
         Ok(Self {
             mtimes,
             default_time,
@@ -66,14 +66,14 @@ impl GitInfo {
     }
 
     pub fn get_last_commit_time_of_file(&self, file_name: &str) -> Option<String> {
-        info!("获取文件日期：{}", file_name);
+        debug!("Get file date: {}", file_name);
         match self.mtimes.get(file_name) {
             Some(time) => {
                 let systime = std::time::SystemTime::UNIX_EPOCH
                     .checked_add(Duration::new(*time as u64, 0))
                     .unwrap();
                 let time: chrono::DateTime<Utc> = systime.into();
-                trace!("文件 {file_name} 最后一次时间为：{:?}", systime);
+                trace!("Last modify date for {file_name} is: {:?}", systime);
                 Some(time.format("%Y-%m-%d %H:%M:%S").to_string())
             }
             None => Some(self.default_time.clone()),

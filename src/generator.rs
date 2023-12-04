@@ -51,7 +51,7 @@ impl AdocGenerator {
             return;
         };
 
-        info!("生成文件：{} -> {}", source_file, dest_file);
+        debug!("Generate file: {} -> {}", source_file, dest_file);
         let output =
             Self::generate_raw_page(self.config.clone(), source_file.clone(), dest_dir.clone())
                 .await;
@@ -69,7 +69,7 @@ impl AdocGenerator {
 
         let res = self.render(&data, need_minify);
         if let Err(err) = fs::write(&dest_file, &res).await {
-            eprintln!("写入文件失败：{}", err);
+            eprintln!("Failed write file: {}", err);
         }
 
         let assets = html.get_image_urls();
@@ -82,18 +82,21 @@ impl AdocGenerator {
 
     pub fn generate_build_context(source_file: PathBuf) -> Result<BuildContext, ()> {
         if !source_file.exists() {
-            warn!("路径 {} 不存在", source_file.display());
+            warn!("Path {} doesn't exists.", source_file.display());
             return Err(());
         }
         if !source_file.is_file() {
-            warn!("路径 {} 指向的不是一个文件，忽略", source_file.display());
+            warn!(
+                "Path {} is not point to a file, ignore.",
+                source_file.display()
+            );
             return Err(());
         }
 
         let source_dir: String = source_file.parent().unwrap().to_str().unwrap().into();
         let dest_dir = source_dir.replace("content", "public");
         if let Err(err) = std::fs::create_dir_all(&dest_dir) {
-            error!("创建 {} 时发生错误：{}", dest_dir, err);
+            error!("Error happend whe create file {}: {}", dest_dir, err);
             return Err(());
         }
 
@@ -113,7 +116,7 @@ impl AdocGenerator {
     pub async fn move_assets(item: &str, source: &str, des: &str) {
         let source_file = path::Path::new(source).join(item);
         if !source_file.exists() {
-            warn!("文件不存在：{}", source_file.display());
+            warn!("File doesn't exists: {}", source_file.display());
             return;
         }
         let des_file = path::Path::new(des).join(item);
@@ -122,8 +125,8 @@ impl AdocGenerator {
             fs::create_dir_all(des_path).await.unwrap();
         }
 
-        info!(
-            "移动文件：{} -> {}",
+        debug!(
+            "Move file: {} -> {}",
             source_file.display(),
             des_file.display()
         );
