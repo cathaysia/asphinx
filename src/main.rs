@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 mod config;
+pub mod error;
 mod generator;
 mod utils;
 
@@ -84,21 +85,21 @@ async fn main() {
     let _ = fs::create_dir_all("public/assets/").await;
     let _ = fs::write(
         "public/assets/breadcrumb.css",
-        utils::jinjaext::minify_inner(include_str!("../assets/breadcrumb.css"))
+        utils::jinjaext::minify_inner(include_str!("../builtin/assets/breadcrumb.css"))
             .unwrap()
             .to_string(),
     )
     .await;
     let _ = fs::write(
         "public/assets/index.css",
-        utils::jinjaext::minify_inner(include_str!("../assets/index.css"))
+        utils::jinjaext::minify_inner(include_str!("../builtin/assets/index.css"))
             .unwrap()
             .to_string(),
     )
     .await;
     let _ = fs::write(
         "public/assets/prism.css",
-        utils::jinjaext::minify_inner(include_str!("../assets/prism.css"))
+        utils::jinjaext::minify_inner(include_str!("../builtin/assets/prism.css"))
             .unwrap()
             .to_string(),
     )

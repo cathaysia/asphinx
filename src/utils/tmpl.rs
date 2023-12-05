@@ -2,9 +2,10 @@ use minijinja::Environment;
 use rust_embed::RustEmbed;
 
 use super::jinjaext::{self, LocalTime};
+use crate::error::Error;
 
 #[derive(RustEmbed)]
-#[folder = "layouts"]
+#[folder = "builtin"]
 struct Asset;
 
 #[derive(Debug)]
@@ -32,9 +33,10 @@ impl Tmpl {
             }
             None => {
                 engine.set_loader(move |name| {
+                    let path = format!("layouts/{name}.html.jinja");
                     let content = String::from_utf8(
-                        Asset::get(&format!("{name}.html.jinja"))
-                            .unwrap()
+                        Asset::get(&path)
+                            .expect(&format!("Cannot found {path}"))
                             .data
                             .to_vec(),
                     )
