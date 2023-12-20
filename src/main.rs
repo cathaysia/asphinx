@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+mod context;
 mod config;
 pub mod error;
 mod generator;
