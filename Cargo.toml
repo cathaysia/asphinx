@@ -30,3 +30,5 @@ time = { version = "0.3.30", features = ["macros"] }
 tokio = { version = "1.37.0", features = ["full"] }
 rust-embed = "8.0.0"
 thiserror = "1.0.50"
+asphinx_derive = { path = "./asphinx_derive" }
+deno_core = "0.238.0"

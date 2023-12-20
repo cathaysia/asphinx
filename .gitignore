@@ -1,4 +1,4 @@
 cargo.lock
-/target
+**/target/
 public
 .direnv
