@@ -1,0 +1,41 @@
+name: "gate"
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      RUST_LOG: DEBUG
+    steps:
+      - uses: actions/checkout@v3
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: make fonts-noto-cjk fonts-noto-cjk-extra yarnpkg
+          version: 1.0
+      - name: Cache cargo
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/git/db/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.rustup
+          key: cargo_cache-${{ runner.os }}
+      - uses: CfirTsabari/actions-rs-toolchain@v1
+      - name: pre-commit
+        run: |
+          pip install pre-commit
+          yarnpkg global add @taplo/cli
+          pre-commit run -a
+
+      - name: Check
+        run: |
+          cargo clippy -- -Dwarnings
+          cargo build
