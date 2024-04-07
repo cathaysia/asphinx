@@ -16,7 +16,7 @@ minify-html = '0.11.1'
 clap = { version = '4.4.10', features = ["derive"] }
 chrono = '0.4.31'
 gix = '0.55.2'
-log = '0.4.20'
+log = '0.4.21'
 tracing-subscriber = { version = "0.3.18", default_features = true, features = [
   "local-time",
   "time",
