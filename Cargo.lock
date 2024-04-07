@@ -1870,9 +1870,9 @@ dependencies = [
 
 [[package]]
 name = "minijinja"
-version = "1.0.10"
+version = "1.0.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "208758577ef2c86cf5dd3e85730d161413ec3284e2d73b2ef65d9a24d9971bcb"
+checksum = "3fb3bf58a1ec4f3f228bec851a2066c7717ad308817cd8a08f67c10660c6ff7b"
 dependencies = [
  "memo-map",
  "self_cell",

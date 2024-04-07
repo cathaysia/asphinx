@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 regex = { version = "1.10.2" }
 rayon = "1.8.0"
-minijinja = { version = '1.0.10', features = ["loader"] }
+minijinja = { version = '1.0.16', features = ["loader"] }
 scraper = '0.18.1'
 serde = { version = '1.0.193', features = ["derive"] }
 futures = '0.3.29'
