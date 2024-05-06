@@ -10,7 +10,6 @@ use std::path;
 use clap::Parser;
 use lazy_regex::regex;
 use log::*;
-use mimalloc::MiMalloc;
 use tokio::fs;
 use tracing_subscriber::{
     fmt, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, EnvFilter,
@@ -21,9 +20,6 @@ use crate::{
     generator::AdocGenerator,
     utils::{Counter, GitInfo},
 };
-
-#[global_allocator]
-static GLOBAL: MiMalloc = MiMalloc;
 
 fn parse_index_file(file_path_str: String) -> Vec<String> {
     let mut result = Vec::<String>::new();
