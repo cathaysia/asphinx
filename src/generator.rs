@@ -170,7 +170,7 @@ impl AdocGenerator {
 
     pub fn render(&self, context: &Document, need_minify: bool) -> String {
         let tmpl = self.engine.engine.get_template("single").unwrap();
-        let ctx = minijinja::value::Value::from_serializable(&context);
+        let ctx = minijinja::value::Value::from_serialize(context);
         let mut res = tmpl.render(ctx).unwrap();
         if need_minify {
             res = jinjaext::minify_inner(&res).unwrap().to_string();

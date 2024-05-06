@@ -1,5 +1,5 @@
 use core::fmt;
-use std::io;
+use std::{io, sync::Arc};
 
 use minijinja::{
     value::{Object, Value},
@@ -35,7 +35,12 @@ impl fmt::Display for Resource {
 }
 
 impl Object for Resource {
-    fn call_method(&self, _state: &State, name: &str, args: &[Value]) -> Result<Value, Error> {
+    fn call_method(
+        self: &Arc<Self>,
+        _state: &State,
+        name: &str,
+        args: &[Value],
+    ) -> Result<Value, Error> {
         match name {
             "Get" => match Resource::get(&args.first().unwrap().to_string()) {
                 Ok(v) => Ok(Value::from(v)),
@@ -78,7 +83,12 @@ impl Default for LocalTime {
 }
 
 impl Object for LocalTime {
-    fn call_method(&self, _state: &State, name: &str, args: &[Value]) -> Result<Value, Error> {
+    fn call_method(
+        self: &Arc<Self>,
+        _state: &State,
+        name: &str,
+        args: &[Value],
+    ) -> Result<Value, Error> {
         match name {
             "Format" => {
                 if args.is_empty() {
