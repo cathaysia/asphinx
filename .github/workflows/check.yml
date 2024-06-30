@@ -31,6 +31,7 @@ jobs:
       - uses: CfirTsabari/actions-rs-toolchain@v1
       - name: pre-commit
         run: |
+          rustup component add rustfmt
           pip install pre-commit
           yarnpkg global add @taplo/cli
           pre-commit run -a
