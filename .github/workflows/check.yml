@@ -32,6 +32,7 @@ jobs:
       - name: pre-commit
         run: |
           rustup component add rustfmt
+          rustup component add clippy
           pip install pre-commit
           yarnpkg global add @taplo/cli
           pre-commit run -a
