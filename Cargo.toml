@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 minijinja = { version = '2.1.1', features = ["loader"] }
 scraper = '0.20.0'
-serde = { version = '1.0.204', features = ["derive"] }
+serde = { version = '1.0.206', features = ["derive"] }
 futures = '0.3.30'
 minify-html = '0.15.0'
 clap = { version = '4.5.13', features = ["derive"] }
