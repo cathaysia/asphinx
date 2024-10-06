@@ -1,6 +1,8 @@
 #![allow(dead_code)]
 
 mod config;
+use futures::future;
+use itertools::Itertools;
 pub mod error;
 mod generator;
 mod utils;
@@ -55,6 +57,14 @@ struct Args {
     theme: Option<String>,
 }
 
+// https://users.rust-lang.org/t/how-to-breakup-an-iterator-into-chunks/87915
+fn chunked<I>(a: impl IntoIterator<Item = I>, chunk_size: usize) -> impl Iterator<Item = Vec<I>> {
+    let mut a = a.into_iter();
+    std::iter::from_fn(move || {
+        Some(a.by_ref().take(chunk_size).collect()).filter(|chunk: &Vec<_>| !chunk.is_empty())
+    })
+}
+
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
@@ -74,9 +84,15 @@ async fn main() {
     println!("Parsing index took {}.", counter.elapsed().unwrap());
     let b = files
         .into_iter()
-        .map(|item| generator.generate_html(&gitinfo, item.into(), args.minify));
+        .map(|item| generator.generate_html(&gitinfo, item.into(), args.minify))
+        .collect_vec();
 
-    futures::future::join_all(b).await;
+    let cpu_num = std::thread::available_parallelism()
+        .map(|item| item.get())
+        .unwrap_or(16);
+    for i in chunked(b, cpu_num) {
+        future::join_all(i.into_iter()).await;
+    }
 
     let _ = fs::create_dir_all("public/assets/").await;
     let _ = fs::write(
