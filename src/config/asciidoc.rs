@@ -15,7 +15,7 @@ impl Default for Asciidoc {
         attributes.insert("icons".into(), "font".into());
         attributes.insert("toc".into(), 1.into());
         attributes.insert("experimental".into(), "".into());
-        attributes.insert("stem".into(), "latexmath".into());
+        // attributes.insert("stem".into(), "latexmath".into());
 
         Self {
             extensions: vec![
