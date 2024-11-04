@@ -1,3 +1,4 @@
+use gix::object::tree::diff::Change;
 use std::{
     collections::{HashMap, HashSet},
     time::Duration,
@@ -5,10 +6,7 @@ use std::{
 
 use chrono::{FixedOffset, Utc};
 use gix::{
-    bstr::ByteSlice,
-    object::tree::diff::{change::Event, Action},
-    path::Utf8Error,
-    Commit, Id, ThreadSafeRepository,
+    bstr::ByteSlice, object::tree::diff::Action, path::Utf8Error, Commit, Id, ThreadSafeRepository,
 };
 use log::*;
 
@@ -90,21 +88,22 @@ impl GitInfo {
     ) -> anyhow::Result<(u32, HashSet<String>)> {
         let tree = last.tree()?;
         let mut changes = tree.changes()?;
-        let changes = changes.track_path();
         let last_tree = next.unwrap().tree()?;
         let mut filenames = HashSet::new();
         changes.for_each_to_obtain_tree(
             &last_tree,
             |change| -> Result<gix::object::tree::diff::Action, _> {
                 let is_file_change = !matches!(
-                    change.event,
-                    Event::Deletion {
+                    change,
+                    Change::Deletion {
+                        location: _,
                         entry_mode: _,
-                        id: _,
+                        relation: _,
+                        id: _
                     }
                 );
                 if is_file_change {
-                    let path = change.location.to_os_str().unwrap().to_string_lossy();
+                    let path = change.location().to_os_str().unwrap().to_string_lossy();
                     filenames.insert(format!("{}", path));
                 }
 
