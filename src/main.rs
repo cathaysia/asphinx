@@ -25,11 +25,11 @@ use crate::{
 
 fn parse_index_file(file_path_str: String) -> Vec<String> {
     let mut result = Vec::<String>::new();
-    debug!("处理文件：{}", file_path_str);
+    debug!("process file: {}", file_path_str);
 
     let file_path = path::Path::new(&file_path_str);
     if !file_path.exists() {
-        warn!("文件 {} 不存在", file_path.display());
+        warn!("file doesn't existes: {}", file_path.display());
         return result;
     }
 
@@ -70,54 +70,53 @@ async fn main() {
     let args = Args::parse();
     init_logger();
 
-    let mut counter = Counter::new();
+    let mut timer = Counter::new();
     let gitinfo = GitInfo::new(".").unwrap();
-    println!("Checking Git took {}.", counter.elapsed().unwrap());
+    println!("checking Git took {}.", timer.elapsed().unwrap());
 
-    let file_path = "content/index.adoc";
+    let entry_file = "content/index.adoc";
 
-    let config: config::Config = Config::from_file("config.toml").await;
+    let config = Config::from_file("config.toml").await;
     let generator = AdocGenerator::new(args.theme, config.asciidoc);
 
-    counter.reset();
-    let files = parse_index_file(file_path.into());
-    println!("Parsing index took {}.", counter.elapsed().unwrap());
-    let b = files
+    timer.reset();
+    let files = parse_index_file(entry_file.into());
+    println!("parsing index took {}.", timer.elapsed().unwrap());
+
+    let tasks = files
         .into_iter()
-        .map(|item| generator.generate_html(&gitinfo, item.into(), args.minify))
+        .map(|source_file| generator.generate_html(&gitinfo, source_file.into(), args.minify))
         .collect_vec();
 
     let cpu_num = std::thread::available_parallelism()
         .map(|item| item.get())
         .unwrap_or(16);
-    for i in chunked(b, cpu_num) {
+    for i in chunked(tasks, cpu_num) {
         future::join_all(i.into_iter()).await;
     }
 
-    let _ = fs::create_dir_all("public/assets/").await;
-    let _ = fs::write(
-        "public/assets/breadcrumb.css",
-        utils::jinjaext::minify_inner(include_str!("../builtin/assets/breadcrumb.css"))
-            .unwrap()
-            .to_string(),
-    )
-    .await;
-    let _ = fs::write(
-        "public/assets/index.css",
-        utils::jinjaext::minify_inner(include_str!("../builtin/assets/index.css"))
-            .unwrap()
-            .to_string(),
-    )
-    .await;
-    let _ = fs::write(
-        "public/assets/prism.css",
-        utils::jinjaext::minify_inner(include_str!("../builtin/assets/prism.css"))
-            .unwrap()
-            .to_string(),
-    )
-    .await;
+    let source = [
+        (
+            "public/assets/breadcrumb.css",
+            include_str!("../builtin/assets/breadcrumb.css"),
+        ),
+        (
+            "public/assets/index.css",
+            include_str!("../builtin/assets/index.css"),
+        ),
+        (
+            "public/assets/prism.css",
+            include_str!("../builtin/assets/prism.css"),
+        ),
+    ];
 
-    println!("Build took {}.", counter.since_start().unwrap());
+    let _ = fs::create_dir_all("public/assets/").await;
+
+    for (dst, source) in source {
+        let _ = fs::write(dst, source).await;
+    }
+
+    println!("build took {}.", timer.since_start().unwrap());
 }
 
 fn init_logger() {

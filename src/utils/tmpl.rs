@@ -46,7 +46,7 @@ impl Tmpl {
             }
         }
 
-        engine.add_filter("minify", jinjaext::minify);
+        engine.add_filter("minify", jinjaext::minify_jinja);
 
         let resource = jinjaext::Resource::new();
         engine.add_global("resource", minijinja::value::Value::from_object(resource));

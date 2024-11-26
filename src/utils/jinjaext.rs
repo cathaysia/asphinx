@@ -7,7 +7,7 @@ use minijinja::{
 };
 use time::{format_description, OffsetDateTime};
 
-pub(crate) fn minify_inner(value: &str) -> Result<Value, Error> {
+pub(crate) fn minify(value: &str) -> Result<Value, Error> {
     let mut cfg = minify_html::Cfg::new();
     cfg.minify_css = true;
     cfg.minify_js = true;
@@ -21,8 +21,8 @@ pub(crate) fn minify_inner(value: &str) -> Result<Value, Error> {
     }
 }
 
-pub fn minify(_state: &State, value: &Value) -> Result<Value, Error> {
-    minify_inner(&value.to_string())
+pub fn minify_jinja(_state: &State, value: &Value) -> Result<Value, Error> {
+    minify(&value.to_string())
 }
 
 #[derive(Debug)]

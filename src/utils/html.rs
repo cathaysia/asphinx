@@ -41,14 +41,13 @@ impl HtmlParser {
     pub fn get_image_urls(&self) -> Vec<String> {
         let selector = Selector::parse("img").unwrap();
         let mut res = Vec::new();
+
         for item in self.html.select(&selector) {
-            let val = item
-                .value()
-                .attr("src")
-                .unwrap()
-                .to_string()
-                .replace("%20", " ");
-            res.push(val);
+            if let Some(val) = item.value().attr("src") {
+                if let Ok(url) = urlencoding::decode(val) {
+                    res.push(url.into());
+                }
+            }
         }
 
         res

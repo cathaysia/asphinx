@@ -52,13 +52,13 @@ impl AdocGenerator {
         };
 
         debug!("Generate file: {} -> {}", source_file, dest_file);
-        let output =
+        let html =
             Self::generate_raw_page(self.config.clone(), source_file.clone(), dest_dir.clone())
                 .await;
 
-        let html = HtmlParser::new(&output);
+        let html = HtmlParser::new(&html);
 
-        let data = Document {
+        let document = Document {
             title: html.get_title(),
             content: html.get_content(),
             toc: html.get_toc(),
@@ -67,13 +67,13 @@ impl AdocGenerator {
             ancestors: Self::generate_pathes(&dest_file),
         };
 
-        let res = self.render(&data, need_minify);
-        if let Err(err) = fs::write(&dest_file, &res).await {
+        let document = self.render(&document, need_minify);
+        if let Err(err) = fs::write(&dest_file, &document).await {
             eprintln!("Failed write file: {}", err);
         }
 
-        let assets = html.get_image_urls();
-        let acts = assets
+        let images = html.get_image_urls();
+        let acts = images
             .iter()
             .filter(|item| !item.starts_with("diag-"))
             .map(|item| Self::move_assets(item, &source_dir, &dest_dir));
@@ -173,7 +173,7 @@ impl AdocGenerator {
         let ctx = minijinja::value::Value::from_serialize(context);
         let mut res = tmpl.render(ctx).unwrap();
         if need_minify {
-            res = jinjaext::minify_inner(&res).unwrap().to_string();
+            res = jinjaext::minify(&res).unwrap().to_string();
         }
 
         res
