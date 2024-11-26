@@ -173,7 +173,7 @@ impl AdocGenerator {
         let ctx = minijinja::value::Value::from_serialize(context);
         let mut res = tmpl.render(ctx).unwrap();
         if need_minify {
-            res = jinjaext::minify(&res).unwrap().to_string();
+            res = jinjaext::minify(&res);
         }
 
         res

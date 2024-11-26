@@ -7,22 +7,16 @@ use minijinja::{
 };
 use time::{format_description, OffsetDateTime};
 
-pub(crate) fn minify(value: &str) -> Result<Value, Error> {
+pub(crate) fn minify(value: &str) -> String {
     let mut cfg = minify_html::Cfg::new();
     cfg.minify_css = true;
     cfg.minify_js = true;
     let res = minify_html::minify(value.to_string().as_bytes(), &cfg);
-    match String::from_utf8(res) {
-        Ok(v) => Ok(Value::from(v)),
-        Err(err) => Err(Error::new(
-            ErrorKind::InvalidOperation,
-            format!("minify failed: {}", err),
-        )),
-    }
+    String::from_utf8(res).unwrap_or(value.to_string())
 }
 
-pub fn minify_jinja(_state: &State, value: &Value) -> Result<Value, Error> {
-    minify(&value.to_string())
+pub fn minify_jinja(_state: &State, value: &Value) -> Value {
+    minify(&value.to_string()).into()
 }
 
 #[derive(Debug)]

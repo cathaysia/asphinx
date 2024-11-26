@@ -20,7 +20,7 @@ use tracing_subscriber::{
 use crate::{
     config::Config,
     generator::AdocGenerator,
-    utils::{Counter, GitInfo},
+    utils::{jinjaext::minify, Counter, GitInfo},
 };
 
 fn parse_index_file(file_path_str: String) -> Vec<String> {
@@ -113,7 +113,7 @@ async fn main() {
     let _ = fs::create_dir_all("public/assets/").await;
 
     for (dst, source) in source {
-        let _ = fs::write(dst, source).await;
+        let _ = fs::write(dst, minify(source)).await;
     }
 
     println!("build took {}.", timer.since_start().unwrap());
