@@ -1,0 +1,51 @@
+name: "publish"
+
+on:
+  pull_request:
+  push:
+    paths:
+      - theme/**
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      RUST_LOG: DEBUG
+    steps:
+      - uses: actions/checkout@v4
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: make fonts-noto-cjk fonts-noto-cjk-extra yarnpkg
+          version: 1.0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache-dependency-path: theme/pnpm-lock.yaml
+          cache: pnpm
+      - name: build
+        run: |
+          bash -c "cd theme && pnpm install"
+          bash -c "cd theme && pnpm build"
+          bash -c "cd theme/dist && tar -czf theme.tar.gz *"
+
+      - name: add tag
+        run: |
+          git tag "theme-v0.0.${{ github.run_number }}"
+          git push origin "theme-v0.0.${{ github.run_number }}"
+
+
+      - uses: ncipollo/release-action@v1
+        with:
+          commit: "${{ github.sha }}"
+          tag: "theme-v0.0.${{ github.run_number }}"
+          artifacts: "theme/dist/theme.tar.gz"
+          makeLatest: true
