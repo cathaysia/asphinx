@@ -9,8 +9,8 @@
 </head>
 
 <body class="article antialiased text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 font-serif">
-    <script type="module" src="@/main.js"></script>
-    <nav class="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-none bg-gray-50 dark:bg-gray-800 dark:border-gray-700 fixed w-full z-50"
+    <script type="module" src="@/main.jsx"></script>
+    <nav class="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-none bg-gray-50 dark:bg-gray-800 dark:border-gray-700 fixed w-full z-50 justify-between"
         aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -25,7 +25,6 @@
                 </a>
             </li>
             {% for key, value in ancestors %}
-            {% if not loop.last %}
             <li>
                 <div class="flex items-center">
                     <svg class="rtl:rotate-180 block w-3 h-3 mx-1 text-gray-400 " aria-hidden="true"
@@ -39,7 +38,7 @@
                     </a>
                 </div>
             </li>
-            {% else %}
+            {% endfor %}
             <li aria-current="page">
                 <div class="flex items-center">
                     <svg class="rtl:rotate-180  w-3 h-3 mx-1 text-gray-400" aria-hidden="true"
@@ -47,15 +46,14 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="m1 9 4-4-4-4" />
                     </svg>
-                    <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">{{ key }}</span>
+                    <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">{{ title }}</span>
                 </div>
             </li>
-            {% endif %}
-            {% endfor %}
         </ol>
+        <div id="theme_btn" />
     </nav>
 
-    <div id="header" class="prose dark:prose-invert">
+    <div id="header" class="prose prose-slate dark:prose-invert">
         <h1 class="mt-16">{{ title }}</h1>
         {% if toc %}
         <div id="toc" class="toc">
@@ -66,7 +64,7 @@
     </div>
     {% if content %}
     <div id="content">
-        <div class="prose max-w-full dark:prose-invert">
+        <div class="prose prose-slate max-w-full dark:prose-invert">
             {{ content }}
         </div>
     </div>
@@ -86,7 +84,7 @@
     </div>
     </div>
     {% endif %}
-    <script type="module" src="@/tail.js"></script>
+    <script type="module" src="@/tail.jsx"></script>
 </body>
 
 </html>

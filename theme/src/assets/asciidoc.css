@@ -1,10 +1,4 @@
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
-/* Uncomment the following line when using as a custom stylesheet */
-/* @import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"; */
-html {
-    font-family: sans-serif;
-    -webkit-text-size-adjust: 100%
-}
 
 a {
     background: none
@@ -50,14 +44,6 @@ hr {
 mark {
     background: #ff0;
     color: #000
-}
-
-code,
-kbd,
-pre,
-samp {
-    font-family: monospace;
-    font-size: 1em
 }
 
 pre {
@@ -125,7 +111,6 @@ button,
 input,
 select,
 textarea {
-    font-family: inherit;
     font-size: 100%;
     margin: 0
 }
@@ -185,23 +170,6 @@ body {
     font-size: 100%
 }
 
-body {
-    background: #fff;
-    color: rgba(0, 0, 0, .8);
-    padding: 0;
-    margin: 0;
-    font-family: "Noto Serif", "DejaVu Serif", serif;
-    line-height: 1;
-    position: relative;
-    cursor: auto;
-    -moz-tab-size: 4;
-    -o-tab-size: 4;
-    tab-size: 4;
-    word-wrap: anywhere;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased
-}
-
 a:hover {
     cursor: pointer
 }
@@ -250,13 +218,6 @@ img {
     display: none
 }
 
-img,
-object,
-svg {
-    display: inline-block;
-    vertical-align: middle
-}
-
 textarea {
     height: auto;
     min-height: 50px
@@ -286,10 +247,10 @@ table.tableblock>.title,
 .qlist>.title,
 .hdlist>.title {
     line-height: 1.45;
-    color: #7a2518;
     font-weight: 400;
     margin-top: 0;
-    margin-bottom: .25em
+    margin-bottom: .25em;
+    @apply text-blue-900 dark:text-blue-500;
 }
 
 div,
@@ -344,23 +305,6 @@ p aside {
     font-style: italic
 }
 
-h1,
-h2,
-h3,
-#toctitle,
-.sidebarblock>.content>.title,
-h4,
-h5,
-h6 {
-    font-family: "Open Sans", "DejaVu Sans", sans-serif;
-    font-weight: 300;
-    font-style: normal;
-    color: #ba3925;
-    text-rendering: optimizeLegibility;
-    margin-top: 1em;
-    margin-bottom: .5em;
-    line-height: 1.0125em
-}
 
 h1 small,
 h2 small,
@@ -422,19 +366,12 @@ small {
     line-height: inherit
 }
 
-code {
-    font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace;
-    font-weight: 400;
-    color: rgba(0, 0, 0, .9)
-}
-
 ul,
 ol,
 dl {
     line-height: 1.6;
     margin-bottom: 1.25em;
     list-style-position: outside;
-    font-family: inherit
 }
 
 ul,
@@ -526,15 +463,14 @@ blockquote p {
 }
 
 table {
-    background: #fff;
     margin-bottom: 1.25em;
-    border: 1px solid #dedede;
-    word-wrap: normal
+    word-wrap: normal;
+    @apply border border-gray-300 dark:border-slate-800;
 }
 
 table thead,
 table tfoot {
-    background: #f7f8f7
+    @apply bg-gray-300 dark:bg-slate-800;
 }
 
 table thead tr th,
@@ -545,13 +481,6 @@ table tfoot tr td {
     font-size: inherit;
     color: rgba(0, 0, 0, .8);
     text-align: left
-}
-
-table tr th,
-table tr td {
-    padding: .5625em .625em;
-    font-size: inherit;
-    color: rgba(0, 0, 0, .8)
 }
 
 table tr.even,
@@ -624,21 +553,7 @@ h6 strong {
     white-space: pre-wrap
 }
 
-:not(pre):not([class^=L])>code {
-    font-size: .9375em;
-    font-style: normal !important;
-    letter-spacing: 0;
-    padding: .1em .5ex;
-    word-spacing: -.15em;
-    background: #f7f7f8;
-    border-radius: 4px;
-    line-height: 1.45;
-    text-rendering: optimizeSpeed
-}
-
 pre {
-    color: rgba(0, 0, 0, .9);
-    font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace;
     line-height: 1.45;
     text-rendering: optimizeSpeed
 }
@@ -673,7 +588,6 @@ strong strong {
 }
 
 kbd {
-    font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace;
     display: inline-block;
     color: rgba(0, 0, 0, .8);
     font-size: .65em;
@@ -783,16 +697,6 @@ p a>code:hover {
     content: none
 }
 
-#header>h1:first-child {
-    color: rgba(0, 0, 0, .85);
-    margin-bottom: 0
-}
-
-#header>h1:first-child+#toc {
-    margin-top: 8px;
-    border-top: 1px solid #dddddf
-}
-
 #header>h1:only-child,
 body.toc2 #header>h1:nth-last-child(2) {
     border-bottom: 1px solid #dddddf;
@@ -852,11 +756,6 @@ body.toc2 #header>h1:nth-last-child(2) {
     margin-bottom: 1.25rem
 }
 
-#toc {
-    border-bottom: 1px solid #e7e7e9;
-    padding-bottom: .5em
-}
-
 #toc>ul {
     margin-left: .125em
 }
@@ -870,7 +769,6 @@ body.toc2 #header>h1:nth-last-child(2) {
 }
 
 #toc ul {
-    font-family: "Open Sans", "DejaVu Sans", sans-serif;
     list-style-type: none
 }
 
@@ -1031,7 +929,7 @@ body.toc2 #header>h1:nth-last-child(2) {
 }
 
 .sect1+.sect1 {
-    border-top: 1px solid #e7e7e9
+    @apply border-t border-gray-400 dark:border-slate-800;
 }
 
 #content h1>a.anchor,
@@ -1184,7 +1082,6 @@ table.tableblock>.title,
 .hdlist>.title {
     text-rendering: optimizeLegibility;
     text-align: left;
-    font-family: "Noto Serif", "DejaVu Serif", serif;
     font-size: 1rem;
     font-style: italic
 }
@@ -1192,13 +1089,6 @@ table.tableblock>.title,
 table.tableblock.fit-content>caption.title {
     white-space: nowrap;
     width: 0
-}
-
-.paragraph.lead>p,
-#preamble>.sectionbody>[class=paragraph]:first-of-type p {
-    font-size: 1.21875em;
-    line-height: 1.6;
-    color: rgba(0, 0, 0, .85)
 }
 
 .admonitionblock>table {
@@ -1219,16 +1109,7 @@ table.tableblock.fit-content>caption.title {
 
 .admonitionblock>table td.icon .title {
     font-weight: bold;
-    font-family: "Open Sans", "DejaVu Sans", sans-serif;
     text-transform: uppercase
-}
-
-.admonitionblock>table td.content {
-    padding-left: 1.125em;
-    padding-right: 1.25em;
-    border-left: 1px solid #dddddf;
-    color: rgba(0, 0, 0, .6);
-    word-wrap: anywhere
 }
 
 .admonitionblock>table td.content>:last-child>:last-child {
@@ -1288,7 +1169,6 @@ table.tableblock.fit-content>caption.title {
 .listingblock>.content>pre {
     border-radius: 4px;
     overflow-x: auto;
-    padding: 1em;
     font-size: .8125em
 }
 
@@ -1347,11 +1227,6 @@ table.tableblock.fit-content>caption.title {
 
 .listingblock pre.highlightjs {
     padding: 0
-}
-
-.listingblock pre.highlightjs>code {
-    padding: 1em;
-    border-radius: 4px
 }
 
 .listingblock pre.prettyprint {
@@ -1469,7 +1344,6 @@ pre.pygments span.linenos {
 }
 
 .verseblock pre {
-    font-family: "Open Sans", "DejaVu Sans", sans-serif;
     font-size: 1.15rem;
     color: rgba(0, 0, 0, .85);
     font-weight: 300;
@@ -2154,7 +2028,6 @@ a span.icon>.fa {
     width: 1.67em;
     height: 1.67em;
     line-height: 1.67em;
-    font-family: "Open Sans", "DejaVu Sans", sans-serif;
     font-style: normal;
     font-weight: bold
 }

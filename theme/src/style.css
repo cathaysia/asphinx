@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+code {
+    @apply rounded bg-gray-200 dark:bg-gray-800 px-1 font-mono dark:text-white;
+}
+
+.toc {
+    @apply border-t border-b border-gray-400 dark:border-slate-800 py-6;
+}
+
 .hljs {
-    @apply text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 font-mono;
+    @apply shadow;
+}
+
+.icon {
+    @apply align-middle;
+}
+
+.admonitionblock {
+    @apply border rounded shadow border-gray-300 dark:border-slate-800;
+}
+
+.admonitionblock>table {
+    @apply m-0;
 }

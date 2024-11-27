@@ -1,11 +1,12 @@
 import path, { resolve } from "path";
 import { type PluginOption, defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
 
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [],
+	plugins: [react()],
 
 	// Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
 	//
