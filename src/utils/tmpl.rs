@@ -1,11 +1,6 @@
 use minijinja::Environment;
-use rust_embed::RustEmbed;
 
 use super::jinjaext::{self, LocalTime};
-
-#[derive(RustEmbed)]
-#[folder = "builtin"]
-struct Asset;
 
 #[derive(Debug)]
 pub struct Tmpl {
