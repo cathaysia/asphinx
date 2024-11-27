@@ -12,7 +12,6 @@ use std::path;
 use clap::Parser;
 use lazy_regex::regex;
 use log::*;
-use tokio::fs;
 use tracing_subscriber::{
     fmt, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, EnvFilter,
 };
@@ -20,7 +19,7 @@ use tracing_subscriber::{
 use crate::{
     config::Config,
     generator::AdocGenerator,
-    utils::{jinjaext::minify, Counter, GitInfo},
+    utils::{Counter, GitInfo},
 };
 
 fn parse_index_file(file_path_str: String) -> Vec<String> {
@@ -54,7 +53,8 @@ fn parse_index_file(file_path_str: String) -> Vec<String> {
 struct Args {
     #[arg(long, default_value_t = false)]
     minify: bool,
-    theme: Option<String>,
+    #[arg(long)]
+    theme: String,
 }
 
 // https://users.rust-lang.org/t/how-to-breakup-an-iterator-into-chunks/87915
@@ -77,7 +77,7 @@ async fn main() {
     let entry_file = "content/index.adoc";
 
     let config = Config::from_file("config.toml").await;
-    let generator = AdocGenerator::new(args.theme, config.asciidoc);
+    let generator = AdocGenerator::new(args.theme.clone(), config.asciidoc);
 
     timer.reset();
     let files = parse_index_file(entry_file.into());
@@ -93,27 +93,6 @@ async fn main() {
         .unwrap_or(16);
     for i in chunked(tasks, cpu_num) {
         future::join_all(i.into_iter()).await;
-    }
-
-    let source = [
-        (
-            "public/assets/breadcrumb.css",
-            include_str!("../builtin/assets/breadcrumb.css"),
-        ),
-        (
-            "public/assets/index.css",
-            include_str!("../builtin/assets/index.css"),
-        ),
-        (
-            "public/assets/prism.css",
-            include_str!("../builtin/assets/prism.css"),
-        ),
-    ];
-
-    let _ = fs::create_dir_all("public/assets/").await;
-
-    for (dst, source) in source {
-        let _ = fs::write(dst, minify(source)).await;
     }
 
     println!("build took {}.", timer.since_start().unwrap());

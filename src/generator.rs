@@ -34,7 +34,7 @@ pub struct AdocGenerator {
 }
 
 impl AdocGenerator {
-    pub fn new(theme_dir: Option<String>, config: config::Asciidoc) -> Self {
+    pub fn new(theme_dir: String, config: config::Asciidoc) -> Self {
         let engine = Tmpl::new(theme_dir);
 
         Self { engine, config }
@@ -169,7 +169,7 @@ impl AdocGenerator {
     }
 
     pub fn render(&self, context: &Document, need_minify: bool) -> String {
-        let tmpl = self.engine.engine.get_template("single").unwrap();
+        let tmpl = self.engine.engine.get_template("page").unwrap();
         let ctx = minijinja::value::Value::from_serialize(context);
         let mut res = tmpl.render(ctx).unwrap();
         if need_minify {

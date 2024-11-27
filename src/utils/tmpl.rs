@@ -13,38 +13,20 @@ pub struct Tmpl {
 }
 
 impl Tmpl {
-    pub fn new(layout_dir: Option<String>) -> Self {
+    pub fn new(theme_dir: String) -> Self {
         let mut engine = Box::new(Environment::new());
-        match layout_dir {
-            Some(layout_dir) => {
-                engine.set_loader(move |name| {
-                    let file_name = format!("{}/{}.html.jinja", layout_dir, name);
-                    match std::fs::read_to_string(file_name) {
-                        Ok(v) => Ok(Some(v)),
-                        Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(None),
-                        Err(err) => Err(minijinja::Error::new(
-                            minijinja::ErrorKind::InvalidOperation,
-                            "could not read template",
-                        )
-                        .with_source(err)),
-                    }
-                });
+        engine.set_loader(move |name| {
+            let file_name = format!("{theme_dir}/layouts/{name}.html");
+            match std::fs::read_to_string(file_name) {
+                Ok(v) => Ok(Some(v)),
+                Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(None),
+                Err(err) => Err(minijinja::Error::new(
+                    minijinja::ErrorKind::InvalidOperation,
+                    "could not read template",
+                )
+                .with_source(err)),
             }
-            None => {
-                engine.set_loader(move |name| {
-                    let path = format!("layouts/{name}.html.jinja");
-                    let content = String::from_utf8(
-                        Asset::get(&path)
-                            .unwrap_or_else(|| panic!("Cannot found {path}"))
-                            .data
-                            .to_vec(),
-                    )
-                    .unwrap();
-
-                    Ok(Some(content))
-                });
-            }
-        }
+        });
 
         engine.add_filter("minify", jinjaext::minify_jinja);
 
