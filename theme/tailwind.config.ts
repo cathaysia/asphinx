@@ -14,6 +14,18 @@ const config: Config = {
 				],
 				mono: ["Fira Code Variable", ...defaultTheme.fontFamily.mono],
 			},
+			typography: {
+				DEFAULT: {
+					css: {
+						"code::before": {
+							content: "",
+						},
+						"code::after": {
+							content: "",
+						},
+					},
+				},
+			},
 		},
 	},
 	plugins: [require("@tailwindcss/typography")],
