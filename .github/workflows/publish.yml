@@ -3,6 +3,8 @@ name: "publish"
 on:
   pull_request:
   push:
+    branches:
+      - master
     paths:
       - theme/**
   workflow_dispatch:
