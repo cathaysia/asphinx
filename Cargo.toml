@@ -16,7 +16,7 @@ clap = { version = '4.5.20', features = ["derive"] }
 chrono = '0.4.38'
 gix = '0.67.0'
 log = '0.4.22'
-tracing-subscriber = { version = "0.3.18", default-features = true, features = [
+tracing-subscriber = { version = "0.3.19", default-features = true, features = [
   "local-time",
   "time",
   "env-filter",
