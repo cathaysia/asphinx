@@ -11,10 +11,7 @@ use std::path;
 
 use clap::Parser;
 use lazy_regex::regex;
-use log::*;
-use tracing_subscriber::{
-    fmt, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, EnvFilter,
-};
+use tracing::*;
 
 use crate::{
     config::Config,
@@ -99,6 +96,9 @@ async fn main() {
 }
 
 fn init_logger() {
+    use tracing_subscriber::{
+        fmt, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, EnvFilter,
+    };
     let log_level = std::env::var("RUST_LOG")
         .unwrap_or("INFO".into())
         .to_lowercase();

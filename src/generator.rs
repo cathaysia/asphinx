@@ -1,8 +1,8 @@
 use std::path::{self, PathBuf};
 
-use log::*;
 use serde::{Deserialize, Serialize};
 use tokio::fs;
+use tracing::*;
 
 use crate::{
     config,

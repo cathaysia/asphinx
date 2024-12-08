@@ -8,7 +8,7 @@ use chrono::{FixedOffset, Utc};
 use gix::{
     bstr::ByteSlice, object::tree::diff::Action, path::Utf8Error, Commit, Id, ThreadSafeRepository,
 };
-use log::*;
+use tracing::*;
 
 pub struct GitInfo {
     mtimes: HashMap<String, u32>,
