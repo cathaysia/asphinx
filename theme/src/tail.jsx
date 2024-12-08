@@ -1,7 +1,7 @@
 import hljs from "highlight.js";
 
 import { Moon, Sun } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import reactDom from "react-dom/client";
 
 if (!hljs.initHighlighting.called) {
@@ -22,6 +22,7 @@ function ThemeButton() {
 		"dark",
 		localStorage.theme === "dark",
 	);
+	const [isDark, setIsdark] = useState(localStorage.them === "dark");
 
 	return (
 		<div
@@ -32,9 +33,10 @@ function ThemeButton() {
 					"dark",
 					localStorage.theme === "dark",
 				);
+				setIsdark(localStorage.theme === "dark");
 			}}
 		>
-			{localStorage.theme === "dark" ? (
+			{isDark ? (
 				<Moon className="h-[1.2rem] w-[1.2rem]" />
 			) : (
 				<Sun className="h-[1.2rem] w-[1.2rem]" />

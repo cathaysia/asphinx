@@ -19,7 +19,7 @@ importers:
         version: 5.1.0
       '@vitejs/plugin-react-swc':
         specifier: ^3.7.2
-        version: 3.7.2(vite@6.0.0(@types/node@22.10.0)(jiti@1.21.6)(yaml@2.6.1))
+        version: 3.7.2(@swc/helpers@0.5.13)(vite@6.0.0(@types/node@22.10.0)(jiti@1.21.6)(yaml@2.6.1))
       font-awesome:
         specifier: ^4.7.0
         version: 4.7.0
@@ -419,6 +419,9 @@ packages:
 
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
+
+  '@swc/helpers@0.5.13':
+    resolution: {integrity: sha512-UoKGxQ3r5kYI9dALKJapMmuK+1zWM/H17Z1+iwnNmzcJRnfFuevZs375TA5rW31pu4BS4NoSy1fRsexDXfWn5w==}
 
   '@swc/types@0.1.17':
     resolution: {integrity: sha512-V5gRru+aD8YVyCOMAjMpWR1Ui577DD5KSJsHP8RAxopAH22jFz6GZd/qxqjO6MJHQhcsjvjOFXyDhyLQUnMveQ==}
@@ -901,6 +904,9 @@ packages:
   ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
 
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
@@ -1181,7 +1187,7 @@ snapshots:
   '@swc/core-win32-x64-msvc@1.9.3':
     optional: true
 
-  '@swc/core@1.9.3':
+  '@swc/core@1.9.3(@swc/helpers@0.5.13)':
     dependencies:
       '@swc/counter': 0.1.3
       '@swc/types': 0.1.17
@@ -1196,8 +1202,14 @@ snapshots:
       '@swc/core-win32-arm64-msvc': 1.9.3
       '@swc/core-win32-ia32-msvc': 1.9.3
       '@swc/core-win32-x64-msvc': 1.9.3
+      '@swc/helpers': 0.5.13
 
   '@swc/counter@0.1.3': {}
+
+  '@swc/helpers@0.5.13':
+    dependencies:
+      tslib: 2.8.1
+    optional: true
 
   '@swc/types@0.1.17':
     dependencies:
@@ -1217,9 +1229,9 @@ snapshots:
     dependencies:
       undici-types: 6.20.0
 
-  '@vitejs/plugin-react-swc@3.7.2(vite@6.0.0(@types/node@22.10.0)(jiti@1.21.6)(yaml@2.6.1))':
+  '@vitejs/plugin-react-swc@3.7.2(@swc/helpers@0.5.13)(vite@6.0.0(@types/node@22.10.0)(jiti@1.21.6)(yaml@2.6.1))':
     dependencies:
-      '@swc/core': 1.9.3
+      '@swc/core': 1.9.3(@swc/helpers@0.5.13)
       vite: 6.0.0(@types/node@22.10.0)(jiti@1.21.6)(yaml@2.6.1)
     transitivePeerDependencies:
       - '@swc/helpers'
@@ -1699,6 +1711,9 @@ snapshots:
       is-number: 7.0.0
 
   ts-interface-checker@0.1.13: {}
+
+  tslib@2.8.1:
+    optional: true
 
   undici-types@6.20.0: {}
 
