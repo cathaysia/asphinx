@@ -5,8 +5,16 @@ use toml::Value;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Asciidoc {
+    #[serde(default)]
     pub extensions: Vec<String>,
     pub attributes: HashMap<String, Value>,
+}
+
+impl Asciidoc {
+    pub fn extend(&mut self, rhs: Self) {
+        self.extensions.extend(rhs.extensions);
+        self.attributes.extend(rhs.attributes);
+    }
 }
 
 impl Default for Asciidoc {
