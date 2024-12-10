@@ -16,6 +16,7 @@ impl Default for Asciidoc {
         attributes.insert("toc".into(), 1.into());
         attributes.insert("experimental".into(), "".into());
         attributes.insert("source-highlighter".into(), "highlight.js".into());
+        attributes.insert("plantuml-format".into(), "svg".into());
         // attributes.insert("stem".into(), "latexmath".into());
 
         Self {
