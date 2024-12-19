@@ -23,7 +23,7 @@ impl Default for Asciidoc {
         attributes.insert("icons".into(), "font".into());
         attributes.insert("toc".into(), 1.into());
         attributes.insert("experimental".into(), "".into());
-        attributes.insert("source-highlighter".into(), "highlight.js".into());
+        attributes.insert("source-highlighter".into(), "pygments".into());
         attributes.insert("plantuml-format".into(), "svg".into());
         // attributes.insert("stem".into(), "latexmath".into());
 

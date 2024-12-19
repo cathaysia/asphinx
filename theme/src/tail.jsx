@@ -1,17 +1,6 @@
-import hljs from "highlight.js";
-
 import { Moon, Sun } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import reactDom from "react-dom/client";
-
-if (!hljs.initHighlighting.called) {
-	hljs.initHighlighting.called = true;
-	[].slice
-		.call(document.querySelectorAll("pre.highlight > code[data-lang]"))
-		.forEach(function (el) {
-			hljs.highlightBlock(el);
-		});
-}
 
 import renderMathInElement from "katex/contrib/auto-render";
 

@@ -9,6 +9,5 @@ import "katex/contrib/copy-tex";
 import "katex/dist/katex.min.css";
 
 import "font-awesome/css/font-awesome.css";
-import "highlight.js/styles/github-dark.min.css";
 
 import "@/style.css";
