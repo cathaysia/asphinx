@@ -6,6 +6,7 @@ use tracing::*;
 
 use crate::{
     config,
+    index::index_insert,
     utils::{jinjaext, AsciidoctorBuilder, GitInfo, HtmlParser, Tmpl},
 };
 
@@ -57,6 +58,15 @@ impl AdocGenerator {
                 .await;
 
         let html = HtmlParser::new(&html);
+
+        match dest_file.split_once("public/") {
+            Some((_, p)) => {
+                let _ = index_insert(p.into(), (html.text(), html.get_title()));
+            }
+            None => {
+                let _ = index_insert(dest_file.clone(), (html.text(), html.get_title()));
+            }
+        }
 
         let document = Document {
             title: html.get_title(),

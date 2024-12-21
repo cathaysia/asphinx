@@ -2,10 +2,13 @@
 
 mod config;
 use futures::future;
+use index::{index_clear, index_list};
 use itertools::Itertools;
 pub mod error;
 mod generator;
+mod index;
 mod utils;
+use tokio::fs;
 
 use std::{path, str::FromStr};
 
@@ -64,6 +67,7 @@ fn chunked<I>(a: impl IntoIterator<Item = I>, chunk_size: usize) -> impl Iterato
 
 #[tokio::main]
 async fn main() {
+    let _ = index_clear();
     let args = Args::parse();
     init_logger();
 
@@ -96,6 +100,18 @@ async fn main() {
         future::join_all(i.into_iter()).await;
     }
 
+    match index_list() {
+        Ok(index) => {
+            if let Ok(index) = serde_json::to_string(&index) {
+                debug!(%index);
+                let _ = fs::write("public/cache.json", &index).await;
+            }
+        }
+        Err(err) => {
+            error!(%err);
+        }
+    }
+
     println!("build took {}.", timer.since_start().unwrap());
 }
 
@@ -112,7 +128,7 @@ fn init_logger() {
         .unwrap();
 
     tracing_subscriber::registry()
-        .with(fmt::layer())
+        .with(fmt::layer().with_file(true).with_line_number(true))
         .with(env_filter)
         .init();
 }
