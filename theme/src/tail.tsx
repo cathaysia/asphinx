@@ -1,6 +1,7 @@
 import { Moon, Sun } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import reactDom from "react-dom/client";
+import SearchBar from "@/search-bar";
 
 import renderMathInElement from "katex/contrib/auto-render";
 
@@ -34,7 +35,12 @@ function ThemeButton() {
 	);
 }
 
-const rootElement = document.getElementById("theme_btn");
-const root = reactDom.createRoot(rootElement);
+const themeBtn = document.getElementById("theme_btn");
+const btn = reactDom.createRoot(themeBtn!);
 
-root.render(<ThemeButton />);
+btn.render(<ThemeButton />);
+
+const searchBar = document.getElementById("search_bar");
+const bar = reactDom.createRoot(searchBar!);
+
+bar.render(<SearchBar />);
