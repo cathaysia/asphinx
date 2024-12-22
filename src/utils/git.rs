@@ -1,7 +1,7 @@
 use gix::object::tree::diff::Change;
 use std::{
     collections::{HashMap, HashSet},
-    time::Duration,
+    time::{Duration, SystemTime},
 };
 
 use chrono::{FixedOffset, Utc};
@@ -27,12 +27,15 @@ impl GitInfo {
             last = next.id();
         }
 
-        let systime = std::time::SystemTime::UNIX_EPOCH
-            .checked_add(Duration::new(
-                Self::id_to_commit(&cont.last().unwrap().0)?.time()?.seconds as u64,
-                0,
-            ))
-            .unwrap();
+        let systime = match cont.last() {
+            Some(v) => std::time::SystemTime::UNIX_EPOCH
+                .checked_add(Duration::new(
+                    Self::id_to_commit(&v.0)?.time()?.seconds as u64,
+                    0,
+                ))
+                .unwrap_or(SystemTime::now()),
+            None => SystemTime::now(),
+        };
         let default_time: chrono::DateTime<Utc> = systime.into();
         let default_time = default_time
             .with_timezone(&FixedOffset::east_opt(8 * 3600).unwrap())
