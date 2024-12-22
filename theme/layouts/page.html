@@ -8,11 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body class="article antialiased text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 font-serif">
+<body class="article antialiased text-foreground bg-background font-serif">
     <script type="module" src="../src/main.tsx"></script>
-    <nav class="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-none bg-gray-50 dark:bg-gray-800 dark:border-gray-700 fixed w-full z-50 justify-between"
+    <nav class="flex px-5 py-3 rounded-none justify-between sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 max-h-12 overflow-hidden gap-2"
         aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+        <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse min-w-0 overflow-x-hidden">
             <li class="inline-flex items-center">
                 <a href="/"
                     class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
@@ -33,7 +33,7 @@
                             d="m1 9 4-4-4-4" />
                     </svg>
                     <a href="{{ value }}"
-                        class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">
+                        class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white text-ellipsis min-w-0 overflow-x-hidden whitespace-nowrap">
                         {{ key }}
                     </a>
                 </div>
@@ -46,7 +46,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="m1 9 4-4-4-4" />
                     </svg>
-                    <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">{{ title }}</span>
+                    <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400 whitespace-nowrap overflow-x-hidden">{{ title }}</span>
                 </div>
             </li>
         </ol>
@@ -56,7 +56,7 @@
         </div>
     </nav>
 
-    <div id="header" class="prose prose-slate dark:prose-invert">
+    <div id="header" class="prose prose-zinc dark:prose-invert">
         <h1 class="mt-16">{{ title }}</h1>
         {% if toc %}
         <div id="toc" class="toc">
@@ -67,7 +67,7 @@
     </div>
     {% if content %}
     <div id="content">
-        <div class="prose prose-slate max-w-full dark:prose-invert">
+        <div class="prose prose-zinc max-w-full dark:prose-invert">
             {{ content }}
         </div>
     </div>
@@ -78,12 +78,10 @@
     </div>
     {% endif %}
     {% if last_modify_date %}
-    <div id="footer">
-        <div id="footer-text">
-            <div>Last moify: {{ last_modify_date }}</div>
-            <div>Build time：{{ now.Format("[year]-[month]-[day] [hour]:[minute]:[second]") }}</div>
-            <div>Powered By <a href="https://github.com/cathaysia/asphinx">asphinx</a></div>
-        </div>
+    <div class="flex flex-col p-2 border-t">
+        <div>Last moify: {{ last_modify_date }}</div>
+        <div>Build time：{{ now.Format("[year]-[month]-[day] [hour]:[minute]:[second]") }}</div>
+        <div>Powered By <a href="https://github.com/cathaysia/asphinx">asphinx</a></div>
     </div>
     </div>
     {% endif %}

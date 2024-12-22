@@ -465,12 +465,12 @@ blockquote p {
 table {
     margin-bottom: 1.25em;
     word-wrap: normal;
-    @apply border border-gray-300 dark:border-slate-800;
+    @apply border border-gray-300 dark:border-zinc-800;
 }
 
 table thead,
 table tfoot {
-    @apply bg-gray-300 dark:bg-slate-800;
+    @apply bg-gray-300 dark:bg-zinc-800;
 }
 
 table thead tr th,
@@ -929,7 +929,7 @@ body.toc2 #header>h1:nth-last-child(2) {
 }
 
 .sect1+.sect1 {
-    @apply border-t border-gray-400 dark:border-slate-800;
+    @apply border-t border-gray-400 dark:border-zinc-800;
 }
 
 #content h1>a.anchor,
