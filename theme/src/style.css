@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 code {
-    @apply rounded bg-gray-200 dark:bg-gray-800 px-1 font-mono dark:text-white;
+    @apply rounded bg-muted px-1 font-mono dark:text-white;
 }
 
 .toc {
@@ -18,20 +18,12 @@ code {
     @apply align-middle;
 }
 
-.admonitionblock {
-    @apply border rounded shadow border-gray-300 dark:border-zinc-800;
-}
-
-.admonitionblock>table {
-    @apply m-0;
-}
-
 pre.pygments .hll {
-    @apply bg-yellow-50;
+    @apply bg-yellow-50 dark:bg-yellow-900;
 }
 
 pre.pygments {
-    @apply bg-zinc-800 dark:bg-zinc-800;
+    @apply bg-zinc-800 dark:bg-zinc-800 m-2;
 }
 
 pre.pygments .tok-c {
@@ -128,8 +120,7 @@ pre.pygments .tok-go {
 
 /* Generic.Output */
 pre.pygments .tok-gp {
-    color: #000080;
-    font-weight: bold;
+    @apply text-blue-600 font-bold;
 }
 
 /* Generic.Prompt */
@@ -204,8 +195,7 @@ pre.pygments .tok-nb {
 
 /* Name.Builtin */
 pre.pygments .tok-nc {
-    color: #0000ff;
-    font-weight: bold;
+    @apply text-blue-600 font-bold;
 }
 
 /* Name.Class */
@@ -232,7 +222,7 @@ pre.pygments .tok-ne {
 
 /* Name.Exception */
 pre.pygments .tok-nf {
-    color: #0000ff;
+    @apply text-blue-600;
 }
 
 /* Name.Function */
@@ -242,8 +232,8 @@ pre.pygments .tok-nl {
 
 /* Name.Label */
 pre.pygments .tok-nn {
-    color: #0000ff;
     font-weight: bold;
+    @apply text-blue-600;
 }
 
 /* Name.Namespace */
@@ -254,7 +244,7 @@ pre.pygments .tok-nt {
 
 /* Name.Tag */
 pre.pygments .tok-nv {
-    color: #19177c;
+    @apply text-blue-600;
 }
 
 /* Name.Variable */
@@ -315,8 +305,7 @@ pre.pygments .tok-dl {
 
 /* Literal.String.Delimiter */
 pre.pygments .tok-sd {
-    color: #ba2121;
-    font-style: italic;
+    @apply text-gray-600 italic;
 }
 
 /* Literal.String.Doc */
@@ -358,7 +347,7 @@ pre.pygments .tok-s1 {
 
 /* Literal.String.Single */
 pre.pygments .tok-ss {
-    color: #19177c;
+    @apply text-blue-600;
 }
 
 /* Literal.String.Symbol */
@@ -368,27 +357,27 @@ pre.pygments .tok-bp {
 
 /* Name.Builtin.Pseudo */
 pre.pygments .tok-fm {
-    color: #0000ff;
+    @apply text-sky-600;
 }
 
 /* Name.Function.Magic */
 pre.pygments .tok-vc {
-    color: #19177c;
+    @apply text-blue-600;
 }
 
 /* Name.Variable.Class */
 pre.pygments .tok-vg {
-    color: #19177c;
+    @apply text-blue-600;
 }
 
 /* Name.Variable.Global */
 pre.pygments .tok-vi {
-    color: #19177c;
+    @apply text-blue-600;
 }
 
 /* Name.Variable.Instance */
 pre.pygments .tok-vm {
-    color: #19177c;
+    @apply text-blue-600;
 }
 
 /* Name.Variable.Magic */
@@ -468,4 +457,46 @@ pre.pygments .tok-il {
 mark {
     background: orange;
     color: black;
+}
+
+.admonitionblock>table {
+    @apply border-none m-0;
+}
+
+.admonitionblock>table>tbody>tr {
+    @apply flex flex-col p-2;
+}
+
+.admonitionblock td.icon {
+    transform: translate(-.5rem, -60%);
+    @apply absolute;
+}
+
+.admonitionblock>table>tbody>tr>.content {
+    @apply bg-gray-100 rounded p-2 dark:bg-zinc-800;
+}
+
+.admonitionblock td.icon .icon-note::before {
+    content: "NOTE";
+    @apply bg-blue-800 py-1 px-2 rounded text-white;
+}
+
+.admonitionblock td.icon .icon-tip::before {
+    content: "TIP";
+    @apply bg-blue-800 py-1 px-2 rounded text-white;
+}
+
+.admonitionblock td.icon .icon-warning::before {
+    content: "WARNING";
+    @apply bg-yellow-800 py-1 px-2 rounded text-white;
+}
+
+.admonitionblock td.icon .icon-caution::before {
+    content: "WARNING";
+    @apply bg-yellow-800 py-1 px-2 rounded text-white;
+}
+
+.admonitionblock td.icon .icon-important::before {
+    content: "WARNING";
+    @apply bg-red-800 py-1 px-2 rounded text-white;
 }
