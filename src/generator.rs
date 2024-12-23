@@ -68,8 +68,13 @@ impl AdocGenerator {
             }
         }
 
+        let title = html.get_title();
+        if title == "Untitled" {
+            warn!("Title is empty, file: {}", source_file);
+        }
+
         let document = Document {
-            title: html.get_title(),
+            title,
             content: html.get_content(),
             toc: html.get_toc(),
             footnotes: html.get_footnotes(),
