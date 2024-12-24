@@ -11,3 +11,4 @@ import 'katex/dist/katex.min.css';
 import 'font-awesome/css/font-awesome.css';
 
 import '@/style.css';
+import '@/assets/pygments.css';
