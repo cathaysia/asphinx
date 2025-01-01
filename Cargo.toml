@@ -9,7 +9,7 @@ edition = "2021"
 itertools = "0.13.0"
 minijinja = { version = '2.5.0', features = ["loader"] }
 scraper = '0.21.0'
-serde = { version = '1.0.215', features = ["derive"] }
+serde = { version = '1.0.217', features = ["derive"] }
 futures = '0.3.31'
 minify-html = '0.15.0'
 clap = { version = '4.5.21', features = ["derive"] }
