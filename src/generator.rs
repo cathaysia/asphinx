@@ -61,10 +61,24 @@ impl AdocGenerator {
 
         match dest_file.split_once("public/") {
             Some((_, p)) => {
-                let _ = index_insert(p.into(), (html.text(), html.get_title()));
+                let _ = index_insert(
+                    p.into(),
+                    (
+                        html.text(),
+                        html.get_title(),
+                        gitinfo.get_last_commit_time_of_file(&source_file),
+                    ),
+                );
             }
             None => {
-                let _ = index_insert(dest_file.clone(), (html.text(), html.get_title()));
+                let _ = index_insert(
+                    dest_file.clone(),
+                    (
+                        html.text(),
+                        html.get_title(),
+                        gitinfo.get_last_commit_time_of_file(&source_file),
+                    ),
+                );
             }
         }
 

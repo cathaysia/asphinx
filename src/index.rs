@@ -12,7 +12,8 @@ static DB: LazyLock<redb::Database> = LazyLock::new(|| {
         .unwrap()
 });
 
-pub type CacheValue = (String, String);
+// (Content, Title)
+pub type CacheValue = (String, String, Option<String>);
 
 fn table_definition() -> redb::TableDefinition<'static, std::string::String, CacheValue> {
     TableDefinition::new(TABLE_NAME)
