@@ -3,9 +3,9 @@ import { Button } from './components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { useMemo, useState } from 'react';
 import useSwr from 'swr';
-import { ScrollArea } from './components/ui/scroll-area';
-import { Input } from './components/ui/input';
 import { useDebounce } from 'use-debounce';
+import { Input } from './components/ui/input';
+import { ScrollArea } from './components/ui/scroll-area';
 
 type CacheType = [string, [string, string, string | null]][];
 
@@ -67,7 +67,7 @@ export function History() {
                 const time = item.time?.toLocaleString();
                 return (
                   <li key={item.path}>
-                    <a href={item.path} className="flex justify-between">
+                    <a href={`/${item.path}`} className="flex justify-between">
                       <span>{item.title}</span>
                       {time && <div>{`${time}`}</div>}
                     </a>
