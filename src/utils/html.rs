@@ -1,6 +1,7 @@
 use std::sync::LazyLock;
 
 use itertools::Itertools;
+use lazy_regex::regex;
 use scraper::{Html, Selector};
 
 pub struct HtmlParser {
@@ -59,6 +60,10 @@ impl HtmlParser {
         for item in self.html.select(&TAG_IMG) {
             if let Some(val) = item.value().attr("src") {
                 if let Ok(url) = urlencoding::decode(val) {
+                    let re = regex!(r#"(\w+:\/\/)|(mailto:)"#);
+                    if re.find(&url).is_some() {
+                        continue;
+                    }
                     res.push(url.into());
                 }
             }
