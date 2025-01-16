@@ -48,7 +48,7 @@ export function History() {
       <DialogTrigger>
         <Button variant={'outline'}>History</Button>
       </DialogTrigger>
-      <DialogContent className="flex w-full flex-col gap-2 overflow-y-scroll rounded-xl">
+      <DialogContent className="flex w-full flex-col gap-2 rounded-xl">
         <Input
           placeholder="type for search"
           value={search}
@@ -58,6 +58,9 @@ export function History() {
           <ul>
             {handledData
               ?.filter(item => {
+                if (debounce === '') {
+                  return true;
+                }
                 return item.title.includes(debounce);
               })
               .map(item => {
