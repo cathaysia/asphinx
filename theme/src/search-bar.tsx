@@ -73,7 +73,7 @@ export default function SearchBar() {
           onChange={e => setSearch(e.target.value)}
         />
         <ScrollArea className="h-[320px]">
-          <div className="flex w-[304px] flex-col gap-2 sm:w-[520px]">
+          <div className="flex w-full flex-col gap-2">
             {result
               ? result.map(item => {
                   return (
