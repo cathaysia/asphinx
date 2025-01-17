@@ -1,5 +1,5 @@
-import Fuse, { type FuseResult } from 'fuse.js';
-import { useEffect, useMemo, useState } from 'react';
+import Fuse from 'fuse.js';
+import { useMemo, useState } from 'react';
 import { Button } from './components/ui/button';
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
@@ -9,18 +9,11 @@ import { Input } from './components/ui/input';
 import { Label } from './components/ui/label';
 import { ScrollArea } from './components/ui/scroll-area';
 
-type CacheType = [string, [string, string]][];
+type CacheType = [string, [string, string, string]][];
 
 export default function SearchBar() {
   const [search, setSearch] = useState('');
   const [debounce] = useDebounce(search, 200);
-  const [result, setResult] =
-    useState<
-      FuseResult<{
-        file: string;
-        content: [string, string];
-      }>[]
-    >();
   const { data } = useSwr<CacheType>(
     '/cache.json',
     (input: RequestInfo | URL, init?: RequestInit) => {
@@ -43,17 +36,23 @@ export default function SearchBar() {
     });
   }, [data]);
 
-  useEffect(() => {
+  const result = useMemo(() => {
     if (!data || !fuse) {
-      return;
+      return null;
     }
     if (debounce.length === 0) {
-      setResult(undefined);
-      return;
+      return data.map(item => {
+        const [path, content] = item;
+        return {
+          item: {
+            file: path,
+            content: content,
+          },
+        };
+      });
     }
-
     const res = fuse.search(debounce);
-    setResult(res);
+    return res;
   }, [data, debounce]);
 
   return (
@@ -74,38 +73,22 @@ export default function SearchBar() {
         />
         <ScrollArea className="h-[320px]">
           <div className="flex w-full flex-col gap-2">
-            {result
-              ? result.map(item => {
-                  return (
-                    <a
-                      key={item.item.file}
-                      className="flex w-full flex-col items-start rounded border p-2 shadow"
-                      href={`/${item.item.file}`}
-                    >
-                      <Label className="w-full min-w-0 overflow-x-hidden text-ellipsis whitespace-nowrap text-lg">
-                        {item.item.content[1] || item.item.file}
-                      </Label>
-                      <Label className="w-full min-w-0 overflow-x-hidden text-ellipsis whitespace-nowrap text-gray-600 text-sm">
-                        {item.item.content[0]}
-                      </Label>
-                    </a>
-                  );
-                })
-              : data?.map(item => {
-                  return (
-                    <div
-                      key={item[0]}
-                      className="flex h-[74px] items-center rounded border p-2 shadow "
-                    >
-                      <a
-                        href={`/${item[0]}`}
-                        className="min-w-0 overflow-x-hidden text-ellipsis whitespace-nowrap"
-                      >
-                        {item[1][1]}
-                      </a>
-                    </div>
-                  );
-                })}
+            {result?.map(item => {
+              return (
+                <a
+                  key={item.item.file}
+                  className="flex w-full flex-col items-start rounded border p-2 shadow"
+                  href={`/${item.item.file}`}
+                >
+                  <Label className="w-full min-w-0 overflow-x-hidden text-ellipsis whitespace-nowrap text-lg">
+                    {item.item.content[1] || item.item.file}
+                  </Label>
+                  <Label className="line-clamp-2 w-full min-w-0 overflow-x-hidden text-ellipsis text-gray-600 text-sm">
+                    {item.item.content[0]}
+                  </Label>
+                </a>
+              );
+            })}
           </div>
         </ScrollArea>
         {result ? (
