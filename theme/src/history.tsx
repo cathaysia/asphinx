@@ -61,7 +61,7 @@ export function History() {
                 if (debounce === '') {
                   return true;
                 }
-                return item.title.includes(debounce);
+                return item.title.toLowerCase().includes(debounce);
               })
               .map(item => {
                 const time = item.time?.toLocaleString();
