@@ -72,21 +72,22 @@ export default function SearchBar() {
           onChange={e => setSearch(e.target.value)}
         />
         <ScrollArea className="h-[320px]">
-          <div className="flex w-full flex-col gap-2">
+          <div className="flex max-w-[270px] flex-col gap-2 md:max-w-[460px]">
             {result?.map(item => {
               return (
-                <a
-                  key={item.item.file}
-                  className="flex w-full flex-col items-start rounded border p-2 shadow"
-                  href={`/${item.item.file}`}
-                >
-                  <Label className="w-full min-w-0 overflow-x-hidden text-ellipsis whitespace-nowrap text-lg">
-                    {item.item.content[1] || item.item.file}
-                  </Label>
-                  <Label className="line-clamp-2 w-full min-w-0 overflow-x-hidden text-ellipsis text-gray-600 text-sm">
-                    {item.item.content[0]}
-                  </Label>
-                </a>
+                <div key={item.item.file} className="w-full">
+                  <a
+                    className="flex w-full flex-col items-start rounded border p-2 shadow"
+                    href={`/${item.item.file}`}
+                  >
+                    <Label className="w-full min-w-0 overflow-x-hidden text-ellipsis whitespace-nowrap text-lg">
+                      {item.item.content[1] || item.item.file}
+                    </Label>
+                    <Label className="line-clamp-2 w-full min-w-0 text-gray-600 text-sm">
+                      {item.item.content[0]}
+                    </Label>
+                  </a>
+                </div>
               );
             })}
           </div>
