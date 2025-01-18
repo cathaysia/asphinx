@@ -8,16 +8,18 @@ import { useDebounce } from 'use-debounce';
 import { Input } from './components/ui/input';
 import { Label } from './components/ui/label';
 import { ScrollArea } from './components/ui/scroll-area';
+import { Skeleton } from './components/ui/skeleton';
 
 type CacheType = [string, [string, string, string]][];
 
 export default function SearchBar() {
   const [search, setSearch] = useState('');
   const [debounce] = useDebounce(search, 200);
-  const { data } = useSwr<CacheType>(
+  const { data, error, isLoading } = useSwr<CacheType>(
     '/cache.json',
-    (input: RequestInfo | URL, init?: RequestInit) => {
-      return fetch(input, init).then(res => res.json());
+    async (input: RequestInfo | URL, init?: RequestInit) => {
+      const data = await fetch(input, init);
+      return data.json();
     },
   );
   const fuse = useMemo(() => {
@@ -72,25 +74,37 @@ export default function SearchBar() {
           onChange={e => setSearch(e.target.value)}
         />
         <ScrollArea className="h-[320px]">
-          <div className="flex max-w-[270px] flex-col gap-2 md:max-w-[460px]">
-            {result?.map(item => {
-              return (
-                <div key={item.item.file} className="w-full">
-                  <a
-                    className="flex w-full flex-col items-start rounded border p-2 shadow"
-                    href={`/${item.item.file}`}
-                  >
-                    <Label className="w-full min-w-0 overflow-x-hidden text-ellipsis whitespace-nowrap text-lg">
-                      {item.item.content[1] || item.item.file}
-                    </Label>
-                    <Label className="line-clamp-2 w-full min-w-0 text-gray-600 text-sm">
-                      {item.item.content[0]}
-                    </Label>
-                  </a>
-                </div>
-              );
-            })}
-          </div>
+          {isLoading && (
+            <div className="flex max-w-[270px] flex-col gap-2 md:max-w-[460px]">
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+            </div>
+          )}
+          {!isLoading && !error && (
+            <div className="flex max-w-[270px] flex-col gap-2 md:max-w-[460px]">
+              {result?.map(item => {
+                return (
+                  <div key={item.item.file} className="w-full">
+                    <a
+                      className="flex w-full flex-col items-start rounded border p-2 shadow"
+                      href={`/${item.item.file}`}
+                    >
+                      <Label className="w-full min-w-0 overflow-x-hidden text-ellipsis whitespace-nowrap text-lg">
+                        {item.item.content[1] || item.item.file}
+                      </Label>
+                      <Label className="line-clamp-2 w-full min-w-0 text-gray-600 text-sm">
+                        {item.item.content[0]}
+                      </Label>
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </ScrollArea>
         {result ? (
           <Label className="text-muted-foreground text-sm">
