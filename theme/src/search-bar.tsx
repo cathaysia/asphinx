@@ -1,4 +1,4 @@
-import Fuse from 'fuse.js';
+import MiniSearch from 'minisearch';
 import { useMemo, useState } from 'react';
 import { Button } from './components/ui/button';
 
@@ -22,7 +22,7 @@ export default function SearchBar() {
       return data.json();
     },
   );
-  const fuse = useMemo(() => {
+  const miniSearch = useMemo(() => {
     if (!data) {
       return;
     }
@@ -37,40 +37,71 @@ export default function SearchBar() {
       };
     });
 
-    return new Fuse(posts, {
-      keys: ['file', 'content'],
+    const miniSearch = new MiniSearch<{
+      path: string;
+      content: string;
+      title: string;
+      time: Date | null;
+    }>({
+      fields: ['title', 'content'],
+      idField: 'path',
+      storeFields: ['path', 'content', 'title', 'time'],
+      tokenize: text => {
+        text = text.toLowerCase();
+        // TODO: better CJK tokenizer
+        // NOTE: How to inject dependency (n-gram etc.) into here? `tokenize` will ignore top-level import somehow,
+        // and it can't be made async which means we can't dynamic import.
+        const segmenter =
+          Intl.Segmenter && new Intl.Segmenter('zh', { granularity: 'word' });
+        if (!segmenter) return [text]; // firefox?
+        return Array.from(segmenter.segment(text), ({ segment }) => segment);
+      },
     });
+    miniSearch.addAll(posts);
+    return miniSearch;
   }, [data]);
 
   const result = useMemo(() => {
-    if (!data || !fuse) {
+    if (!data || !miniSearch) {
       return null;
     }
     if (debounce.length === 0) {
       const data1 = data.map(item => {
         const [path, [content, title, time]] = item;
         return {
-          item: {
-            path: path,
-            content: content,
-            title: title,
-            time: time ? new Date(time) : null,
-          },
+          path: path,
+          content: content,
+          title: title,
+          time: time ? new Date(time) : null,
         };
       });
 
       data1.sort((a, b) => {
-        if (!a.item.time) {
+        if (!a.time) {
           return 1;
         }
-        if (!b.item.time) {
+        if (!b.time) {
           return -1;
         }
-        return a.item.time > b.item.time ? -1 : 1;
+        return a.time > b.time ? -1 : 1;
       });
       return data1;
     }
-    const res = fuse.search(debounce);
+    const res = miniSearch.search(debounce, {
+      combineWith: 'AND',
+      // don't split search word, user searching "泛函" shouldn't get "广泛" or "函数"
+      // XXX: This is a hack, we should probably use a better CJK tokenizer
+      tokenize: text => [text.toLowerCase()],
+      fuzzy(term) {
+        // disable fuzzy search if the term contains a CJK character
+        // so searching "函数式" will not contain results only matching "函数"
+        const cjkRange =
+          '\u2e80-\u2eff\u2f00-\u2fdf\u3040-\u309f\u30a0-\u30fa\u30fc-\u30ff\u3100-\u312f\u3200-\u32ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff';
+        const cjkWord = new RegExp(`[${cjkRange}]`);
+        if (cjkWord.test(term)) return false;
+        return true;
+      },
+    });
     return res;
   }, [data, debounce]);
 
@@ -105,28 +136,28 @@ export default function SearchBar() {
             <div className="flex max-w-[270px] flex-col gap-2 md:max-w-[460px]">
               {result?.map(item => {
                 return (
-                  <div key={item.item.path} className="w-full">
+                  <div key={item.path} className="w-full">
                     <a
                       className="flex w-full flex-col items-start rounded border p-2 shadow"
-                      href={`/${item.item.path}`}
+                      href={`/${item.path}`}
                     >
                       <Label className="w-full">
                         <div className="flex min-w-0 justify-between overflow-x-hidden text-ellipsis whitespace-nowrap text-lg">
-                          <span>{item.item.title || item.item.path}</span>
+                          <span>{item.title || item.path}</span>
                           <span
                             className="font-mono font-normal"
                             title={
-                              item.item.time
-                                ? dateInYyyyMmDdHhMmSs(item.item.time)
+                              item.time
+                                ? dateInYyyyMmDdHhMmSs(item.time)
                                 : undefined
                             }
                           >
-                            {item.item.time && dateInYyyyMmDd(item.item.time)}
+                            {item.time && dateInYyyyMmDd(item.time)}
                           </span>
                         </div>
                       </Label>
                       <Label className="line-clamp-2 w-full min-w-0 text-gray-600 text-sm">
-                        {item.item.content}
+                        {item.content}
                       </Label>
                     </a>
                   </div>
