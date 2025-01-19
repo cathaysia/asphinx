@@ -113,7 +113,7 @@ function padTwoDigits(num: number) {
   return num.toString().padStart(2, '0');
 }
 
-function dateInYyyyMmDdHhMmSs(date: Date) {
+export function dateInYyyyMmDdHhMmSs(date: Date) {
   // :::: Exmple Usage ::::
   // The function takes a Date object as a parameter and formats the date as YYYY-MM-DD hh:mm:ss.
   // 👇 2023-04-11 16:21:23 (yyyy-mm-dd hh:mm:ss)
@@ -127,7 +127,7 @@ function dateInYyyyMmDdHhMmSs(date: Date) {
   return `${date.getFullYear()}/${padTwoDigits(date.getMonth() + 1)}/${padTwoDigits(date.getDate())} ${padTwoDigits(date.getHours())}:${padTwoDigits(date.getMinutes())}:${padTwoDigits(date.getSeconds())}`;
 }
 
-function dateInYyyyMmDd(date: Date) {
+export function dateInYyyyMmDd(date: Date) {
   // :::: Exmple Usage ::::
   // The function takes a Date object as a parameter and formats the date as YYYY-MM-DD hh:mm:ss.
   // 👇 2023-04-11 16:21:23 (yyyy-mm-dd hh:mm:ss)

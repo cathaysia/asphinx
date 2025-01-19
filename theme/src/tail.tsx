@@ -1,4 +1,3 @@
-import { History } from '@/history';
 import SearchBar from '@/search-bar';
 import { Moon, Sun } from 'lucide-react';
 import { useState } from 'react';
@@ -49,9 +48,3 @@ const searchBar = document.getElementById('search_bar');
 const bar = reactDom.createRoot(searchBar!);
 
 bar.render(<SearchBar />);
-
-const history = document.getElementById('history');
-// biome-ignore lint/style/noNonNullAssertion:
-const his = reactDom.createRoot(history!);
-
-his.render(<History />);

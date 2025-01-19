@@ -9,8 +9,9 @@ import { Input } from './components/ui/input';
 import { Label } from './components/ui/label';
 import { ScrollArea } from './components/ui/scroll-area';
 import { Skeleton } from './components/ui/skeleton';
+import { dateInYyyyMmDd, dateInYyyyMmDdHhMmSs } from './history';
 
-type CacheType = [string, [string, string, string]][];
+type CacheType = [string, [string, string, string | null]][];
 
 export default function SearchBar() {
   const [search, setSearch] = useState('');
@@ -28,9 +29,12 @@ export default function SearchBar() {
     }
     const v = data as CacheType;
     const posts = v.map(item => {
+      const [path, [content, title, time]] = item;
       return {
-        file: item[0],
-        content: item[1],
+        path: path,
+        content: content,
+        title: title,
+        time: time ? new Date(time) : null,
       };
     });
     return new Fuse(posts, {
@@ -43,15 +47,28 @@ export default function SearchBar() {
       return null;
     }
     if (debounce.length === 0) {
-      return data.map(item => {
-        const [path, content] = item;
+      const data1 = data.map(item => {
+        const [path, [content, title, time]] = item;
         return {
           item: {
-            file: path,
+            path: path,
             content: content,
+            title: title,
+            time: time ? new Date(time) : null,
           },
         };
       });
+
+      data1.sort((a, b) => {
+        if (!a.item.time) {
+          return 1;
+        }
+        if (!b.item.time) {
+          return -1;
+        }
+        return a.item.time > b.item.time ? -1 : 1;
+      });
+      return data1;
     }
     const res = fuse.search(debounce);
     return res;
@@ -88,16 +105,28 @@ export default function SearchBar() {
             <div className="flex max-w-[270px] flex-col gap-2 md:max-w-[460px]">
               {result?.map(item => {
                 return (
-                  <div key={item.item.file} className="w-full">
+                  <div key={item.item.path} className="w-full">
                     <a
                       className="flex w-full flex-col items-start rounded border p-2 shadow"
-                      href={`/${item.item.file}`}
+                      href={`/${item.item.path}`}
                     >
-                      <Label className="w-full min-w-0 overflow-x-hidden text-ellipsis whitespace-nowrap text-lg">
-                        {item.item.content[1] || item.item.file}
+                      <Label className="w-full">
+                        <div className="flex min-w-0 justify-between overflow-x-hidden text-ellipsis whitespace-nowrap text-lg">
+                          <span>{item.item.title || item.item.path}</span>
+                          <span
+                            className="font-mono font-normal"
+                            title={
+                              item.item.time
+                                ? dateInYyyyMmDdHhMmSs(item.item.time)
+                                : undefined
+                            }
+                          >
+                            {item.item.time && dateInYyyyMmDd(item.item.time)}
+                          </span>
+                        </div>
                       </Label>
                       <Label className="line-clamp-2 w-full min-w-0 text-gray-600 text-sm">
-                        {item.item.content[0]}
+                        {item.item.content}
                       </Label>
                     </a>
                   </div>
@@ -107,7 +136,7 @@ export default function SearchBar() {
           )}
         </ScrollArea>
         {result ? (
-          <Label className="text-muted-foreground text-sm">
+          <Label className="font-mono text-muted-foreground text-sm">
             total {result?.length}
           </Label>
         ) : (
