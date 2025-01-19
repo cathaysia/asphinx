@@ -9,7 +9,6 @@ import { Input } from './components/ui/input';
 import { Label } from './components/ui/label';
 import { ScrollArea } from './components/ui/scroll-area';
 import { Skeleton } from './components/ui/skeleton';
-import { dateInYyyyMmDd, dateInYyyyMmDdHhMmSs } from './history';
 
 type CacheType = [string, [string, string, string | null]][];
 
@@ -37,6 +36,7 @@ export default function SearchBar() {
         time: time ? new Date(time) : null,
       };
     });
+
     return new Fuse(posts, {
       keys: ['file', 'content'],
     });
@@ -145,4 +145,36 @@ export default function SearchBar() {
       </DialogContent>
     </Dialog>
   );
+}
+
+function padTwoDigits(num: number) {
+  return num.toString().padStart(2, '0');
+}
+
+export function dateInYyyyMmDdHhMmSs(date: Date) {
+  // :::: Exmple Usage ::::
+  // The function takes a Date object as a parameter and formats the date as YYYY-MM-DD hh:mm:ss.
+  // 👇 2023-04-11 16:21:23 (yyyy-mm-dd hh:mm:ss)
+  //console.log(dateInYyyyMmDdHhMmSs(new Date()));
+
+  //  👇 2025-05-04 05:24:07 (yyyy-mm-dd hh:mm:ss)
+  // console.log(dateInYyyyMmDdHhMmSs(new Date('May 04, 2025 05:24:07')));
+  // Date divider
+  // 👇 01/04/2023 10:20:07 (MM/DD/YYYY hh:mm:ss)
+  // console.log(dateInYyyyMmDdHhMmSs(new Date(), "/"));
+  return `${date.getFullYear()}/${padTwoDigits(date.getMonth() + 1)}/${padTwoDigits(date.getDate())} ${padTwoDigits(date.getHours())}:${padTwoDigits(date.getMinutes())}:${padTwoDigits(date.getSeconds())}`;
+}
+
+export function dateInYyyyMmDd(date: Date) {
+  // :::: Exmple Usage ::::
+  // The function takes a Date object as a parameter and formats the date as YYYY-MM-DD hh:mm:ss.
+  // 👇 2023-04-11 16:21:23 (yyyy-mm-dd hh:mm:ss)
+  //console.log(dateInYyyyMmDdHhMmSs(new Date()));
+
+  //  👇 2025-05-04 05:24:07 (yyyy-mm-dd hh:mm:ss)
+  // console.log(dateInYyyyMmDdHhMmSs(new Date('May 04, 2025 05:24:07')));
+  // Date divider
+  // 👇 01/04/2023 10:20:07 (MM/DD/YYYY hh:mm:ss)
+  // console.log(dateInYyyyMmDdHhMmSs(new Date(), "/"));
+  return `${date.getFullYear()}/${padTwoDigits(date.getMonth() + 1)}/${padTwoDigits(date.getDate())}`;
 }
