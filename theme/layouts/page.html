@@ -48,8 +48,9 @@
                             d="m1 9 4-4-4-4" />
                     </svg>
                     <span
-                        class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400 whitespace-nowrap overflow-x-hidden">{{
-                        title }}</span>
+                        class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400 whitespace-nowrap overflow-x-hidden">
+                        {{ title }}
+                    </span>
                 </div>
             </li>
         </ol>
@@ -60,7 +61,12 @@
     </nav>
 
     <div id="header" class="prose prose-zinc dark:prose-invert">
-        <h1 class="mt-16">{{ title }}</h1>
+        <div class="flex justify-between w-full gap-2 items-end">
+            <h1 class="mt-16">{{ title }}</h1>
+            <span class="font-mono">
+                {{ last_modify_date }}
+            </span>
+        </div>
         {% if toc %}
         <div id="toc" class="toc">
             <div id="toctitle">TOC</div>
