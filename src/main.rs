@@ -10,7 +10,7 @@ mod index;
 mod utils;
 use tokio::fs;
 
-use std::{path, str::FromStr};
+use std::path;
 
 use clap::Parser;
 use lazy_regex::regex;
@@ -77,10 +77,7 @@ async fn main() {
 
     let entry_file = "content/index.adoc";
 
-    let config = tokio::fs::read_to_string("config.toml")
-        .await
-        .map(|item| Config::from_str(&item).unwrap_or_default())
-        .unwrap_or_default();
+    let config = Config::from_path("asphinx.toml").await;
     debug!(?config);
     let generator = AdocGenerator::new(args.theme.clone(), config.asciidoc);
 

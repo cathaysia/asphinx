@@ -1,0 +1,13 @@
+# This file contains the default configuration for asphinx.
+no_default = false
+
+[asciidoc]
+extensions = ["asciidoctor-mathematical", "asciidoctor-diagram"]
+
+[asciidoc.attributes]
+icons = "font"
+toc = 1
+experimental = ""
+source-highlighter = "pygments"
+plantuml-format = "svg"
+mermaid-format = "svg"

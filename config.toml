@@ -1,6 +1,0 @@
-[asciidoc]
-extensions = ["asciidoctor-mathematical", "asciidoctor-diagram"]
-
-[asciidoc.attributes]
-icons = "font"
-toc = 1

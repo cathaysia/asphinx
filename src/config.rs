@@ -1,13 +1,40 @@
 mod asciidoc;
 
-use std::str::FromStr;
+use std::{path::Path, str::FromStr};
 
 pub use asciidoc::Asciidoc;
 use serde::{Deserialize, Serialize};
+use tokio::fs;
 
-#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
+    #[serde(default)]
+    pub no_default: bool,
+    #[serde(default)]
     pub asciidoc: asciidoc::Asciidoc,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        toml::from_str(include_str!("../asphinx.toml")).unwrap()
+    }
+}
+
+impl Config {
+    pub async fn from_path(path: impl AsRef<Path>) -> Self {
+        let mut res = Self::default();
+
+        if let Ok(config) = fs::read_to_string(path).await {
+            if let Ok(config) = toml::from_str::<Self>(&config) {
+                if config.no_default {
+                    return config;
+                }
+                res.asciidoc.extend(config.asciidoc);
+            }
+        }
+
+        res
+    }
 }
 
 impl FromStr for Config {
@@ -30,6 +57,8 @@ impl FromStr for Config {
 mod test {
     use std::str::FromStr;
 
+    use itertools::Itertools;
+
     use super::Config;
 
     #[test]
@@ -43,6 +72,12 @@ icons = "font"
     "#;
         // let res = Config::from_str(data).unwrap();
         let res: Config = toml::from_str(data).unwrap();
+        let values = res
+            .asciidoc
+            .extensions
+            .iter()
+            .map(|item| item.as_str())
+            .collect_vec();
 
         assert_eq!(
             "font",
@@ -55,7 +90,7 @@ icons = "font"
         );
         assert_eq!(
             &["asciidoctor-mathematical", "asciidoctor-diagram"],
-            res.asciidoc.extensions.as_slice()
+            values.as_slice()
         );
     }
 
