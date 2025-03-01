@@ -28,7 +28,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.rustup
           key: cargo_cache-${{ runner.os }}
-      - uses: dtolnay/rust-toolchain@1.81.0
+      - uses: dtolnay/rust-toolchain@1.90.0
       - name: pre-commit
         run: |
           rustup component add rustfmt
