@@ -11,7 +11,7 @@ minijinja = { version = '2.7.0', features = ["loader"] }
 scraper = '0.23.1'
 serde = { version = '1.0.217', features = ["derive"] }
 futures = '0.3.31'
-minify-html = '0.15.0'
+minify-html = '0.16.4'
 clap = { version = '4.5.31', features = ["derive"] }
 chrono = '0.4.40'
 gix = '0.70.0'
