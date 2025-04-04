@@ -14,7 +14,7 @@ futures = '0.3.31'
 minify-html = '0.16.4'
 clap = { version = '4.5.31', features = ["derive"] }
 chrono = '0.4.40'
-gix = '0.70.0'
+gix = '0.71.0'
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", default-features = true, features = [
   "local-time",
