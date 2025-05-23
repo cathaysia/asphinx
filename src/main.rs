@@ -1,8 +1,14 @@
 #![allow(dead_code)]
 
 mod config;
-use fs_more::directory::copy_directory;
-use futures::{StreamExt, stream};
+use fs_more::{
+    directory::{
+        copy_directory, CollidingSubDirectoryBehaviour, DestinationDirectoryRule,
+        DirectoryCopyOptions,
+    },
+    file::CollidingFileBehaviour,
+};
+use futures::{stream, StreamExt};
 use index::{index_clear, index_list};
 pub mod error;
 mod generator;
@@ -86,7 +92,27 @@ async fn main() {
 
     let asset_path = path::Path::new(&args.theme).join("assets");
     if asset_path.is_dir() {
-        let _ = copy_directory(asset_path, "public", Default::default());
+        println!("copy  assets...");
+        let pwd = std::env::current_dir().unwrap();
+        let pwd = pwd.join("public/assets");
+
+        let _ = tokio::task::spawn_blocking(|| {
+            let ret = copy_directory(
+                asset_path,
+                pwd,
+                DirectoryCopyOptions {
+                    destination_directory_rule: DestinationDirectoryRule::AllowNonEmpty {
+                        colliding_file_behaviour: CollidingFileBehaviour::Overwrite,
+                        colliding_subdirectory_behaviour: CollidingSubDirectoryBehaviour::Continue,
+                    },
+                    ..Default::default()
+                },
+            );
+            if let Err(e) = ret {
+                error!(%e);
+            }
+        })
+        .await;
     }
 
     match index_list() {
@@ -106,7 +132,7 @@ async fn main() {
 
 fn init_logger() {
     use tracing_subscriber::{
-        EnvFilter, fmt, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt,
+        fmt, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, EnvFilter,
     };
     let log_level = std::env::var("RUST_LOG")
         .unwrap_or("INFO".into())
