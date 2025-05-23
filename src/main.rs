@@ -1,14 +1,15 @@
 #![allow(dead_code)]
 
 mod config;
-use futures::future;
+use fs_more::directory::copy_directory;
+use futures::{StreamExt, stream};
 use index::{index_clear, index_list};
-use itertools::Itertools;
 pub mod error;
 mod generator;
 mod index;
 mod utils;
 use tokio::fs;
+use utils::cpu_num;
 
 use std::path;
 
@@ -57,14 +58,6 @@ struct Args {
     theme: String,
 }
 
-// https://users.rust-lang.org/t/how-to-breakup-an-iterator-into-chunks/87915
-fn chunked<I>(a: impl IntoIterator<Item = I>, chunk_size: usize) -> impl Iterator<Item = Vec<I>> {
-    let mut a = a.into_iter();
-    std::iter::from_fn(move || {
-        Some(a.by_ref().take(chunk_size).collect()).filter(|chunk: &Vec<_>| !chunk.is_empty())
-    })
-}
-
 #[tokio::main]
 async fn main() {
     let _ = index_clear();
@@ -85,16 +78,15 @@ async fn main() {
     let files = parse_index_file(entry_file.into());
     println!("parsing index took {}.", timer.elapsed().unwrap());
 
-    let tasks = files
+    let iter = files
         .into_iter()
-        .map(|source_file| generator.generate_html(&gitinfo, source_file.into(), args.minify))
-        .collect_vec();
+        .map(|source_file| generator.generate_html(&gitinfo, source_file.into(), args.minify));
+    let stream = stream::iter(iter);
+    let _: Vec<_> = stream.buffer_unordered(cpu_num()).collect().await;
 
-    let cpu_num = std::thread::available_parallelism()
-        .map(|item| item.get())
-        .unwrap_or(16);
-    for i in chunked(tasks, cpu_num) {
-        future::join_all(i.into_iter()).await;
+    let asset_path = path::Path::new(&args.theme).join("assets");
+    if asset_path.is_dir() {
+        let _ = copy_directory(asset_path, "public", Default::default());
     }
 
     match index_list() {
@@ -114,7 +106,7 @@ async fn main() {
 
 fn init_logger() {
     use tracing_subscriber::{
-        fmt, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, EnvFilter,
+        EnvFilter, fmt, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt,
     };
     let log_level = std::env::var("RUST_LOG")
         .unwrap_or("INFO".into())
