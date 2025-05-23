@@ -41,22 +41,19 @@ impl AdocGenerator {
         Self { engine, config }
     }
 
-    pub async fn generate_html(&self, gitinfo: &GitInfo, source_file: PathBuf, need_minify: bool) {
-        let Ok(BuildContext {
+    pub async fn render_html(
+        &self,
+        ctx: BuildContext,
+        html: String,
+        gitinfo: &GitInfo,
+        need_minify: bool,
+    ) {
+        let BuildContext {
             source_dir,
             source_file,
             dest_dir,
             dest_file,
-        }) = Self::generate_build_context(source_file)
-        else {
-            return;
-        };
-
-        debug!("Generate file: {} -> {}", source_file, dest_file);
-        let html =
-            Self::generate_raw_page(self.config.clone(), source_file.clone(), dest_dir.clone())
-                .await;
-
+        } = ctx;
         let html = HtmlParser::new(&html);
 
         match dest_file.split_once("public/") {
@@ -113,6 +110,22 @@ impl AdocGenerator {
                 .map(|item| Self::move_assets(item, &source_dir, &dest_dir));
             futures::future::join_all(acts).await;
         }
+    }
+
+    pub async fn generate_html(&self, source_file: PathBuf) -> Option<(BuildContext, String)> {
+        let Ok(ctx) = Self::generate_build_context(source_file) else {
+            return None;
+        };
+
+        debug!("Generate file: {} -> {}", ctx.source_file, ctx.dest_file);
+        let html = Self::generate_raw_page(
+            self.config.clone(),
+            ctx.source_file.clone(),
+            ctx.dest_dir.clone(),
+        )
+        .await;
+
+        Some((ctx, html))
     }
 
     pub fn generate_build_context(source_file: PathBuf) -> Result<BuildContext, ()> {

@@ -104,28 +104,57 @@ async fn main() {
         files.len()
     ));
 
-    let total_files = files.len();
-    let pb = mpb.add(ProgressBar::new(total_files as u64));
-    pb.set_style(ProgressStyle::default_bar()
+    let raw_html = {
+        let total_files = files.len();
+        let pb = mpb.add(ProgressBar::new(total_files as u64));
+        pb.set_style(ProgressStyle::default_bar()
         .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({percent}%) {msg}")
         .unwrap()
         .progress_chars("#>-"));
-    pb.set_message("Generating HTML ...");
+        pb.set_message("Generating HTML ...");
 
-    let iter = files.into_iter().map(|source_file| async {
-        let pb_clone = pb.clone();
-        {
-            pb_clone.set_message(format!("Generated {} ...", source_file));
-            let result = generator
-                .generate_html(&gitinfo, source_file.into(), args.minify)
-                .await;
-            pb_clone.inc(1);
-            result
-        }
-    });
-    let stream = stream::iter(iter);
-    let _: Vec<_> = stream.buffer_unordered(cpu_num()).collect().await;
-    pb.finish_with_message("Generated all files");
+        let raw_html: Vec<_> = stream::iter(files.into_iter().map(|source_file| async {
+            let pb_clone = pb.clone();
+            {
+                pb_clone.set_message(format!("Generated {} ...", source_file));
+                let result = generator.generate_html(source_file.into()).await;
+                pb_clone.inc(1);
+                result
+            }
+        }))
+        .buffer_unordered(cpu_num())
+        .filter_map(|v| async { v })
+        .collect()
+        .await;
+        pb.finish_with_message("Generated all files");
+        raw_html
+    };
+
+    {
+        let total_files = raw_html.len();
+        let pb = mpb.add(ProgressBar::new(total_files as u64));
+        pb.set_style(ProgressStyle::default_bar()
+        .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({percent}%) {msg}")
+        .unwrap()
+        .progress_chars("#>-"));
+        pb.set_message("Render HTML ...");
+
+        let _: Vec<_> = stream::iter(raw_html.into_iter().map(|(ctx, html)| async {
+            let pb_clone = pb.clone();
+            {
+                pb_clone.set_message(format!("render {} ...", ctx.source_file));
+                let result = generator
+                    .render_html(ctx, html, &gitinfo, args.minify)
+                    .await;
+                pb_clone.inc(1);
+                result
+            }
+        }))
+        .buffer_unordered(cpu_num())
+        .collect()
+        .await;
+        pb.finish_with_message("Render all files");
+    }
 
     let asset_path = path::Path::new(&args.theme).join("assets");
     if asset_path.is_dir() {
