@@ -110,7 +110,7 @@ async fn main() {
         pb.set_style(ProgressStyle::default_bar()
         .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({percent}%) {msg}")
         .unwrap()
-        .progress_chars("#>-"));
+        .progress_chars("━━╾╴─"));
         pb.set_message("Generating HTML ...");
 
         let raw_html: Vec<_> = stream::iter(files.into_iter().map(|source_file| async {
@@ -136,7 +136,7 @@ async fn main() {
         pb.set_style(ProgressStyle::default_bar()
         .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({percent}%) {msg}")
         .unwrap()
-        .progress_chars("#>-"));
+        .progress_chars("━━╾╴─"));
         pb.set_message("Render HTML ...");
 
         let _: Vec<_> = stream::iter(raw_html.into_iter().map(|(ctx, html)| async {
