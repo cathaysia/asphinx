@@ -41,7 +41,7 @@ impl HtmlParser {
         if let Some(item) = self.html.select(&TAG_TITLE).next() {
             return item.inner_html().trim().into();
         }
-        unreachable!()
+        Default::default()
     }
 
     pub fn get_toc(&self) -> Option<String> {

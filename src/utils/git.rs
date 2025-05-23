@@ -30,10 +30,10 @@ impl GitInfo {
             tokio::task::spawn_blocking(move || {
                 pb.set_style(
                     ProgressStyle::default_spinner()
-                        .template("{spinner:.green} {elapsed_precise} {msg}")
+                        .template("{spinner:.green} [{elapsed_precise}] {msg}")
                         .unwrap(),
                 );
-                pb.set_message("Parse Git info...");
+                pb.enable_steady_tick(Duration::from_millis(100));
 
                 let f = || {
                     let repo = ThreadSafeRepository::discover(repo_dir)?.to_thread_local();
@@ -76,7 +76,7 @@ impl GitInfo {
                                 res = set
                                     .into_iter()
                                     .inspect(|filename| {
-                                        pb.set_message(format!("parse git info of: {}", filename));
+                                        pb.set_message(format!("Resolving git info: {}", filename));
                                     })
                                     .map(|filename| (filename, time))
                                     .collect();
@@ -89,7 +89,7 @@ impl GitInfo {
                         .rev()
                         .collect();
                     drop(mtimes);
-                    pb.set_message("parse git info completed");
+                    pb.finish_with_message("Resolving git info...");
                     Ok(()) as anyhow::Result<()>
                 };
                 let _ = f();

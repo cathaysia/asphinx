@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 mod config;
+use console::Emoji;
 use fs_more::{
     directory::{
         copy_directory_with_progress, CollidingSubDirectoryBehaviour, DestinationDirectoryRule,
@@ -14,21 +15,17 @@ pub mod error;
 mod generator;
 mod index;
 mod utils;
-use tokio::fs;
+use tokio::{fs, time::Instant};
 use utils::cpu_num;
 
 use std::path;
 
 use clap::Parser;
-use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
+use indicatif::{HumanDuration, MultiProgress, ProgressBar, ProgressStyle};
 use lazy_regex::regex;
 use tracing::*;
 
-use crate::{
-    config::Config,
-    generator::AdocGenerator,
-    utils::{Counter, GitInfo},
-};
+use crate::{config::Config, generator::AdocGenerator, utils::GitInfo};
 
 fn parse_index_file(file_path_str: String) -> Vec<String> {
     let mut result = Vec::<String>::new();
@@ -65,20 +62,21 @@ struct Args {
     theme: String,
 }
 
+static SPARKLE: Emoji<'_, '_> = Emoji("✨ ", ":-)");
+
 #[tokio::main]
 async fn main() {
     let _ = index_clear();
     let args = Args::parse();
     init_logger();
 
-    let mut timer = Counter::new();
+    let started = Instant::now();
 
     let mpb = MultiProgress::new();
 
     let pb = mpb.add(ProgressBar::new_spinner());
 
     let gitinfo = GitInfo::new(".".to_string(), pb).await.unwrap();
-    println!("checking Git took {}.", timer.elapsed().unwrap());
 
     let entry_file = "content/index.adoc";
 
@@ -86,12 +84,10 @@ async fn main() {
     debug!(?config);
     let generator = AdocGenerator::new(args.theme.clone(), config.asciidoc);
 
-    timer.reset();
-
     let pb = mpb.add(ProgressBar::new_spinner());
     pb.set_style(
         ProgressStyle::default_spinner()
-            .template("{spinner:.green} {elapsed_precise} {msg}")
+            .template("{spinner:.green} [{elapsed_precise}] {msg}")
             .unwrap(),
     );
     pb.set_message("Parse Index info...");
@@ -161,7 +157,7 @@ async fn main() {
         let pb = mpb.add(ProgressBar::new_spinner());
         pb.set_style(
             ProgressStyle::default_spinner()
-                .template("{spinner:.green} {elapsed_precise} {msg}")
+                .template("{spinner:.green} [{elapsed_precise}] {msg}")
                 .unwrap(),
         );
         pb.set_message("Copying assets...");
@@ -199,7 +195,7 @@ async fn main() {
     let pb = mpb.add(ProgressBar::new_spinner());
     pb.set_style(
         ProgressStyle::default_spinner()
-            .template("{spinner:.green} {elapsed_precise} {msg}")
+            .template("{spinner:.green} [{elapsed_precise}] {msg}")
             .unwrap(),
     );
     pb.set_message("Generating index file...");
@@ -218,7 +214,7 @@ async fn main() {
         }
     }
 
-    println!("build took {}.", timer.since_start().unwrap());
+    println!("{} Done in {}", SPARKLE, HumanDuration(started.elapsed()));
 }
 
 fn init_logger() {
