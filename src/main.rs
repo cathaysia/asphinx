@@ -3,8 +3,8 @@
 mod config;
 use fs_more::{
     directory::{
-        copy_directory, CollidingSubDirectoryBehaviour, DestinationDirectoryRule,
-        DirectoryCopyOptions,
+        copy_directory_with_progress, CollidingSubDirectoryBehaviour, DestinationDirectoryRule,
+        DirectoryCopyWithProgressOptions,
     },
     file::CollidingFileBehaviour,
 };
@@ -20,6 +20,7 @@ use utils::cpu_num;
 use std::path;
 
 use clap::Parser;
+use indicatif::{ProgressBar, ProgressStyle};
 use lazy_regex::regex;
 use tracing::*;
 
@@ -81,33 +82,79 @@ async fn main() {
     let generator = AdocGenerator::new(args.theme.clone(), config.asciidoc);
 
     timer.reset();
-    let files = parse_index_file(entry_file.into());
-    println!("parsing index took {}.", timer.elapsed().unwrap());
 
-    let iter = files
-        .into_iter()
-        .map(|source_file| generator.generate_html(&gitinfo, source_file.into(), args.minify));
+    let pb = ProgressBar::new_spinner();
+    pb.set_style(
+        ProgressStyle::default_spinner()
+            .template("{spinner:.green} {elapsed_precise} {msg}")
+            .unwrap(),
+    );
+    pb.set_message("Parse Index info...");
+    pb.enable_steady_tick(std::time::Duration::from_millis(100));
+
+    let files = parse_index_file(entry_file.into());
+
+    pb.finish_with_message(format!(
+        "Parse index completed, total {} file.",
+        files.len()
+    ));
+
+    let total_files = files.len();
+    let pb = ProgressBar::new(total_files as u64);
+    pb.set_style(ProgressStyle::default_bar()
+        .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({percent}%) {msg}")
+        .unwrap()
+        .progress_chars("#>-"));
+    pb.set_message("Generating HTML ...");
+
+    let iter = files.into_iter().map(|source_file| async {
+        let pb_clone = pb.clone();
+        {
+            pb_clone.set_message(format!("Generated {} ...", source_file));
+            let result = generator
+                .generate_html(&gitinfo, source_file.into(), args.minify)
+                .await;
+            pb_clone.inc(1);
+            result
+        }
+    });
     let stream = stream::iter(iter);
     let _: Vec<_> = stream.buffer_unordered(cpu_num()).collect().await;
+    pb.finish_with_message("Generated all files");
 
     let asset_path = path::Path::new(&args.theme).join("assets");
     if asset_path.is_dir() {
-        println!("copy  assets...");
+        let pb = ProgressBar::new_spinner();
+        pb.set_style(
+            ProgressStyle::default_spinner()
+                .template("{spinner:.green} {elapsed_precise} {msg}")
+                .unwrap(),
+        );
+        pb.set_message("Copying assets...");
+        pb.enable_steady_tick(std::time::Duration::from_millis(100));
+
         let pwd = std::env::current_dir().unwrap();
         let pwd = pwd.join("public/assets");
 
-        let _ = tokio::task::spawn_blocking(|| {
-            let ret = copy_directory(
+        let _ = tokio::task::spawn_blocking(move || {
+            let ret = copy_directory_with_progress(
                 asset_path,
                 pwd,
-                DirectoryCopyOptions {
+                DirectoryCopyWithProgressOptions {
                     destination_directory_rule: DestinationDirectoryRule::AllowNonEmpty {
                         colliding_file_behaviour: CollidingFileBehaviour::Overwrite,
                         colliding_subdirectory_behaviour: CollidingSubDirectoryBehaviour::Continue,
                     },
                     ..Default::default()
                 },
+                |process| {
+                    pb.set_message(format!(
+                        "{}/{}",
+                        process.current_operation_index, process.total_operations,
+                    ));
+                },
             );
+            pb.finish_with_message("Copy assets completed.");
             if let Err(e) = ret {
                 error!(%e);
             }
@@ -115,15 +162,25 @@ async fn main() {
         .await;
     }
 
+    let pb = ProgressBar::new_spinner();
+    pb.set_style(
+        ProgressStyle::default_spinner()
+            .template("{spinner:.green} {elapsed_precise} {msg}")
+            .unwrap(),
+    );
+    pb.set_message("Generating index file...");
+    pb.enable_steady_tick(std::time::Duration::from_millis(100));
+
     match index_list() {
         Ok(index) => {
             if let Ok(index) = serde_json::to_string(&index) {
                 debug!(%index);
                 let _ = fs::write("public/cache.json", &index).await;
+                pb.finish_with_message("Generated index file.");
             }
         }
         Err(err) => {
-            error!(%err);
+            pb.finish_with_message(format!("Generated index file failed: {err}"));
         }
     }
 

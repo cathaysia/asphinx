@@ -102,11 +102,17 @@ impl AdocGenerator {
         }
 
         let images = html.get_image_urls();
-        let acts = images
+        let filtered_images: Vec<_> = images
             .iter()
             .filter(|item| !item.starts_with("diag-"))
-            .map(|item| Self::move_assets(item, &source_dir, &dest_dir));
-        futures::future::join_all(acts).await;
+            .collect();
+
+        if !filtered_images.is_empty() {
+            let acts = filtered_images
+                .iter()
+                .map(|item| Self::move_assets(item, &source_dir, &dest_dir));
+            futures::future::join_all(acts).await;
+        }
     }
 
     pub fn generate_build_context(source_file: PathBuf) -> Result<BuildContext, ()> {
