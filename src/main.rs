@@ -20,7 +20,7 @@ use utils::cpu_num;
 use std::path;
 
 use clap::Parser;
-use indicatif::{ProgressBar, ProgressStyle};
+use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use lazy_regex::regex;
 use tracing::*;
 
@@ -72,7 +72,12 @@ async fn main() {
     init_logger();
 
     let mut timer = Counter::new();
-    let gitinfo = GitInfo::new(".").unwrap();
+
+    let mpb = MultiProgress::new();
+
+    let pb = mpb.add(ProgressBar::new_spinner());
+
+    let gitinfo = GitInfo::new(".".to_string(), pb).await.unwrap();
     println!("checking Git took {}.", timer.elapsed().unwrap());
 
     let entry_file = "content/index.adoc";
@@ -83,7 +88,7 @@ async fn main() {
 
     timer.reset();
 
-    let pb = ProgressBar::new_spinner();
+    let pb = mpb.add(ProgressBar::new_spinner());
     pb.set_style(
         ProgressStyle::default_spinner()
             .template("{spinner:.green} {elapsed_precise} {msg}")
@@ -100,7 +105,7 @@ async fn main() {
     ));
 
     let total_files = files.len();
-    let pb = ProgressBar::new(total_files as u64);
+    let pb = mpb.add(ProgressBar::new(total_files as u64));
     pb.set_style(ProgressStyle::default_bar()
         .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({percent}%) {msg}")
         .unwrap()
@@ -124,7 +129,7 @@ async fn main() {
 
     let asset_path = path::Path::new(&args.theme).join("assets");
     if asset_path.is_dir() {
-        let pb = ProgressBar::new_spinner();
+        let pb = mpb.add(ProgressBar::new_spinner());
         pb.set_style(
             ProgressStyle::default_spinner()
                 .template("{spinner:.green} {elapsed_precise} {msg}")
@@ -162,7 +167,7 @@ async fn main() {
         .await;
     }
 
-    let pb = ProgressBar::new_spinner();
+    let pb = mpb.add(ProgressBar::new_spinner());
     pb.set_style(
         ProgressStyle::default_spinner()
             .template("{spinner:.green} {elapsed_precise} {msg}")

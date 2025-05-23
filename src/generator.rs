@@ -66,7 +66,7 @@ impl AdocGenerator {
                     (
                         html.text(),
                         html.get_title(),
-                        gitinfo.get_last_commit_time_of_file(&source_file),
+                        gitinfo.get_last_commit_time_of_file(&source_file).await,
                     ),
                 );
             }
@@ -76,7 +76,7 @@ impl AdocGenerator {
                     (
                         html.text(),
                         html.get_title(),
-                        gitinfo.get_last_commit_time_of_file(&source_file),
+                        gitinfo.get_last_commit_time_of_file(&source_file).await,
                     ),
                 );
             }
@@ -92,7 +92,7 @@ impl AdocGenerator {
             content: html.get_content(),
             toc: html.get_toc(),
             footnotes: html.get_footnotes(),
-            last_modify_date: gitinfo.get_last_commit_time_of_file(&source_file),
+            last_modify_date: gitinfo.get_last_commit_time_of_file(&source_file).await,
             ancestors: Self::generate_pathes(&dest_file),
         };
 
