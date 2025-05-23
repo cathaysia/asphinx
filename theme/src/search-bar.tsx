@@ -183,7 +183,7 @@ function padTwoDigits(num: number) {
 }
 
 export function dateInYyyyMmDdHhMmSs(date: Date) {
-  // :::: Exmple Usage ::::
+  // :::: Example Usage ::::
   // The function takes a Date object as a parameter and formats the date as YYYY-MM-DD hh:mm:ss.
   // 👇 2023-04-11 16:21:23 (yyyy-mm-dd hh:mm:ss)
   //console.log(dateInYyyyMmDdHhMmSs(new Date()));
@@ -197,7 +197,7 @@ export function dateInYyyyMmDdHhMmSs(date: Date) {
 }
 
 export function dateInYyyyMmDd(date: Date) {
-  // :::: Exmple Usage ::::
+  // :::: Example Usage ::::
   // The function takes a Date object as a parameter and formats the date as YYYY-MM-DD hh:mm:ss.
   // 👇 2023-04-11 16:21:23 (yyyy-mm-dd hh:mm:ss)
   //console.log(dateInYyyyMmDdHhMmSs(new Date()));

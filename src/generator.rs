@@ -93,7 +93,7 @@ impl AdocGenerator {
             toc: html.get_toc(),
             footnotes: html.get_footnotes(),
             last_modify_date: gitinfo.get_last_commit_time_of_file(&source_file).await,
-            ancestors: Self::generate_pathes(&dest_file),
+            ancestors: Self::generate_paths(&dest_file),
         };
 
         let document = self.render(&document, need_minify);
@@ -131,7 +131,7 @@ impl AdocGenerator {
         let source_dir: String = source_file.parent().unwrap().to_str().unwrap().into();
         let dest_dir = source_dir.replace("content", "public");
         if let Err(err) = std::fs::create_dir_all(&dest_dir) {
-            error!("Error happend whe create file {}: {}", dest_dir, err);
+            error!("Error happens when create file {}: {}", dest_dir, err);
             return Err(());
         }
 
@@ -186,18 +186,18 @@ impl AdocGenerator {
         output.build().await
     }
 
-    pub fn generate_pathes(dest_file: &str) -> Vec<(String, String)> {
-        let pathes: Vec<String> = dest_file
+    pub fn generate_paths(dest_file: &str) -> Vec<(String, String)> {
+        let paths: Vec<String> = dest_file
             .replace("public/", "")
             .split('/')
             .map(|item| item.to_string())
             .collect();
         let mut res: Vec<(String, String)> = Default::default();
-        for idx in 1..pathes.len() {
-            let a = &pathes[0..idx];
+        for idx in 1..paths.len() {
+            let a = &paths[0..idx];
             let mut v = a.join("/").to_string();
             v.insert(0, '/');
-            res.push((pathes[idx - 1].clone(), v));
+            res.push((paths[idx - 1].clone(), v));
         }
 
         res
