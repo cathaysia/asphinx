@@ -1,9 +1,4 @@
 = Getting Started
-:toc: left
-:toclevels: 3
-:sectanchors:
-:sectlinks:
-:source-highlighter: pygments
 
 This guide will help you get up and running with Asphinx quickly.
 
@@ -36,11 +31,3 @@ Asphinx runs on:
 1. Start with xref:installation.adoc[Installation] to set up Asphinx
 2. Follow the xref:quick-start.adoc[Quick Start] guide to create your first site
 3. Explore the xref:../user-guide/index.adoc[User Guide] for advanced features
-
-== Need Help?
-
-If you encounter any issues during setup:
-
-* Check the xref:../user-guide/troubleshooting.adoc[Troubleshooting Guide]
-* Review the xref:../user-guide/faq.adoc[FAQ]
-* Open an issue on our https://github.com/your-username/asphinx[GitHub repository]

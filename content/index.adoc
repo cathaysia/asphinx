@@ -25,18 +25,3 @@ Asphinx is a high-performance static site generator built with Rust that transfo
 
 * xref:getting-started/index.adoc[Getting Started] - Installation and basic usage
 * xref:user-guide/index.adoc[User Guide] - Comprehensive usage documentation
-* xref:configuration/index.adoc[Configuration] - Configuration options and customization
-* xref:theme-development/index.adoc[Theme Development] - Creating and customizing themes
-* xref:api-reference/index.adoc[API Reference] - Technical reference documentation
-
-== Getting Help
-
-If you need help with Asphinx:
-
-* Check the xref:user-guide/troubleshooting.adoc[Troubleshooting Guide]
-* Browse the xref:user-guide/faq.adoc[Frequently Asked Questions]
-* Visit our https://github.com/your-username/asphinx[GitHub Repository]
-
-== Contributing
-
-Asphinx is an open-source project and we welcome contributions! See our xref:contributing/index.adoc[Contributing Guide] to get started.
