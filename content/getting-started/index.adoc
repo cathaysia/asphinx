@@ -1,0 +1,46 @@
+= Getting Started
+:toc: left
+:toclevels: 3
+:sectanchors:
+:sectlinks:
+:source-highlighter: pygments
+
+This guide will help you get up and running with Asphinx quickly.
+
+== Table of Contents
+
+* xref:installation.adoc[Installation] - How to install Asphinx
+* xref:quick-start.adoc[Quick Start] - Create your first documentation site
+* xref:basic-usage.adoc[Basic Usage] - Learn the fundamentals
+* xref:project-structure.adoc[Project Structure] - Understanding the file organization
+
+== Prerequisites
+
+Before installing Asphinx, make sure you have:
+
+* **Rust 1.70+**: Required for building Asphinx
+* **Node.js 18+**: Required for theme development
+* **AsciiDoctor**: Required for document processing
+* **Git**: For version control (recommended)
+
+== System Requirements
+
+Asphinx runs on:
+
+* Linux (Ubuntu 20.04+, Debian 10+, etc.)
+* macOS (10.15+)
+* Windows (10+)
+
+== Next Steps
+
+1. Start with xref:installation.adoc[Installation] to set up Asphinx
+2. Follow the xref:quick-start.adoc[Quick Start] guide to create your first site
+3. Explore the xref:../user-guide/index.adoc[User Guide] for advanced features
+
+== Need Help?
+
+If you encounter any issues during setup:
+
+* Check the xref:../user-guide/troubleshooting.adoc[Troubleshooting Guide]
+* Review the xref:../user-guide/faq.adoc[FAQ]
+* Open an issue on our https://github.com/your-username/asphinx[GitHub repository]

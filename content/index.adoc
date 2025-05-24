@@ -1,6 +1,42 @@
-# A note
+= Asphinx Documentation
+:toc: left
+:toclevels: 3
+:sectanchors:
+:sectlinks:
+:source-highlighter: pygments
 
-- xref:book1/index.adoc[book1]
-- xref:book2/index.adoc[book2]
+Welcome to Asphinx, a modern AsciiDoc static site generator designed for technical documentation and books.
 
-NOTE: this is a note.
+== Overview
+
+Asphinx is a high-performance static site generator built with Rust that transforms AsciiDoc documents into beautiful, searchable websites. It combines the power of AsciiDoc with modern web technologies to create fast, responsive documentation sites.
+
+== Key Features
+
+* 🚀 **High Performance**: Built with Rust for maximum speed and efficiency
+* 📚 **Full AsciiDoc Support**: Complete support for AsciiDoc syntax and extensions
+* 🎨 **Modern Theme**: Responsive design with React and Tailwind CSS
+* 🔍 **Built-in Search**: Full-text search functionality
+* 📊 **Rich Diagrams**: Support for PlantUML, Mermaid, Graphviz, and more
+* ⚡ **Fast Builds**: Intelligent caching and parallel processing
+* 🌐 **SEO Optimized**: Clean HTML output optimized for search engines
+
+== Quick Navigation
+
+* xref:getting-started/index.adoc[Getting Started] - Installation and basic usage
+* xref:user-guide/index.adoc[User Guide] - Comprehensive usage documentation
+* xref:configuration/index.adoc[Configuration] - Configuration options and customization
+* xref:theme-development/index.adoc[Theme Development] - Creating and customizing themes
+* xref:api-reference/index.adoc[API Reference] - Technical reference documentation
+
+== Getting Help
+
+If you need help with Asphinx:
+
+* Check the xref:user-guide/troubleshooting.adoc[Troubleshooting Guide]
+* Browse the xref:user-guide/faq.adoc[Frequently Asked Questions]
+* Visit our https://github.com/your-username/asphinx[GitHub Repository]
+
+== Contributing
+
+Asphinx is an open-source project and we welcome contributions! See our xref:contributing/index.adoc[Contributing Guide] to get started.

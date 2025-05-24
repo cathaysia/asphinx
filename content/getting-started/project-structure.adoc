@@ -1,0 +1,473 @@
+= Project Structure
+:toc: left
+:toclevels: 3
+:sectanchors:
+:sectlinks:
+:source-highlighter: pygments
+
+Understanding how to organize your Asphinx project for maximum efficiency and maintainability.
+
+== Overview
+
+A well-organized project structure is crucial for maintaining large documentation sites. Asphinx follows conventions that make your content easy to navigate and maintain.
+
+== Standard Project Layout
+
+[source,text]
+----
+my-project/
+├── content/                    # Documentation content
+│   ├── index.adoc             # Main entry point
+│   ├── getting-started/       # Getting started section
+│   │   ├── index.adoc
+│   │   ├── installation.adoc
+│   │   └── quick-start.adoc
+│   ├── user-guide/           # User guide section
+│   │   ├── index.adoc
+│   │   ├── basic-concepts.adoc
+│   │   └── advanced-features.adoc
+│   ├── reference/            # Reference documentation
+│   │   ├── index.adoc
+│   │   ├── api/
+│   │   └── configuration/
+│   └── assets/               # Shared assets
+│       ├── images/
+│       └── files/
+├── theme/                     # Theme files
+│   ├── src/                  # Theme source code
+│   │   ├── main.tsx
+│   │   ├── style.css
+│   │   └── components/
+│   ├── layouts/              # HTML templates
+│   │   └── page.html
+│   ├── assets/               # Theme assets
+│   └── package.json
+├── asphinx.toml              # Configuration file
+├── .gitignore                # Git ignore rules
+└── public/                   # Generated output (auto-created)
+    ├── index.html
+    ├── getting-started/
+    ├── user-guide/
+    ├── reference/
+    ├── assets/
+    └── cache.json
+----
+
+== Content Directory Structure
+
+=== Hierarchical Organization
+
+Organize content hierarchically to reflect your documentation structure:
+
+[source,text]
+----
+content/
+├── index.adoc                 # Root index
+├── section1/
+│   ├── index.adoc            # Section index
+│   ├── topic1.adoc           # Individual topics
+│   ├── topic2.adoc
+│   └── subsection/
+│       ├── index.adoc        # Subsection index
+│       └── subtopic.adoc
+└── section2/
+    ├── index.adoc
+    └── ...
+----
+
+=== Index Files
+
+Every directory should contain an `index.adoc` file that:
+
+1. Introduces the section
+2. Lists and links to subsections
+3. Provides navigation context
+
+Example section index:
+
+[source,asciidoc]
+----
+= User Guide
+:toc: left
+
+This section covers everything you need to know about using our software.
+
+== Getting Started
+
+* xref:installation.adoc[Installation Guide]
+* xref:first-steps.adoc[First Steps]
+* xref:basic-concepts.adoc[Basic Concepts]
+
+== Advanced Topics
+
+* xref:advanced-features.adoc[Advanced Features]
+* xref:customization.adoc[Customization]
+* xref:troubleshooting.adoc[Troubleshooting]
+
+== Reference
+
+* xref:../reference/api/index.adoc[API Reference]
+* xref:../reference/configuration/index.adoc[Configuration Reference]
+----
+
+=== File Naming Conventions
+
+Use consistent, descriptive file names:
+
+[cols="2,3,2"]
+|===
+|Pattern |Example |Purpose
+
+|`index.adoc`
+|`user-guide/index.adoc`
+|Section entry points
+
+|`kebab-case.adoc`
+|`getting-started.adoc`
+|Regular content pages
+
+|`noun-verb.adoc`
+|`database-setup.adoc`
+|Task-oriented pages
+
+|`concept-name.adoc`
+|`user-management.adoc`
+|Conceptual topics
+|===
+
+== Asset Management
+
+=== Images
+
+Organize images logically:
+
+[source,text]
+----
+content/
+├── assets/
+│   └── images/
+│       ├── common/           # Shared images
+│       │   ├── logo.png
+│       │   └── icons/
+│       ├── getting-started/  # Section-specific images
+│       │   ├── installation-screen.png
+│       │   └── setup-wizard.png
+│       └── user-guide/
+│           ├── dashboard.png
+│           └── settings.png
+----
+
+Reference images using relative paths:
+
+[source,asciidoc]
+----
+# From content/getting-started/installation.adoc
+image::../assets/images/getting-started/installation-screen.png[Installation Screen]
+
+# From content/user-guide/dashboard.adoc
+image::../assets/images/user-guide/dashboard.png[Dashboard Overview]
+----
+
+=== Other Assets
+
+Store downloadable files and resources:
+
+[source,text]
+----
+content/
+└── assets/
+    ├── files/
+    │   ├── sample-config.toml
+    │   ├── templates/
+    │   └── examples/
+    └── downloads/
+        ├── software-v1.0.zip
+        └── documentation.pdf
+----
+
+== Theme Structure
+
+=== Source Files
+
+[source,text]
+----
+theme/
+├── src/
+│   ├── main.tsx              # React entry point
+│   ├── style.css             # Global styles
+│   ├── search-bar.tsx        # Search component
+│   ├── components/           # Reusable components
+│   │   ├── ui/              # UI primitives
+│   │   └── layout/          # Layout components
+│   └── lib/                 # Utility functions
+├── layouts/
+│   └── page.html            # HTML template
+├── assets/                  # Static assets
+│   ├── fonts/
+│   ├── images/
+│   └── icons/
+├── package.json             # Node.js dependencies
+└── vite.config.ts          # Build configuration
+----
+
+=== Build Output
+
+After building the theme:
+
+[source,text]
+----
+theme/
+├── dist/                    # Built theme files
+│   ├── assets/
+│   │   ├── main.js
+│   │   ├── style.css
+│   │   └── ...
+│   └── layouts/
+│       └── page.html
+----
+
+== Configuration Files
+
+=== Main Configuration
+
+`asphinx.toml` contains project-wide settings:
+
+[source,toml]
+----
+# Project configuration
+no_default = false
+
+[asciidoc]
+extensions = ["asciidoctor-diagram", "asciidoctor-mathematical"]
+
+[asciidoc.attributes]
+icons = "font"
+toc = 1
+experimental = ""
+source-highlighter = "pygments"
+sectanchors = ""
+sectlinks = ""
+
+# Diagram formats
+plantuml-format = "svg"
+mermaid-format = "svg"
+graphviz-format = "svg"
+----
+
+=== Git Configuration
+
+`.gitignore` should exclude generated files:
+
+[source,text]
+----
+# Generated output
+public/
+.asphinx-cache/
+
+# Theme build artifacts
+theme/dist/
+theme/node_modules/
+theme/.vite/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+----
+
+== Scaling Large Projects
+
+=== Multi-Book Structure
+
+For large projects with multiple books or products:
+
+[source,text]
+----
+content/
+├── index.adoc               # Main landing page
+├── product-a/
+│   ├── index.adoc
+│   ├── user-guide/
+│   ├── admin-guide/
+│   └── api-reference/
+├── product-b/
+│   ├── index.adoc
+│   ├── getting-started/
+│   └── tutorials/
+└── shared/
+    ├── glossary.adoc
+    ├── legal/
+    └── assets/
+----
+
+=== Modular Themes
+
+For different sections requiring different styling:
+
+[source,text]
+----
+themes/
+├── default/                 # Main theme
+├── api-docs/               # API documentation theme
+└── tutorials/              # Tutorial-specific theme
+----
+
+Build with different themes:
+
+[source,bash]
+----
+# Build main documentation
+asphinx --theme themes/default
+
+# Build API docs with specialized theme
+asphinx --theme themes/api-docs
+----
+
+== Best Practices
+
+=== Content Organization
+
+1. **Group Related Content**: Keep related topics in the same directory
+2. **Use Descriptive Names**: File and directory names should be self-explanatory
+3. **Maintain Consistent Depth**: Avoid deeply nested structures (max 3-4 levels)
+4. **Create Clear Navigation**: Every section should have a clear index page
+
+=== Asset Management
+
+1. **Optimize Images**: Compress images before adding them
+2. **Use Consistent Naming**: Follow naming conventions for assets
+3. **Organize by Section**: Group assets by the content that uses them
+4. **Version Control**: Include assets in version control
+
+=== Theme Development
+
+1. **Separate Concerns**: Keep styling, logic, and templates separate
+2. **Use Build Tools**: Leverage modern build tools for optimization
+3. **Test Responsiveness**: Ensure themes work on all device sizes
+4. **Document Customizations**: Document any theme modifications
+
+== Migration Strategies
+
+=== From Other Tools
+
+==== From GitBook
+
+[source,bash]
+----
+# Convert GitBook structure
+mkdir -p content
+cp -r gitbook-content/* content/
+# Rename .md files to .adoc and convert syntax
+find content -name "*.md" -exec rename 's/\.md$/.adoc/' {} \;
+----
+
+==== From Sphinx
+
+[source,bash]
+----
+# Convert reStructuredText to AsciiDoc
+pip install pandoc
+find source -name "*.rst" -exec pandoc -f rst -t asciidoc {} -o content/{}.adoc \;
+----
+
+=== Restructuring Existing Projects
+
+1. **Plan the New Structure**: Design the target structure
+2. **Create Migration Script**: Automate file moves and updates
+3. **Update Cross-References**: Fix all `xref:` links
+4. **Test Thoroughly**: Verify all links and assets work
+
+Example migration script:
+
+[source,bash]
+----
+#!/bin/bash
+# migrate.sh
+
+# Create new structure
+mkdir -p content/{getting-started,user-guide,reference}
+
+# Move files
+mv old-docs/installation.adoc content/getting-started/
+mv old-docs/user-manual.adoc content/user-guide/index.adoc
+
+# Update cross-references
+sed -i 's/xref:installation.adoc/xref:getting-started\/installation.adoc/g' content/**/*.adoc
+
+echo "Migration complete. Please review and test."
+----
+
+== Troubleshooting Structure Issues
+
+=== Common Problems
+
+==== Broken Cross-References
+
+**Problem**: Links don't work after restructuring
+
+**Solution**: Use relative paths consistently:
+
+[source,asciidoc]
+----
+# Good: relative to current file
+xref:../user-guide/basics.adoc[Basics]
+
+# Bad: absolute paths
+xref:/user-guide/basics.adoc[Basics]
+----
+
+==== Missing Index Files
+
+**Problem**: Directories without index files cause navigation issues
+
+**Solution**: Ensure every directory has an `index.adoc`:
+
+[source,bash]
+----
+# Find directories without index files
+find content -type d -exec test ! -f {}/index.adoc \; -print
+
+# Create missing index files
+for dir in $(find content -type d -exec test ! -f {}/index.adoc \; -print); do
+    echo "= $(basename $dir | tr '-' ' ' | title)" > "$dir/index.adoc"
+done
+----
+
+==== Asset Path Issues
+
+**Problem**: Images or files not found
+
+**Solution**: Verify paths relative to the `.adoc` file:
+
+[source,bash]
+----
+# Check for missing assets
+grep -r "image::" content/ | while read line; do
+    file=$(echo $line | cut -d: -f1)
+    asset=$(echo $line | sed 's/.*image::\([^[]*\).*/\1/')
+    if [ ! -f "$(dirname $file)/$asset" ]; then
+        echo "Missing: $asset in $file"
+    fi
+done
+----
+
+== Next Steps
+
+Now that you understand project structure:
+
+* Learn about xref:../user-guide/writing-content.adoc[Writing Content]
+* Explore xref:../configuration/index.adoc[Configuration Options]
+* Check out xref:../theme-development/index.adoc[Theme Development]
+
+== Getting Help
+
+For structure-related questions:
+
+* Review the xref:../user-guide/troubleshooting.adoc[Troubleshooting Guide]
+* Check our https://github.com/your-username/asphinx/discussions[GitHub Discussions]
+* Look at example projects in our https://github.com/your-username/asphinx-examples[Examples Repository]

@@ -1,0 +1,326 @@
+= Quick Start
+:toc: left
+:toclevels: 3
+:sectanchors:
+:sectlinks:
+:source-highlighter: pygments
+
+Get your first Asphinx documentation site up and running in minutes.
+
+== Create Your First Site
+
+=== Step 1: Create Project Directory
+
+[source,bash]
+----
+mkdir my-docs
+cd my-docs
+----
+
+=== Step 2: Initialize Project Structure
+
+Create the basic directory structure:
+
+[source,bash]
+----
+mkdir -p content/{getting-started,user-guide}
+mkdir -p theme
+touch asphinx.toml
+----
+
+Your project structure should look like:
+
+[source,text]
+----
+my-docs/
+├── content/
+│   ├── index.adoc
+│   ├── getting-started/
+│   └── user-guide/
+├── theme/
+└── asphinx.toml
+----
+
+=== Step 3: Create Main Index File
+
+Create `content/index.adoc`:
+
+[source,asciidoc]
+----
+= My Documentation Site
+:toc: left
+:sectanchors:
+:sectlinks:
+
+Welcome to my documentation site built with Asphinx!
+
+== Getting Started
+
+* xref:getting-started/installation.adoc[Installation Guide]
+* xref:getting-started/basic-usage.adoc[Basic Usage]
+
+== User Guide
+
+* xref:user-guide/writing-content.adoc[Writing Content]
+* xref:user-guide/configuration.adoc[Configuration]
+
+== About
+
+This site was generated using https://github.com/your-username/asphinx[Asphinx],
+a modern AsciiDoc static site generator.
+----
+
+=== Step 4: Create Sample Content
+
+Create `content/getting-started/installation.adoc`:
+
+[source,asciidoc]
+----
+= Installation Guide
+
+This guide will help you install the software.
+
+== Prerequisites
+
+Before you begin, ensure you have:
+
+* A computer
+* Internet connection
+* Basic command line knowledge
+
+== Installation Steps
+
+. Download the software
+. Extract the archive
+. Run the installer
+. Follow the setup wizard
+
+== Verification
+
+To verify the installation:
+
+[source,bash]
+----
+software --version
+----
+
+You should see version information displayed.
+----
+
+=== Step 5: Configure Asphinx
+
+Create `asphinx.toml`:
+
+[source,toml]
+----
+# Asphinx Configuration
+no_default = false
+
+[asciidoc]
+extensions = ["asciidoctor-diagram"]
+
+[asciidoc.attributes]
+icons = "font"
+toc = 1
+experimental = ""
+source-highlighter = "pygments"
+sectanchors = ""
+sectlinks = ""
+----
+
+=== Step 6: Set Up Theme
+
+Clone or copy the default theme:
+
+[source,bash]
+----
+# If you have the Asphinx repository
+cp -r /path/to/asphinx/theme/* theme/
+
+# Or create a minimal theme structure
+mkdir -p theme/{src,layouts}
+----
+
+Build the theme:
+
+[source,bash]
+----
+cd theme
+npm install
+npm run build
+cd ..
+----
+
+=== Step 7: Generate Your Site
+
+Run Asphinx to generate your documentation site:
+
+[source,bash]
+----
+asphinx --theme theme
+----
+
+This will:
+
+1. Parse your AsciiDoc files
+2. Generate HTML pages
+3. Apply the theme
+4. Create a searchable index
+5. Output everything to the `public/` directory
+
+=== Step 8: Preview Your Site
+
+Open the generated site in your browser:
+
+[source,bash]
+----
+# On macOS
+open public/index.html
+
+# On Linux
+xdg-open public/index.html
+
+# On Windows
+start public/index.html
+
+# Or use a local server
+cd public
+python -m http.server 8000
+# Then visit http://localhost:8000
+----
+
+== Understanding the Output
+
+After running Asphinx, you'll find:
+
+[source,text]
+----
+public/
+├── index.html              # Main page
+├── getting-started/
+│   └── installation.html   # Generated from .adoc files
+├── assets/                 # Theme assets (CSS, JS, images)
+├── cache.json             # Search index
+└── ...                    # Other generated files
+----
+
+== Next Steps
+
+Congratulations! You've created your first Asphinx site. Here's what to explore next:
+
+=== Learn More About Content
+
+* xref:../user-guide/writing-content.adoc[Writing Content] - Learn AsciiDoc syntax
+* xref:../user-guide/organizing-content.adoc[Organizing Content] - Structure your documentation
+* xref:../user-guide/cross-references.adoc[Cross References] - Link between pages
+
+=== Customize Your Site
+
+* xref:../configuration/index.adoc[Configuration] - Customize Asphinx behavior
+* xref:../theme-development/index.adoc[Theme Development] - Create custom themes
+* xref:../user-guide/assets.adoc[Managing Assets] - Add images and files
+
+=== Advanced Features
+
+* xref:../user-guide/diagrams.adoc[Diagrams] - Add PlantUML, Mermaid diagrams
+* xref:../user-guide/math.adoc[Mathematical Expressions] - Include LaTeX math
+* xref:../user-guide/search.adoc[Search Configuration] - Customize search behavior
+
+== Common Next Actions
+
+=== Add More Content
+
+Create additional pages by adding `.adoc` files to your content directory:
+
+[source,bash]
+----
+# Create a new section
+mkdir content/tutorials
+touch content/tutorials/index.adoc
+touch content/tutorials/first-tutorial.adoc
+----
+
+Remember to link to new pages from your main index or section indexes.
+
+=== Customize Styling
+
+Modify the theme to match your brand:
+
+[source,bash]
+----
+cd theme
+# Edit src/style.css for custom styles
+# Modify src/main.tsx for React components
+npm run build
+cd ..
+asphinx --theme theme
+----
+
+=== Set Up Automatic Building
+
+Create a build script for easier regeneration:
+
+[source,bash]
+----
+#!/bin/bash
+# build.sh
+cd theme
+npm run build
+cd ..
+asphinx --theme theme --minify
+echo "Site built successfully!"
+----
+
+Make it executable:
+
+[source,bash]
+----
+chmod +x build.sh
+./build.sh
+----
+
+== Troubleshooting
+
+=== Theme Build Fails
+
+If the theme build fails:
+
+[source,bash]
+----
+cd theme
+rm -rf node_modules package-lock.json
+npm install
+npm run build
+----
+
+=== Missing Dependencies
+
+If you get errors about missing AsciiDoctor extensions:
+
+[source,bash]
+----
+gem install asciidoctor-diagram asciidoctor-mathematical
+----
+
+=== Permission Issues
+
+If you get permission errors:
+
+[source,bash]
+----
+# Make sure you have write permissions
+chmod -R u+w .
+
+# Or run with appropriate permissions
+sudo asphinx --theme theme
+----
+
+== Getting Help
+
+If you need help:
+
+* Check the xref:../user-guide/troubleshooting.adoc[Troubleshooting Guide]
+* Review the xref:../user-guide/faq.adoc[FAQ]
+* Visit our https://github.com/your-username/asphinx[GitHub repository]
+
+Ready to dive deeper? Continue with the xref:basic-usage.adoc[Basic Usage] guide.

@@ -1,4 +1,0 @@
-= book1 ch1
-
-
-image::./assets/empty.svg[]

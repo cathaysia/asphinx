@@ -1,4 +1,0 @@
-= book2
-
-- xref:ch1.adoc[ch1]
-- xref:ch2.adoc[ch2]

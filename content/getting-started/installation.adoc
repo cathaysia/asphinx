@@ -1,0 +1,215 @@
+= Installation
+:toc: left
+:toclevels: 3
+:sectanchors:
+:sectlinks:
+:source-highlighter: pygments
+
+Learn how to install Asphinx on your system.
+
+== Prerequisites
+
+Before installing Asphinx, ensure you have the following dependencies:
+
+=== Rust
+
+Asphinx is built with Rust, so you'll need the Rust toolchain:
+
+[source,bash]
+----
+# Install Rust using rustup
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source ~/.cargo/env
+
+# Verify installation
+rustc --version
+cargo --version
+----
+
+=== Node.js
+
+Node.js is required for theme development and building:
+
+[source,bash]
+----
+# Using Node Version Manager (recommended)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+nvm install 18
+nvm use 18
+
+# Verify installation
+node --version
+npm --version
+----
+
+=== AsciiDoctor
+
+AsciiDoctor is required for processing AsciiDoc files:
+
+==== Ubuntu/Debian
+
+[source,bash]
+----
+sudo apt-get update
+sudo apt-get install -y asciidoctor
+gem install asciidoctor-mathematical asciidoctor-diagram
+----
+
+==== macOS
+
+[source,bash]
+----
+# Using Homebrew
+brew install asciidoctor
+
+# Install extensions
+gem install asciidoctor-mathematical asciidoctor-diagram
+----
+
+==== Windows
+
+[source,powershell]
+----
+# Using Chocolatey
+choco install ruby
+gem install asciidoctor asciidoctor-mathematical asciidoctor-diagram
+----
+
+== Installation Methods
+
+=== From Source (Recommended)
+
+Clone the repository and build from source:
+
+[source,bash]
+----
+# Clone the repository
+git clone https://github.com/your-username/asphinx.git
+cd asphinx
+
+# Build the project
+cargo build --release
+
+# The binary will be available at target/release/asphinx
+----
+
+=== Using Cargo
+
+Install directly from crates.io (when available):
+
+[source,bash]
+----
+cargo install asphinx
+----
+
+== Verification
+
+Verify your installation by running:
+
+[source,bash]
+----
+# Check Asphinx version
+./target/release/asphinx --help
+
+# Or if installed via cargo
+asphinx --help
+----
+
+You should see output similar to:
+
+[source,text]
+----
+asphinx 0.1.0
+A modern AsciiDoc static site generator
+
+USAGE:
+    asphinx [OPTIONS] --theme <THEME>
+
+OPTIONS:
+        --minify         Enable HTML minification
+        --theme <THEME>  Path to the theme directory
+    -h, --help           Print help information
+----
+
+== Post-Installation Setup
+
+=== Add to PATH
+
+If you built from source, you may want to add Asphinx to your PATH:
+
+[source,bash]
+----
+# Add to ~/.bashrc or ~/.zshrc
+export PATH="$PATH:/path/to/asphinx/target/release"
+----
+
+=== Shell Completion
+
+Generate shell completion scripts:
+
+[source,bash]
+----
+# For Bash
+asphinx --generate-completion bash > ~/.local/share/bash-completion/completions/asphinx
+
+# For Zsh
+asphinx --generate-completion zsh > ~/.local/share/zsh/site-functions/_asphinx
+
+# For Fish
+asphinx --generate-completion fish > ~/.config/fish/completions/asphinx.fish
+----
+
+== Troubleshooting
+
+=== Common Issues
+
+==== Rust Not Found
+
+If you get "rustc not found" error:
+
+[source,bash]
+----
+# Reload your shell configuration
+source ~/.cargo/env
+
+# Or restart your terminal
+----
+
+==== AsciiDoctor Extensions Missing
+
+If diagram generation fails:
+
+[source,bash]
+----
+# Install missing extensions
+gem install asciidoctor-diagram asciidoctor-mathematical
+
+# For PlantUML support
+sudo apt-get install plantuml  # Ubuntu/Debian
+brew install plantuml          # macOS
+----
+
+==== Permission Denied
+
+If you get permission errors:
+
+[source,bash]
+----
+# Make the binary executable
+chmod +x target/release/asphinx
+
+# Or run with sudo for system-wide installation
+sudo cp target/release/asphinx /usr/local/bin/
+----
+
+=== Getting Help
+
+If you encounter issues not covered here:
+
+1. Check the xref:../user-guide/troubleshooting.adoc[Troubleshooting Guide]
+2. Search existing https://github.com/your-username/asphinx/issues[GitHub Issues]
+3. Create a new issue with your system details and error messages
+
+== Next Steps
+
+Now that Asphinx is installed, continue with the xref:quick-start.adoc[Quick Start] guide to create your first documentation site.
