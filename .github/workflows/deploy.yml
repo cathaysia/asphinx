@@ -1,0 +1,56 @@
+name: Build and Deploy to GitHub Pages
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'content/**'
+  workflow_dispatch:
+
+permissions:
+  pages: write
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: make fonts-noto-cjk fonts-noto-cjk-extra yarnpkg
+          version: 1.0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache-dependency-path: theme/pnpm-lock.yaml
+          cache: pnpm
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - uses: DeterminateSystems/flake-checker-action@main
+      - name: build theme dependencies
+        run: |
+          cd theme
+          pnpm install
+          pnpm build
+      - name: Build asphinx
+        run: cargo build --release
+      - name: Generate documentation
+        run: |
+          nix develop --impure --command bash -c "./target/release/asphinx --theme theme/dist --minify"
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: public/
+
