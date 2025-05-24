@@ -1,0 +1,204 @@
+<!doctype html><html lang=en><title>Project Structure</title><meta charset=UTF-8><meta content="IE=edge" http-equiv=X-UA-Compatible><meta content="width=device-width,initial-scale=1.0" name=viewport><link as=fetch crossorigin href=/cache.json rel=preload><script crossorigin src=/assets/main-CP2TKb_v.js type=module></script><link crossorigin href=/assets/main-Dmk1p4W5.css rel=stylesheet><body class="article antialiased text-foreground bg-background font-serif"><nav class="flex px-5 py-3 rounded-none justify-between sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 max-h-12 overflow-hidden gap-2" aria-label=Breadcrumb><ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse min-w-0 overflow-x-hidden"><li class="inline-flex items-center"><a class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white" href=/> <svg class="w-3 h-3 me-2.5" viewbox="0 0 20 20" aria-hidden=true fill=currentColor xmlns=http://www.w3.org/2000/svg><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/></svg> Home </a><li><div class="flex items-center"><svg class="rtl:rotate-180 block w-3 h-3 mx-1 text-gray-400 " viewbox="0 0 6 10" aria-hidden=true fill=none xmlns=http://www.w3.org/2000/svg><path d="m1 9 4-4-4-4" stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 /></svg><a class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white text-ellipsis min-w-0 overflow-x-hidden whitespace-nowrap" href=/getting-started> getting-started </a></div><li aria-current=page><div class="flex items-center"><svg class="rtl:rotate-180  w-3 h-3 mx-1 text-gray-400" viewbox="0 0 6 10" aria-hidden=true fill=none xmlns=http://www.w3.org/2000/svg><path d="m1 9 4-4-4-4" stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 /></svg><span class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400 whitespace-nowrap overflow-x-hidden"> Project Structure </span></div></ol><div class="flex gap-2 items-center"><div id=search_bar></div><div id=theme_btn></div></div></nav><div class="prose prose-zinc dark:prose-invert" id=header><div class="flex justify-between w-full gap-2 items-end"><h1 class=mt-16>Project Structure</h1><span class=font-mono> 2025-05-24 13:38:24 </span></div><div class=toc id=toc><div id=toctitle>TOC</div><ul class=sectlevel1><li><a href=#_overview>Overview</a><li><a href=#_standard_project_layout>Standard Project Layout</a><li><a href=#_content_directory_structure>Content Directory Structure</a> <ul class=sectlevel2><li><a href=#_hierarchical_organization>Hierarchical Organization</a><li><a href=#_index_files>Index Files</a><li><a href=#_file_naming_conventions>File Naming Conventions</a></ul><li><a href=#_asset_management>Asset Management</a> <ul class=sectlevel2><li><a href=#_images>Images</a><li><a href=#_other_assets>Other Assets</a></ul><li><a href=#_theme_structure>Theme Structure</a> <ul class=sectlevel2><li><a href=#_source_files>Source Files</a><li><a href=#_build_output>Build Output</a></ul><li><a href=#_configuration_files>Configuration Files</a> <ul class=sectlevel2><li><a href=#_main_configuration>Main Configuration</a><li><a href=#_git_configuration>Git Configuration</a></ul><li><a href=#_scaling_large_projects>Scaling Large Projects</a> <ul class=sectlevel2><li><a href=#_multi_book_structure>Multi-Book Structure</a><li><a href=#_modular_themes>Modular Themes</a></ul><li><a href=#_best_practices>Best Practices</a> <ul class=sectlevel2><li><a href=#_content_organization>Content Organization</a><li><a href=#_asset_management_2>Asset Management</a><li><a href=#_theme_development>Theme Development</a></ul><li><a href=#_migration_strategies>Migration Strategies</a> <ul class=sectlevel2><li><a href=#_from_other_tools>From Other Tools</a> <ul class=sectlevel3><li><a href=#_from_gitbook>From GitBook</a><li><a href=#_from_sphinx>From Sphinx</a></ul><li><a href=#_restructuring_existing_projects>Restructuring Existing Projects</a></ul><li><a href=#_troubleshooting_structure_issues>Troubleshooting Structure Issues</a> <ul class=sectlevel2><li><a href=#_common_problems>Common Problems</a> <ul class=sectlevel3><li><a href=#_broken_cross_references>Broken Cross-References</a><li><a href=#_missing_index_files>Missing Index Files</a><li><a href=#_asset_path_issues>Asset Path Issues</a></ul></ul><li><a href=#_next_steps>Next Steps</a><li><a href=#_getting_help>Getting Help</a></ul></div></div><div id=content><div class="prose prose-zinc max-w-full dark:prose-invert"><div id=preamble><div class=sectionbody><div class=paragraph><p>Understanding how to organize your Asphinx project for maximum efficiency and maintainability.</div></div></div><div class=sect1><h2 id=_overview><a class=anchor href=#_overview></a><a class=link href=#_overview>Overview</a></h2><div class=sectionbody><div class=paragraph><p>A well-organized project structure is crucial for maintaining large documentation sites. Asphinx follows conventions that make your content easy to navigate and maintain.</div></div></div><div class=sect1><h2 id=_standard_project_layout><a class=anchor href=#_standard_project_layout></a><a class=link href=#_standard_project_layout>Standard Project Layout</a></h2><div class=sectionbody><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>my-project/
+├── content/                    # Documentation content
+│   ├── index.adoc             # Main entry point
+│   ├── getting-started/       # Getting started section
+│   │   ├── index.adoc
+│   │   ├── installation.adoc
+│   │   └── quick-start.adoc
+│   ├── user-guide/           # User guide section
+│   │   ├── index.adoc
+│   │   ├── basic-concepts.adoc
+│   │   └── advanced-features.adoc
+│   ├── reference/            # Reference documentation
+│   │   ├── index.adoc
+│   │   ├── api/
+│   │   └── configuration/
+│   └── assets/               # Shared assets
+│       ├── images/
+│       └── files/
+├── theme/                     # Theme files
+│   ├── src/                  # Theme source code
+│   │   ├── main.tsx
+│   │   ├── style.css
+│   │   └── components/
+│   ├── layouts/              # HTML templates
+│   │   └── page.html
+│   ├── assets/               # Theme assets
+│   └── package.json
+├── asphinx.toml              # Configuration file
+├── .gitignore                # Git ignore rules
+└── public/                   # Generated output (auto-created)
+    ├── index.html
+    ├── getting-started/
+    ├── user-guide/
+    ├── reference/
+    ├── assets/
+    └── cache.json</code></pre></div></div></div></div><div class=sect1><h2 id=_content_directory_structure><a class=anchor href=#_content_directory_structure></a><a class=link href=#_content_directory_structure>Content Directory Structure</a></h2><div class=sectionbody><div class=sect2><h3 id=_hierarchical_organization><a class=anchor href=#_hierarchical_organization></a><a class=link href=#_hierarchical_organization>Hierarchical Organization</a></h3><div class=paragraph><p>Organize content hierarchically to reflect your documentation structure:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>content/
+├── index.adoc                 # Root index
+├── section1/
+│   ├── index.adoc            # Section index
+│   ├── topic1.adoc           # Individual topics
+│   ├── topic2.adoc
+│   └── subsection/
+│       ├── index.adoc        # Subsection index
+│       └── subtopic.adoc
+└── section2/
+    ├── index.adoc
+    └── ...</code></pre></div></div></div><div class=sect2><h3 id=_index_files><a class=anchor href=#_index_files></a><a class=link href=#_index_files>Index Files</a></h3><div class=paragraph><p>Every directory should contain an <code>index.adoc</code> file that:</div><div class="olist arabic"><ol class=arabic><li><p>Introduces the section</p><li><p>Lists and links to subsections</p><li><p>Provides navigation context</p></ol></div><div class=paragraph><p>Example section index:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=asciidoc><span></span>= User Guide
+:toc: left
+
+This section covers everything you need to know about using our software.
+
+== Getting Started
+
+* xref:installation.adoc[Installation Guide]
+* xref:first-steps.adoc[First Steps]
+* xref:basic-concepts.adoc[Basic Concepts]
+
+== Advanced Topics
+
+* xref:advanced-features.adoc[Advanced Features]
+* xref:customization.adoc[Customization]
+* xref:troubleshooting.adoc[Troubleshooting]
+
+== Reference
+
+* xref:../reference/api/index.adoc[API Reference]
+* xref:../reference/configuration/index.adoc[Configuration Reference]</code></pre></div></div></div><div class=sect2><h3 id=_file_naming_conventions><a class=anchor href=#_file_naming_conventions></a><a class=link href=#_file_naming_conventions>File Naming Conventions</a></h3><div class=paragraph><p>Use consistent, descriptive file names:</div><table class="tableblock frame-all grid-all stretch"><colgroup><col style=width:28.5714%><col style=width:42.8571%><col style=width:28.5715%></colgroup><thead><tr><th class="tableblock halign-left valign-top">Pattern<th class="tableblock halign-left valign-top">Example<th class="tableblock halign-left valign-top">Purpose<tbody><tr><td class="tableblock halign-left valign-top"><p class=tableblock><code>index.adoc</code><td class="tableblock halign-left valign-top"><p class=tableblock><code>user-guide/index.adoc</code><td class="tableblock halign-left valign-top"><p class=tableblock>Section entry points<tr><td class="tableblock halign-left valign-top"><p class=tableblock><code>kebab-case.adoc</code><td class="tableblock halign-left valign-top"><p class=tableblock><code>getting-started.adoc</code><td class="tableblock halign-left valign-top"><p class=tableblock>Regular content pages<tr><td class="tableblock halign-left valign-top"><p class=tableblock><code>noun-verb.adoc</code><td class="tableblock halign-left valign-top"><p class=tableblock><code>database-setup.adoc</code><td class="tableblock halign-left valign-top"><p class=tableblock>Task-oriented pages<tr><td class="tableblock halign-left valign-top"><p class=tableblock><code>concept-name.adoc</code><td class="tableblock halign-left valign-top"><p class=tableblock><code>user-management.adoc</code><td class="tableblock halign-left valign-top"><p class=tableblock>Conceptual topics</table></div></div></div><div class=sect1><h2 id=_asset_management><a class=anchor href=#_asset_management></a><a class=link href=#_asset_management>Asset Management</a></h2><div class=sectionbody><div class=sect2><h3 id=_images><a class=anchor href=#_images></a><a class=link href=#_images>Images</a></h3><div class=paragraph><p>Organize images logically:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>content/
+├── assets/
+│   └── images/
+│       ├── common/           # Shared images
+│       │   ├── logo.png
+│       │   └── icons/
+│       ├── getting-started/  # Section-specific images
+│       │   ├── installation-screen.png
+│       │   └── setup-wizard.png
+│       └── user-guide/
+│           ├── dashboard.png
+│           └── settings.png</code></pre></div></div><div class=paragraph><p>Reference images using relative paths:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=asciidoc><span></span># From content/getting-started/installation.adoc
+image::../assets/images/getting-started/installation-screen.png[Installation Screen]
+
+# From content/user-guide/dashboard.adoc
+image::../assets/images/user-guide/dashboard.png[Dashboard Overview]</code></pre></div></div></div><div class=sect2><h3 id=_other_assets><a class=anchor href=#_other_assets></a><a class=link href=#_other_assets>Other Assets</a></h3><div class=paragraph><p>Store downloadable files and resources:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>content/
+└── assets/
+    ├── files/
+    │   ├── sample-config.toml
+    │   ├── templates/
+    │   └── examples/
+    └── downloads/
+        ├── software-v1.0.zip
+        └── documentation.pdf</code></pre></div></div></div></div></div><div class=sect1><h2 id=_theme_structure><a class=anchor href=#_theme_structure></a><a class=link href=#_theme_structure>Theme Structure</a></h2><div class=sectionbody><div class=sect2><h3 id=_source_files><a class=anchor href=#_source_files></a><a class=link href=#_source_files>Source Files</a></h3><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>theme/
+├── src/
+│   ├── main.tsx              # React entry point
+│   ├── style.css             # Global styles
+│   ├── search-bar.tsx        # Search component
+│   ├── components/           # Reusable components
+│   │   ├── ui/              # UI primitives
+│   │   └── layout/          # Layout components
+│   └── lib/                 # Utility functions
+├── layouts/
+│   └── page.html            # HTML template
+├── assets/                  # Static assets
+│   ├── fonts/
+│   ├── images/
+│   └── icons/
+├── package.json             # Node.js dependencies
+└── vite.config.ts          # Build configuration</code></pre></div></div></div><div class=sect2><h3 id=_build_output><a class=anchor href=#_build_output></a><a class=link href=#_build_output>Build Output</a></h3><div class=paragraph><p>After building the theme:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>theme/
+├── dist/                    # Built theme files
+│   ├── assets/
+│   │   ├── main.js
+│   │   ├── style.css
+│   │   └── ...
+│   └── layouts/
+│       └── page.html</code></pre></div></div></div></div></div><div class=sect1><h2 id=_configuration_files><a class=anchor href=#_configuration_files></a><a class=link href=#_configuration_files>Configuration Files</a></h2><div class=sectionbody><div class=sect2><h3 id=_main_configuration><a class=anchor href=#_main_configuration></a><a class=link href=#_main_configuration>Main Configuration</a></h3><div class=paragraph><p><code>asphinx.toml</code> contains project-wide settings:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=toml><span></span><span class=tok-c1># Project configuration</span>
+<span class=tok-n>no_default</span><span class=tok-w> </span><span class=tok-o>=</span><span class=tok-w> </span><span class=tok-kc>false</span>
+
+<span class=tok-k>[asciidoc]</span>
+<span class=tok-n>extensions</span><span class=tok-w> </span><span class=tok-o>=</span><span class=tok-w> </span><span class=tok-p>[</span><span class=tok-s2>"asciidoctor-diagram"</span><span class=tok-p>,</span><span class=tok-w> </span><span class=tok-s2>"asciidoctor-mathematical"</span><span class=tok-p>]</span>
+
+<span class=tok-k>[asciidoc.attributes]</span>
+<span class=tok-n>icons</span><span class=tok-w> </span><span class=tok-o>=</span><span class=tok-w> </span><span class=tok-s2>"font"</span>
+<span class=tok-n>toc</span><span class=tok-w> </span><span class=tok-o>=</span><span class=tok-w> </span><span class=tok-mi>1</span>
+<span class=tok-n>experimental</span><span class=tok-w> </span><span class=tok-o>=</span><span class=tok-w> </span><span class=tok-s2>""</span>
+<span class=tok-n>source-highlighter</span><span class=tok-w> </span><span class=tok-o>=</span><span class=tok-w> </span><span class=tok-s2>"pygments"</span>
+<span class=tok-n>sectanchors</span><span class=tok-w> </span><span class=tok-o>=</span><span class=tok-w> </span><span class=tok-s2>""</span>
+<span class=tok-n>sectlinks</span><span class=tok-w> </span><span class=tok-o>=</span><span class=tok-w> </span><span class=tok-s2>""</span>
+
+<span class=tok-c1># Diagram formats</span>
+<span class=tok-n>plantuml-format</span><span class=tok-w> </span><span class=tok-o>=</span><span class=tok-w> </span><span class=tok-s2>"svg"</span>
+<span class=tok-n>mermaid-format</span><span class=tok-w> </span><span class=tok-o>=</span><span class=tok-w> </span><span class=tok-s2>"svg"</span>
+<span class=tok-n>graphviz-format</span><span class=tok-w> </span><span class=tok-o>=</span><span class=tok-w> </span><span class=tok-s2>"svg"</span></code></pre></div></div></div><div class=sect2><h3 id=_git_configuration><a class=anchor href=#_git_configuration></a><a class=link href=#_git_configuration>Git Configuration</a></h3><div class=paragraph><p><code>.gitignore</code> should exclude generated files:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span># Generated output
+public/
+.asphinx-cache/
+
+# Theme build artifacts
+theme/dist/
+theme/node_modules/
+theme/.vite/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo</code></pre></div></div></div></div></div><div class=sect1><h2 id=_scaling_large_projects><a class=anchor href=#_scaling_large_projects></a><a class=link href=#_scaling_large_projects>Scaling Large Projects</a></h2><div class=sectionbody><div class=sect2><h3 id=_multi_book_structure><a class=anchor href=#_multi_book_structure></a><a class=link href=#_multi_book_structure>Multi-Book Structure</a></h3><div class=paragraph><p>For large projects with multiple books or products:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>content/
+├── index.adoc               # Main landing page
+├── product-a/
+│   ├── index.adoc
+│   ├── user-guide/
+│   ├── admin-guide/
+│   └── api-reference/
+├── product-b/
+│   ├── index.adoc
+│   ├── getting-started/
+│   └── tutorials/
+└── shared/
+    ├── glossary.adoc
+    ├── legal/
+    └── assets/</code></pre></div></div></div><div class=sect2><h3 id=_modular_themes><a class=anchor href=#_modular_themes></a><a class=link href=#_modular_themes>Modular Themes</a></h3><div class=paragraph><p>For different sections requiring different styling:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>themes/
+├── default/                 # Main theme
+├── api-docs/               # API documentation theme
+└── tutorials/              # Tutorial-specific theme</code></pre></div></div><div class=paragraph><p>Build with different themes:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-c1># Build main documentation</span>
+asphinx<span class=tok-w> </span>--theme<span class=tok-w> </span>themes/default
+
+<span class=tok-c1># Build API docs with specialized theme</span>
+asphinx<span class=tok-w> </span>--theme<span class=tok-w> </span>themes/api-docs</code></pre></div></div></div></div></div><div class=sect1><h2 id=_best_practices><a class=anchor href=#_best_practices></a><a class=link href=#_best_practices>Best Practices</a></h2><div class=sectionbody><div class=sect2><h3 id=_content_organization><a class=anchor href=#_content_organization></a><a class=link href=#_content_organization>Content Organization</a></h3><div class="olist arabic"><ol class=arabic><li><p><strong>Group Related Content</strong>: Keep related topics in the same directory</p><li><p><strong>Use Descriptive Names</strong>: File and directory names should be self-explanatory</p><li><p><strong>Maintain Consistent Depth</strong>: Avoid deeply nested structures (max 3-4 levels)</p><li><p><strong>Create Clear Navigation</strong>: Every section should have a clear index page</p></ol></div></div><div class=sect2><h3 id=_asset_management_2><a class=anchor href=#_asset_management_2></a><a class=link href=#_asset_management_2>Asset Management</a></h3><div class="olist arabic"><ol class=arabic><li><p><strong>Optimize Images</strong>: Compress images before adding them</p><li><p><strong>Use Consistent Naming</strong>: Follow naming conventions for assets</p><li><p><strong>Organize by Section</strong>: Group assets by the content that uses them</p><li><p><strong>Version Control</strong>: Include assets in version control</p></ol></div></div><div class=sect2><h3 id=_theme_development><a class=anchor href=#_theme_development></a><a class=link href=#_theme_development>Theme Development</a></h3><div class="olist arabic"><ol class=arabic><li><p><strong>Separate Concerns</strong>: Keep styling, logic, and templates separate</p><li><p><strong>Use Build Tools</strong>: Leverage modern build tools for optimization</p><li><p><strong>Test Responsiveness</strong>: Ensure themes work on all device sizes</p><li><p><strong>Document Customizations</strong>: Document any theme modifications</p></ol></div></div></div></div><div class=sect1><h2 id=_migration_strategies><a class=anchor href=#_migration_strategies></a><a class=link href=#_migration_strategies>Migration Strategies</a></h2><div class=sectionbody><div class=sect2><h3 id=_from_other_tools><a class=anchor href=#_from_other_tools></a><a class=link href=#_from_other_tools>From Other Tools</a></h3><div class=sect3><h4 id=_from_gitbook><a class=anchor href=#_from_gitbook></a><a class=link href=#_from_gitbook>From GitBook</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-c1># Convert GitBook structure</span>
+mkdir<span class=tok-w> </span>-p<span class=tok-w> </span>content
+cp<span class=tok-w> </span>-r<span class=tok-w> </span>gitbook-content/*<span class=tok-w> </span>content/
+<span class=tok-c1># Rename .md files to .adoc and convert syntax</span>
+find<span class=tok-w> </span>content<span class=tok-w> </span>-name<span class=tok-w> </span><span class=tok-s2>"*.md"</span><span class=tok-w> </span>-exec<span class=tok-w> </span>rename<span class=tok-w> </span><span class=tok-s1>'s/\.md$/.adoc/'</span><span class=tok-w> </span><span class=tok-o>{}</span><span class=tok-w> </span><span class=tok-se>\;</span></code></pre></div></div></div><div class=sect3><h4 id=_from_sphinx><a class=anchor href=#_from_sphinx></a><a class=link href=#_from_sphinx>From Sphinx</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-c1># Convert reStructuredText to AsciiDoc</span>
+pip<span class=tok-w> </span>install<span class=tok-w> </span>pandoc
+find<span class=tok-w> </span><span class=tok-nb>source</span><span class=tok-w> </span>-name<span class=tok-w> </span><span class=tok-s2>"*.rst"</span><span class=tok-w> </span>-exec<span class=tok-w> </span>pandoc<span class=tok-w> </span>-f<span class=tok-w> </span>rst<span class=tok-w> </span>-t<span class=tok-w> </span>asciidoc<span class=tok-w> </span><span class=tok-o>{}</span><span class=tok-w> </span>-o<span class=tok-w> </span>content/<span class=tok-o>{}</span>.adoc<span class=tok-w> </span><span class=tok-se>\;</span></code></pre></div></div></div></div><div class=sect2><h3 id=_restructuring_existing_projects><a class=anchor href=#_restructuring_existing_projects></a><a class=link href=#_restructuring_existing_projects>Restructuring Existing Projects</a></h3><div class="olist arabic"><ol class=arabic><li><p><strong>Plan the New Structure</strong>: Design the target structure</p><li><p><strong>Create Migration Script</strong>: Automate file moves and updates</p><li><p><strong>Update Cross-References</strong>: Fix all <code>xref:</code> links</p><li><p><strong>Test Thoroughly</strong>: Verify all links and assets work</p></ol></div><div class=paragraph><p>Example migration script:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-ch>#!/bin/bash</span>
+<span class=tok-c1># migrate.sh</span>
+
+<span class=tok-c1># Create new structure</span>
+mkdir<span class=tok-w> </span>-p<span class=tok-w> </span>content/<span class=tok-o>{</span>getting-started,user-guide,reference<span class=tok-o>}</span>
+
+<span class=tok-c1># Move files</span>
+mv<span class=tok-w> </span>old-docs/installation.adoc<span class=tok-w> </span>content/getting-started/
+mv<span class=tok-w> </span>old-docs/user-manual.adoc<span class=tok-w> </span>content/user-guide/index.adoc
+
+<span class=tok-c1># Update cross-references</span>
+sed<span class=tok-w> </span>-i<span class=tok-w> </span><span class=tok-s1>'s/xref:installation.adoc/xref:getting-started\/installation.adoc/g'</span><span class=tok-w> </span>content/**/*.adoc
+
+<span class=tok-nb>echo</span><span class=tok-w> </span><span class=tok-s2>"Migration complete. Please review and test."</span></code></pre></div></div></div></div></div><div class=sect1><h2 id=_troubleshooting_structure_issues><a class=anchor href=#_troubleshooting_structure_issues></a><a class=link href=#_troubleshooting_structure_issues>Troubleshooting Structure Issues</a></h2><div class=sectionbody><div class=sect2><h3 id=_common_problems><a class=anchor href=#_common_problems></a><a class=link href=#_common_problems>Common Problems</a></h3><div class=sect3><h4 id=_broken_cross_references><a class=anchor href=#_broken_cross_references></a><a class=link href=#_broken_cross_references>Broken Cross-References</a></h4><div class=paragraph><p><strong>Problem</strong>: Links don’t work after restructuring</div><div class=paragraph><p><strong>Solution</strong>: Use relative paths consistently:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=asciidoc><span></span># Good: relative to current file
+xref:../user-guide/basics.adoc[Basics]
+
+# Bad: absolute paths
+xref:/user-guide/basics.adoc[Basics]</code></pre></div></div></div><div class=sect3><h4 id=_missing_index_files><a class=anchor href=#_missing_index_files></a><a class=link href=#_missing_index_files>Missing Index Files</a></h4><div class=paragraph><p><strong>Problem</strong>: Directories without index files cause navigation issues</div><div class=paragraph><p><strong>Solution</strong>: Ensure every directory has an <code>index.adoc</code>:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-c1># Find directories without index files</span>
+find<span class=tok-w> </span>content<span class=tok-w> </span>-type<span class=tok-w> </span>d<span class=tok-w> </span>-exec<span class=tok-w> </span><span class=tok-nb>test</span><span class=tok-w> </span>!<span class=tok-w> </span>-f<span class=tok-w> </span><span class=tok-o>{}</span>/index.adoc<span class=tok-w> </span><span class=tok-se>\;</span><span class=tok-w> </span>-print
+
+<span class=tok-c1># Create missing index files</span>
+<span class=tok-k>for</span><span class=tok-w> </span>dir<span class=tok-w> </span><span class=tok-k>in</span><span class=tok-w> </span><span class=tok-k>$(</span>find<span class=tok-w> </span>content<span class=tok-w> </span>-type<span class=tok-w> </span>d<span class=tok-w> </span>-exec<span class=tok-w> </span><span class=tok-nb>test</span><span class=tok-w> </span>!<span class=tok-w> </span>-f<span class=tok-w> </span><span class=tok-o>{}</span>/index.adoc<span class=tok-w> </span><span class=tok-se>\;</span><span class=tok-w> </span>-print<span class=tok-k>)</span><span class=tok-p>;</span><span class=tok-w> </span><span class=tok-k>do</span>
+<span class=tok-w>    </span><span class=tok-nb>echo</span><span class=tok-w> </span><span class=tok-s2>"= </span><span class=tok-k>$(</span>basename<span class=tok-w> </span><span class=tok-nv>$dir</span><span class=tok-w> </span><span class=tok-p>|</span><span class=tok-w> </span>tr<span class=tok-w> </span><span class=tok-s1>'-'</span><span class=tok-w> </span><span class=tok-s1>' '</span><span class=tok-w> </span><span class=tok-p>|</span><span class=tok-w> </span>title<span class=tok-k>)</span><span class=tok-s2>"</span><span class=tok-w> </span>><span class=tok-w> </span><span class=tok-s2>"</span><span class=tok-nv>$dir</span><span class=tok-s2>/index.adoc"</span>
+<span class=tok-k>done</span></code></pre></div></div></div><div class=sect3><h4 id=_asset_path_issues><a class=anchor href=#_asset_path_issues></a><a class=link href=#_asset_path_issues>Asset Path Issues</a></h4><div class=paragraph><p><strong>Problem</strong>: Images or files not found</div><div class=paragraph><p><strong>Solution</strong>: Verify paths relative to the <code>.adoc</code> file:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-c1># Check for missing assets</span>
+grep<span class=tok-w> </span>-r<span class=tok-w> </span><span class=tok-s2>"image::"</span><span class=tok-w> </span>content/<span class=tok-w> </span><span class=tok-p>|</span><span class=tok-w> </span><span class=tok-k>while</span><span class=tok-w> </span><span class=tok-nb>read</span><span class=tok-w> </span>line<span class=tok-p>;</span><span class=tok-w> </span><span class=tok-k>do</span>
+<span class=tok-w>    </span><span class=tok-nv>file</span><span class=tok-o>=</span><span class=tok-k>$(</span><span class=tok-nb>echo</span><span class=tok-w> </span><span class=tok-nv>$line</span><span class=tok-w> </span><span class=tok-p>|</span><span class=tok-w> </span>cut<span class=tok-w> </span>-d:<span class=tok-w> </span>-f1<span class=tok-k>)</span>
+<span class=tok-w>    </span><span class=tok-nv>asset</span><span class=tok-o>=</span><span class=tok-k>$(</span><span class=tok-nb>echo</span><span class=tok-w> </span><span class=tok-nv>$line</span><span class=tok-w> </span><span class=tok-p>|</span><span class=tok-w> </span>sed<span class=tok-w> </span><span class=tok-s1>'s/.*image::\([^[]*\).*/\1/'</span><span class=tok-k>)</span>
+<span class=tok-w>    </span><span class=tok-k>if</span><span class=tok-w> </span><span class=tok-o>[</span><span class=tok-w> </span>!<span class=tok-w> </span>-f<span class=tok-w> </span><span class=tok-s2>"</span><span class=tok-k>$(</span>dirname<span class=tok-w> </span><span class=tok-nv>$file</span><span class=tok-k>)</span><span class=tok-s2>/</span><span class=tok-nv>$asset</span><span class=tok-s2>"</span><span class=tok-w> </span><span class=tok-o>]</span><span class=tok-p>;</span><span class=tok-w> </span><span class=tok-k>then</span>
+<span class=tok-w>        </span><span class=tok-nb>echo</span><span class=tok-w> </span><span class=tok-s2>"Missing: </span><span class=tok-nv>$asset</span><span class=tok-s2> in </span><span class=tok-nv>$file</span><span class=tok-s2>"</span>
+<span class=tok-w>    </span><span class=tok-k>fi</span>
+<span class=tok-k>done</span></code></pre></div></div></div></div></div></div><div class=sect1><h2 id=_next_steps><a class=anchor href=#_next_steps></a><a class=link href=#_next_steps>Next Steps</a></h2><div class=sectionbody><div class=paragraph><p>Now that you understand project structure:</div><div class=ulist><ul><li><p>Learn about <a href=../user-guide/writing-content.html>Writing Content</a></p><li><p>Explore <a href=../configuration/index.html>Configuration Options</a></p><li><p>Check out <a href=../theme-development/index.html>Theme Development</a></p></ul></div></div></div><div class=sect1><h2 id=_getting_help><a class=anchor href=#_getting_help></a><a class=link href=#_getting_help>Getting Help</a></h2><div class=sectionbody><div class=paragraph><p>For structure-related questions:</div><div class=ulist><ul><li><p>Review the <a href=../user-guide/troubleshooting.html>Troubleshooting Guide</a></p><li><p>Check our <a href=https://github.com/your-username/asphinx/discussions>GitHub Discussions</a></p><li><p>Look at example projects in our <a href=https://github.com/your-username/asphinx-examples>Examples Repository</a></p></ul></div></div></div></div></div><div class="flex flex-col p-2 border-t"><div>Last moify: 2025-05-24 13:38:24</div><div>Build time：2025-05-24 05:38:24</div><div>Powered By <a href=https://github.com/cathaysia/asphinx>asphinx</a></div></div>

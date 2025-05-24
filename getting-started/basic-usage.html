@@ -1,0 +1,150 @@
+<!doctype html><html lang=en><title>Basic Usage</title><meta charset=UTF-8><meta content="IE=edge" http-equiv=X-UA-Compatible><meta content="width=device-width,initial-scale=1.0" name=viewport><link as=fetch crossorigin href=/cache.json rel=preload><script crossorigin src=/assets/main-CP2TKb_v.js type=module></script><link crossorigin href=/assets/main-Dmk1p4W5.css rel=stylesheet><body class="article antialiased text-foreground bg-background font-serif"><nav class="flex px-5 py-3 rounded-none justify-between sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 max-h-12 overflow-hidden gap-2" aria-label=Breadcrumb><ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse min-w-0 overflow-x-hidden"><li class="inline-flex items-center"><a class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white" href=/> <svg class="w-3 h-3 me-2.5" viewbox="0 0 20 20" aria-hidden=true fill=currentColor xmlns=http://www.w3.org/2000/svg><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/></svg> Home </a><li><div class="flex items-center"><svg class="rtl:rotate-180 block w-3 h-3 mx-1 text-gray-400 " viewbox="0 0 6 10" aria-hidden=true fill=none xmlns=http://www.w3.org/2000/svg><path d="m1 9 4-4-4-4" stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 /></svg><a class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white text-ellipsis min-w-0 overflow-x-hidden whitespace-nowrap" href=/getting-started> getting-started </a></div><li aria-current=page><div class="flex items-center"><svg class="rtl:rotate-180  w-3 h-3 mx-1 text-gray-400" viewbox="0 0 6 10" aria-hidden=true fill=none xmlns=http://www.w3.org/2000/svg><path d="m1 9 4-4-4-4" stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 /></svg><span class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400 whitespace-nowrap overflow-x-hidden"> Basic Usage </span></div></ol><div class="flex gap-2 items-center"><div id=search_bar></div><div id=theme_btn></div></div></nav><div class="prose prose-zinc dark:prose-invert" id=header><div class="flex justify-between w-full gap-2 items-end"><h1 class=mt-16>Basic Usage</h1><span class=font-mono> 2025-05-24 13:38:24 </span></div><div class=toc id=toc><div id=toctitle>TOC</div><ul class=sectlevel1><li><a href=#_command_line_interface>Command Line Interface</a> <ul class=sectlevel2><li><a href=#_basic_command>Basic Command</a><li><a href=#_command_options>Command Options</a><li><a href=#_examples>Examples</a></ul><li><a href=#_project_structure>Project Structure</a> <ul class=sectlevel2><li><a href=#_standard_layout>Standard Layout</a><li><a href=#_content_organization>Content Organization</a> <ul class=sectlevel3><li><a href=#_index_files>Index Files</a><li><a href=#_cross_references>Cross-References</a></ul></ul><li><a href=#_content_creation_workflow>Content Creation Workflow</a> <ul class=sectlevel2><li><a href=#_1_plan_your_structure>1. Plan Your Structure</a><li><a href=#_2_create_directory_structure>2. Create Directory Structure</a><li><a href=#_3_write_content>3. Write Content</a><li><a href=#_4_build_and_preview>4. Build and Preview</a><li><a href=#_5_iterate>5. Iterate</a></ul><li><a href=#_working_with_asciidoc>Working with AsciiDoc</a> <ul class=sectlevel2><li><a href=#_basic_syntax>Basic Syntax</a> <ul class=sectlevel3><li><a href=#_headings>Headings</a><li><a href=#_text_formatting>Text Formatting</a><li><a href=#_lists>Lists</a><li><a href=#_code_blocks>Code Blocks</a><li><a href=#_tables>Tables</a><li><a href=#_admonitions>Admonitions</a></ul></ul><li><a href=#_build_process>Build Process</a> <ul class=sectlevel2><li><a href=#_processing_steps>Processing Steps</a><li><a href=#_performance_tips>Performance Tips</a> <ul class=sectlevel3><li><a href=#_optimize_images>Optimize Images</a><li><a href=#_use_caching>Use Caching</a><li><a href=#_parallel_processing>Parallel Processing</a></ul></ul><li><a href=#_development_workflow>Development Workflow</a> <ul class=sectlevel2><li><a href=#_recommended_setup>Recommended Setup</a><li><a href=#_testing_your_documentation>Testing Your Documentation</a> <ul class=sectlevel3><li><a href=#_check_links>Check Links</a><li><a href=#_validate_html>Validate HTML</a><li><a href=#_test_search>Test Search</a></ul></ul><li><a href=#_troubleshooting_common_issues>Troubleshooting Common Issues</a> <ul class=sectlevel2><li><a href=#_build_failures>Build Failures</a> <ul class=sectlevel3><li><a href=#_asciidoctor_errors>AsciiDoctor Errors</a><li><a href=#_theme_build_errors>Theme Build Errors</a></ul><li><a href=#_content_issues>Content Issues</a> <ul class=sectlevel3><li><a href=#_broken_cross_references>Broken Cross-References</a><li><a href=#_missing_images>Missing Images</a></ul><li><a href=#_performance_issues>Performance Issues</a> <ul class=sectlevel3><li><a href=#_slow_builds>Slow Builds</a><li><a href=#_large_output_size>Large Output Size</a></ul></ul><li><a href=#_next_steps>Next Steps</a><li><a href=#_getting_help>Getting Help</a></ul></div></div><div id=content><div class="prose prose-zinc max-w-full dark:prose-invert"><div id=preamble><div class=sectionbody><div class=paragraph><p>Learn the fundamental concepts and workflows of Asphinx.</div></div></div><div class=sect1><h2 id=_command_line_interface><a class=anchor href=#_command_line_interface></a><a class=link href=#_command_line_interface>Command Line Interface</a></h2><div class=sectionbody><div class=paragraph><p>Asphinx provides a simple command-line interface for generating documentation sites.</div><div class=sect2><h3 id=_basic_command><a class=anchor href=#_basic_command></a><a class=link href=#_basic_command>Basic Command</a></h3><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span>asphinx<span class=tok-w> </span>--theme<span class=tok-w> </span>&lt;theme-path></code></pre></div></div></div><div class=sect2><h3 id=_command_options><a class=anchor href=#_command_options></a><a class=link href=#_command_options>Command Options</a></h3><table class="tableblock frame-all grid-all stretch"><colgroup><col style=width:20%><col style=width:60%><col style=width:20%></colgroup><thead><tr><th class="tableblock halign-left valign-top">Option<th class="tableblock halign-left valign-top">Description<th class="tableblock halign-left valign-top">Default<tbody><tr><td class="tableblock halign-left valign-top"><p class=tableblock><code>--theme &lt;PATH></code><td class="tableblock halign-left valign-top"><p class=tableblock>Path to the theme directory<td class="tableblock halign-left valign-top"><p class=tableblock>Required<tr><td class="tableblock halign-left valign-top"><p class=tableblock><code>--minify</code><td class="tableblock halign-left valign-top"><p class=tableblock>Enable HTML minification for smaller file sizes<td class="tableblock halign-left valign-top"><p class=tableblock>Disabled<tr><td class="tableblock halign-left valign-top"><p class=tableblock><code>--help</code><td class="tableblock halign-left valign-top"><p class=tableblock>Show help information<td class="tableblock halign-left valign-top"><p class=tableblock>-<tr><td class="tableblock halign-left valign-top"><p class=tableblock><code>--version</code><td class="tableblock halign-left valign-top"><p class=tableblock>Show version information<td class="tableblock halign-left valign-top"><p class=tableblock>-</table></div><div class=sect2><h3 id=_examples><a class=anchor href=#_examples></a><a class=link href=#_examples>Examples</a></h3><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-c1># Basic generation</span>
+asphinx<span class=tok-w> </span>--theme<span class=tok-w> </span>theme
+
+<span class=tok-c1># With minification (recommended for production)</span>
+asphinx<span class=tok-w> </span>--theme<span class=tok-w> </span>theme<span class=tok-w> </span>--minify
+
+<span class=tok-c1># Using a custom theme</span>
+asphinx<span class=tok-w> </span>--theme<span class=tok-w> </span>/path/to/custom-theme
+
+<span class=tok-c1># Show help</span>
+asphinx<span class=tok-w> </span>--help</code></pre></div></div></div></div></div><div class=sect1><h2 id=_project_structure><a class=anchor href=#_project_structure></a><a class=link href=#_project_structure>Project Structure</a></h2><div class=sectionbody><div class=paragraph><p>Understanding the project structure is key to using Asphinx effectively.</div><div class=sect2><h3 id=_standard_layout><a class=anchor href=#_standard_layout></a><a class=link href=#_standard_layout>Standard Layout</a></h3><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>my-project/
+├── content/                 # Your AsciiDoc content
+│   ├── index.adoc          # Main entry point
+│   ├── section1/
+│   │   ├── index.adoc      # Section index
+│   │   ├── page1.adoc      # Content pages
+│   │   └── page2.adoc
+│   └── section2/
+│       └── ...
+├── theme/                   # Theme files
+│   ├── src/                # Theme source code
+│   ├── layouts/            # HTML templates
+│   └── assets/             # Static assets
+├── asphinx.toml            # Configuration file
+└── public/                 # Generated output (created by Asphinx)
+    ├── index.html
+    ├── section1/
+    └── assets/</code></pre></div></div></div><div class=sect2><h3 id=_content_organization><a class=anchor href=#_content_organization></a><a class=link href=#_content_organization>Content Organization</a></h3><div class=sect3><h4 id=_index_files><a class=anchor href=#_index_files></a><a class=link href=#_index_files>Index Files</a></h4><div class=paragraph><p>Every directory should have an <code>index.adoc</code> file that serves as the entry point:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=asciidoc><span></span>= Section Title
+
+Brief description of this section.
+
+== Pages in This Section
+
+* xref:page1.adoc[Page 1 Title]
+* xref:page2.adoc[Page 2 Title]
+* xref:subsection/index.adoc[Subsection]</code></pre></div></div></div><div class=sect3><h4 id=_cross_references><a class=anchor href=#_cross_references></a><a class=link href=#_cross_references>Cross-References</a></h4><div class=paragraph><p>Use <code>xref:</code> to link between pages:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=asciidoc><span></span># Link to a page in the same directory
+xref:other-page.adoc[Link Text]
+
+# Link to a page in a subdirectory
+xref:subdirectory/page.adoc[Link Text]
+
+# Link to a page in a parent directory
+xref:../parent-page.adoc[Link Text]
+
+# Link to a specific section
+xref:page.adoc#section-id[Section Title]</code></pre></div></div></div></div></div></div><div class=sect1><h2 id=_content_creation_workflow><a class=anchor href=#_content_creation_workflow></a><a class=link href=#_content_creation_workflow>Content Creation Workflow</a></h2><div class=sectionbody><div class=sect2><h3 id=_1_plan_your_structure><a class=anchor href=#_1_plan_your_structure></a><a class=link href=#_1_plan_your_structure>1. Plan Your Structure</a></h3><div class=paragraph><p>Before writing content, plan your documentation structure:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>Documentation Plan:
+├── Getting Started
+│   ├── Installation
+│   ├── Quick Start
+│   └── Basic Concepts
+├── User Guide
+│   ├── Writing Content
+│   ├── Configuration
+│   └── Advanced Features
+└── Reference
+    ├── API Documentation
+    └── Configuration Options</code></pre></div></div></div><div class=sect2><h3 id=_2_create_directory_structure><a class=anchor href=#_2_create_directory_structure></a><a class=link href=#_2_create_directory_structure>2. Create Directory Structure</a></h3><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span>mkdir<span class=tok-w> </span>-p<span class=tok-w> </span>content/<span class=tok-o>{</span>getting-started,user-guide,reference<span class=tok-o>}</span>
+touch<span class=tok-w> </span>content/index.adoc
+touch<span class=tok-w> </span>content/getting-started/index.adoc
+touch<span class=tok-w> </span>content/user-guide/index.adoc
+touch<span class=tok-w> </span>content/reference/index.adoc</code></pre></div></div></div><div class=sect2><h3 id=_3_write_content><a class=anchor href=#_3_write_content></a><a class=link href=#_3_write_content>3. Write Content</a></h3><div class=paragraph><p>Start with your main index file, then work on individual sections:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=asciidoc><span></span>= My Documentation
+:toc: left
+
+Welcome to my documentation.
+
+== Quick Navigation
+
+* xref:getting-started/index.adoc[Getting Started]
+* xref:user-guide/index.adoc[User Guide]
+* xref:reference/index.adoc[Reference]</code></pre></div></div></div><div class=sect2><h3 id=_4_build_and_preview><a class=anchor href=#_4_build_and_preview></a><a class=link href=#_4_build_and_preview>4. Build and Preview</a></h3><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-c1># Build the theme (if modified)</span>
+<span class=tok-nb>cd</span><span class=tok-w> </span>theme<span class=tok-w> </span><span class=tok-o>&&</span><span class=tok-w> </span>npm<span class=tok-w> </span>run<span class=tok-w> </span>build<span class=tok-w> </span><span class=tok-o>&&</span><span class=tok-w> </span><span class=tok-nb>cd</span><span class=tok-w> </span>..
+
+<span class=tok-c1># Generate the site</span>
+asphinx<span class=tok-w> </span>--theme<span class=tok-w> </span>theme
+
+<span class=tok-c1># Preview locally</span>
+<span class=tok-nb>cd</span><span class=tok-w> </span>public<span class=tok-w> </span><span class=tok-o>&&</span><span class=tok-w> </span>python<span class=tok-w> </span>-m<span class=tok-w> </span>http.server<span class=tok-w> </span><span class=tok-m>8000</span></code></pre></div></div></div><div class=sect2><h3 id=_5_iterate><a class=anchor href=#_5_iterate></a><a class=link href=#_5_iterate>5. Iterate</a></h3><div class=paragraph><p>Repeat the write-build-preview cycle until satisfied.</div></div></div></div><div class=sect1><h2 id=_working_with_asciidoc><a class=anchor href=#_working_with_asciidoc></a><a class=link href=#_working_with_asciidoc>Working with AsciiDoc</a></h2><div class=sectionbody><div class=sect2><h3 id=_basic_syntax><a class=anchor href=#_basic_syntax></a><a class=link href=#_basic_syntax>Basic Syntax</a></h3><div class=sect3><h4 id=_headings><a class=anchor href=#_headings></a><a class=link href=#_headings>Headings</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=asciidoc><span></span>= Document Title (Level 0)
+== Chapter Title (Level 1)
+=== Section Title (Level 2)
+==== Subsection Title (Level 3)
+===== Subsubsection Title (Level 4)</code></pre></div></div></div><div class=sect3><h4 id=_text_formatting><a class=anchor href=#_text_formatting></a><a class=link href=#_text_formatting>Text Formatting</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=asciidoc><span></span>*bold text*
+_italic text_
+`monospace text`
+^superscript^
+~subscript~</code></pre></div></div></div><div class=sect3><h4 id=_lists><a class=anchor href=#_lists></a><a class=link href=#_lists>Lists</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=asciidoc><span></span># Unordered list
+* Item 1
+* Item 2
+** Nested item
+** Another nested item
+
+# Ordered list
+. First item
+. Second item
+.. Nested numbered item
+.. Another nested numbered item
+
+# Definition list
+Term 1:: Definition 1
+Term 2:: Definition 2</code></pre></div></div></div><div class=sect3><h4 id=_code_blocks><a class=anchor href=#_code_blocks></a><a class=link href=#_code_blocks>Code Blocks</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=asciidoc><span></span>[source,javascript]</code></pre></div></div><div class=paragraph><p>function hello() { console.log("Hello, World!"); }</div><div class=listingblock><div class=content><pre></pre></div></div></div><div class=sect3><h4 id=_tables><a class=anchor href=#_tables></a><a class=link href=#_tables>Tables</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=asciidoc><span></span>[cols="1,2,1"]
+|===
+|Column 1 |Column 2 |Column 3
+
+|Cell 1
+|Cell 2
+|Cell 3
+
+|Cell 4
+|Cell 5
+|Cell 6
+|===</code></pre></div></div></div><div class=sect3><h4 id=_admonitions><a class=anchor href=#_admonitions></a><a class=link href=#_admonitions>Admonitions</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=asciidoc><span></span>NOTE: This is a note.
+
+TIP: This is a tip.
+
+IMPORTANT: This is important information.
+
+CAUTION: This is a caution.
+
+WARNING: This is a warning.</code></pre></div></div></div></div></div></div><div class=sect1><h2 id=_build_process><a class=anchor href=#_build_process></a><a class=link href=#_build_process>Build Process</a></h2><div class=sectionbody><div class=paragraph><p>Understanding how Asphinx processes your content helps optimize your workflow.</div><div class=sect2><h3 id=_processing_steps><a class=anchor href=#_processing_steps></a><a class=link href=#_processing_steps>Processing Steps</a></h3><div class="olist arabic"><ol class=arabic><li><p><strong>Parse Index</strong>: Asphinx starts with <code>content/index.adoc</code> and follows <code>xref:</code> links</p><li><p><strong>Generate HTML</strong>: Each <code>.adoc</code> file is converted to HTML using AsciiDoctor</p><li><p><strong>Apply Theme</strong>: HTML is wrapped with the theme template</p><li><p><strong>Create Search Index</strong>: Full-text search index is generated</p><li><p><strong>Copy Assets</strong>: Theme assets are copied to the output directory</p><li><p><strong>Minify</strong> (optional): HTML is minified if <code>--minify</code> flag is used</p></ol></div></div><div class=sect2><h3 id=_performance_tips><a class=anchor href=#_performance_tips></a><a class=link href=#_performance_tips>Performance Tips</a></h3><div class=sect3><h4 id=_optimize_images><a class=anchor href=#_optimize_images></a><a class=link href=#_optimize_images>Optimize Images</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-c1># Optimize images before adding to content</span>
+convert<span class=tok-w> </span>large-image.png<span class=tok-w> </span>-resize<span class=tok-w> </span>800x600<span class=tok-w> </span>optimized-image.png</code></pre></div></div></div><div class=sect3><h4 id=_use_caching><a class=anchor href=#_use_caching></a><a class=link href=#_use_caching>Use Caching</a></h4><div class=paragraph><p>Asphinx automatically caches processed content. To force a rebuild:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-c1># Clear cache and rebuild</span>
+rm<span class=tok-w> </span>-rf<span class=tok-w> </span>.asphinx-cache
+asphinx<span class=tok-w> </span>--theme<span class=tok-w> </span>theme</code></pre></div></div></div><div class=sect3><h4 id=_parallel_processing><a class=anchor href=#_parallel_processing></a><a class=link href=#_parallel_processing>Parallel Processing</a></h4><div class=paragraph><p>Asphinx processes files in parallel automatically. For large sites, ensure you have adequate system resources.</div></div></div></div></div><div class=sect1><h2 id=_development_workflow><a class=anchor href=#_development_workflow></a><a class=link href=#_development_workflow>Development Workflow</a></h2><div class=sectionbody><div class=sect2><h3 id=_recommended_setup><a class=anchor href=#_recommended_setup></a><a class=link href=#_recommended_setup>Recommended Setup</a></h3><div class="olist arabic"><ol class=arabic><li><p><strong>Use Version Control</strong></p> <div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span>git<span class=tok-w> </span>init
+git<span class=tok-w> </span>add<span class=tok-w> </span>.
+git<span class=tok-w> </span>commit<span class=tok-w> </span>-m<span class=tok-w> </span><span class=tok-s2>"Initial documentation setup"</span></code></pre></div></div><li><p><strong>Create Build Script</strong></p> <div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-ch>#!/bin/bash</span>
+<span class=tok-c1># build.sh</span>
+<span class=tok-nb>set</span><span class=tok-w> </span>-e
+
+<span class=tok-nb>echo</span><span class=tok-w> </span><span class=tok-s2>"Building theme..."</span>
+<span class=tok-nb>cd</span><span class=tok-w> </span>theme
+npm<span class=tok-w> </span>run<span class=tok-w> </span>build
+<span class=tok-nb>cd</span><span class=tok-w> </span>..
+
+<span class=tok-nb>echo</span><span class=tok-w> </span><span class=tok-s2>"Generating documentation..."</span>
+asphinx<span class=tok-w> </span>--theme<span class=tok-w> </span>theme<span class=tok-w> </span>--minify
+
+<span class=tok-nb>echo</span><span class=tok-w> </span><span class=tok-s2>"Documentation built successfully!"</span>
+<span class=tok-nb>echo</span><span class=tok-w> </span><span class=tok-s2>"Open public/index.html to view the site."</span></code></pre></div></div><li><p><strong>Set Up Watch Mode</strong> (for development)</p> <div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-ch>#!/bin/bash</span>
+<span class=tok-c1># watch.sh</span>
+<span class=tok-k>while</span><span class=tok-w> </span>inotifywait<span class=tok-w> </span>-r<span class=tok-w> </span>-e<span class=tok-w> </span>modify<span class=tok-w> </span>content/<span class=tok-w> </span>theme/src/<span class=tok-p>;</span><span class=tok-w> </span><span class=tok-k>do</span>
+<span class=tok-w>    </span>./build.sh
+<span class=tok-k>done</span></code></pre></div></div></ol></div></div><div class=sect2><h3 id=_testing_your_documentation><a class=anchor href=#_testing_your_documentation></a><a class=link href=#_testing_your_documentation>Testing Your Documentation</a></h3><div class=sect3><h4 id=_check_links><a class=anchor href=#_check_links></a><a class=link href=#_check_links>Check Links</a></h4><div class=paragraph><p>Verify all cross-references work:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-c1># Generate site</span>
+asphinx<span class=tok-w> </span>--theme<span class=tok-w> </span>theme
+
+<span class=tok-c1># Check for broken links (using a link checker tool)</span>
+linkchecker<span class=tok-w> </span>public/index.html</code></pre></div></div></div><div class=sect3><h4 id=_validate_html><a class=anchor href=#_validate_html></a><a class=link href=#_validate_html>Validate HTML</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-c1># Install HTML validator</span>
+npm<span class=tok-w> </span>install<span class=tok-w> </span>-g<span class=tok-w> </span>html-validate
+
+<span class=tok-c1># Validate generated HTML</span>
+html-validate<span class=tok-w> </span>public/**/*.html</code></pre></div></div></div><div class=sect3><h4 id=_test_search><a class=anchor href=#_test_search></a><a class=link href=#_test_search>Test Search</a></h4><div class="olist arabic"><ol class=arabic><li><p>Generate the site with search index</p><li><p>Open in browser</p><li><p>Test search functionality with various queries</p></ol></div></div></div></div></div><div class=sect1><h2 id=_troubleshooting_common_issues><a class=anchor href=#_troubleshooting_common_issues></a><a class=link href=#_troubleshooting_common_issues>Troubleshooting Common Issues</a></h2><div class=sectionbody><div class=sect2><h3 id=_build_failures><a class=anchor href=#_build_failures></a><a class=link href=#_build_failures>Build Failures</a></h3><div class=sect3><h4 id=_asciidoctor_errors><a class=anchor href=#_asciidoctor_errors></a><a class=link href=#_asciidoctor_errors>AsciiDoctor Errors</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>Error: asciidoctor: FAILED: missing converter for backend 'html5'</code></pre></div></div><div class=paragraph><p><strong>Solution</strong>: Install required AsciiDoctor gems:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span>gem<span class=tok-w> </span>install<span class=tok-w> </span>asciidoctor<span class=tok-w> </span>asciidoctor-diagram</code></pre></div></div></div><div class=sect3><h4 id=_theme_build_errors><a class=anchor href=#_theme_build_errors></a><a class=link href=#_theme_build_errors>Theme Build Errors</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>Error: Cannot resolve module 'react'</code></pre></div></div><div class=paragraph><p><strong>Solution</strong>: Install theme dependencies:</div><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=bash><span></span><span class=tok-nb>cd</span><span class=tok-w> </span>theme
+rm<span class=tok-w> </span>-rf<span class=tok-w> </span>node_modules<span class=tok-w> </span>package-lock.json
+npm<span class=tok-w> </span>install</code></pre></div></div></div></div><div class=sect2><h3 id=_content_issues><a class=anchor href=#_content_issues></a><a class=link href=#_content_issues>Content Issues</a></h3><div class=sect3><h4 id=_broken_cross_references><a class=anchor href=#_broken_cross_references></a><a class=link href=#_broken_cross_references>Broken Cross-References</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>Warning: invalid cross reference: nonexistent-page.adoc</code></pre></div></div><div class=paragraph><p><strong>Solution</strong>: Check file paths and ensure referenced files exist.</div></div><div class=sect3><h4 id=_missing_images><a class=anchor href=#_missing_images></a><a class=link href=#_missing_images>Missing Images</a></h4><div class=listingblock><div class=content><pre class="pygments highlight"><code data-lang=text><span></span>Warning: image not found: images/missing.png</code></pre></div></div><div class=paragraph><p><strong>Solution</strong>: Verify image paths relative to the <code>.adoc</code> file.</div></div></div><div class=sect2><h3 id=_performance_issues><a class=anchor href=#_performance_issues></a><a class=link href=#_performance_issues>Performance Issues</a></h3><div class=sect3><h4 id=_slow_builds><a class=anchor href=#_slow_builds></a><a class=link href=#_slow_builds>Slow Builds</a></h4><div class=paragraph><p>For large documentation sites:</div><div class="olist arabic"><ol class=arabic><li><p>Use <code>--minify</code> only for production builds</p><li><p>Optimize images before adding them</p><li><p>Consider splitting large files into smaller sections</p></ol></div></div><div class=sect3><h4 id=_large_output_size><a class=anchor href=#_large_output_size></a><a class=link href=#_large_output_size>Large Output Size</a></h4><div class="olist arabic"><ol class=arabic><li><p>Enable minification: <code>--minify</code></p><li><p>Optimize images</p><li><p>Remove unused theme assets</p></ol></div></div></div></div></div><div class=sect1><h2 id=_next_steps><a class=anchor href=#_next_steps></a><a class=link href=#_next_steps>Next Steps</a></h2><div class=sectionbody><div class=paragraph><p>Now that you understand the basics:</div><div class=ulist><ul><li><p>Learn about <a href=project-structure.html>Project Structure</a> in detail</p><li><p>Explore the <a href=../user-guide/index.html>User Guide</a> for advanced features</p><li><p>Check out <a href=../configuration/index.html>Configuration</a> options</p><li><p>Try <a href=../theme-development/index.html>Theme Development</a></p></ul></div></div></div><div class=sect1><h2 id=_getting_help><a class=anchor href=#_getting_help></a><a class=link href=#_getting_help>Getting Help</a></h2><div class=sectionbody><div class=paragraph><p>If you need assistance:</div><div class=ulist><ul><li><p>Review the <a href=../user-guide/troubleshooting.html>Troubleshooting Guide</a></p><li><p>Check the <a href=../user-guide/faq.html>FAQ</a></p><li><p>Visit our <a href=https://github.com/your-username/asphinx>GitHub repository</a></p></ul></div></div></div></div></div><div class="flex flex-col p-2 border-t"><div>Last moify: 2025-05-24 13:38:24</div><div>Build time：2025-05-24 05:38:24</div><div>Powered By <a href=https://github.com/cathaysia/asphinx>asphinx</a></div></div>
