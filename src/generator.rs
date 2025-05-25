@@ -12,6 +12,7 @@ use crate::{
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Document {
+    pub site: String,
     pub title: String,
     pub content: Option<String>,
     pub toc: Option<String>,
@@ -31,11 +32,11 @@ pub struct BuildContext {
 #[derive(Debug)]
 pub struct AdocGenerator {
     engine: Tmpl,
-    config: config::Asciidoc,
+    config: config::Config,
 }
 
 impl AdocGenerator {
-    pub fn new(theme_dir: String, config: config::Asciidoc) -> Self {
+    pub fn new(theme_dir: String, config: config::Config) -> Self {
         let engine = Tmpl::new(theme_dir);
 
         Self { engine, config }
@@ -85,6 +86,7 @@ impl AdocGenerator {
         }
 
         let document = Document {
+            site: self.config.site.clone(),
             title,
             content: html.get_content(),
             toc: html.get_toc(),
@@ -119,7 +121,7 @@ impl AdocGenerator {
 
         debug!("Generate file: {} -> {}", ctx.source_file, ctx.dest_file);
         let html = Self::generate_raw_page(
-            self.config.clone(),
+            self.config.asciidoc.clone(),
             ctx.source_file.clone(),
             ctx.dest_dir.clone(),
         )

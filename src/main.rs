@@ -60,6 +60,8 @@ struct Args {
     minify: bool,
     #[arg(long)]
     theme: String,
+    #[arg(short, long, default_value = "./asphinx.toml")]
+    config: String,
 }
 
 static SPARKLE: Emoji<'_, '_> = Emoji("✨ ", ":-)");
@@ -80,9 +82,9 @@ async fn main() {
 
     let entry_file = "content/index.adoc";
 
-    let config = Config::from_path("asphinx.toml").await;
+    let config = Config::from_path(args.config).await;
     debug!(?config);
-    let generator = AdocGenerator::new(args.theme.clone(), config.asciidoc);
+    let generator = AdocGenerator::new(args.theme.clone(), config.clone());
 
     let pb = mpb.add(ProgressBar::new_spinner());
     pb.set_style(

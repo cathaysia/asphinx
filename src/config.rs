@@ -12,6 +12,8 @@ pub struct Config {
     pub no_default: bool,
     #[serde(default)]
     pub asciidoc: asciidoc::Asciidoc,
+    #[serde(default)]
+    pub site: String,
 }
 
 impl Default for Config {
@@ -21,6 +23,15 @@ impl Default for Config {
 }
 
 impl Config {
+    pub fn merge(&mut self, patch: Self) {
+        let default = Self::default();
+
+        self.asciidoc.merge(patch.asciidoc);
+        if patch.site != default.site {
+            self.site = patch.site;
+        }
+    }
+
     pub async fn from_path(path: impl AsRef<Path>) -> Self {
         let mut res = Self::default();
 
@@ -29,7 +40,7 @@ impl Config {
                 if config.no_default {
                     return config;
                 }
-                res.asciidoc.extend(config.asciidoc);
+                res.merge(config);
             }
         }
 
@@ -45,7 +56,7 @@ impl FromStr for Config {
         Ok(match res {
             Ok(config) => {
                 let mut res = Self::default();
-                res.asciidoc.extend(config.asciidoc);
+                res.asciidoc.merge(config.asciidoc);
                 res
             }
             Err(_) => Self::default(),

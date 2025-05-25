@@ -1,4 +1,5 @@
 # This file contains the default configuration for asphinx.
+site = "."
 no_default = false
 
 [asciidoc]

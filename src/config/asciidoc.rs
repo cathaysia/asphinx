@@ -11,8 +11,8 @@ pub struct Asciidoc {
 }
 
 impl Asciidoc {
-    pub fn extend(&mut self, rhs: Self) {
-        self.extensions.extend(rhs.extensions);
-        self.attributes.extend(rhs.attributes);
+    pub fn merge(&mut self, patch: Self) {
+        self.extensions.extend(patch.extensions);
+        self.attributes.extend(patch.attributes);
     }
 }
