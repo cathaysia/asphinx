@@ -118,6 +118,7 @@ export default function SearchBar() {
       <DialogContent className="flex w-80 flex-col gap-2 rounded-xl sm:w-full">
         <Input
           placeholder="type for search"
+          type="search"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
