@@ -216,6 +216,11 @@ async fn main() {
         }
     }
 
+    {
+        std::env::set_var("PAGEFIND_SITE", "public");
+        let _ = pagefind::runner::run_indexer().await;
+    }
+
     println!("{} Done in {}", SPARKLE, HumanDuration(started.elapsed()));
 }
 
