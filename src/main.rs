@@ -215,6 +215,12 @@ async fn main() {
             pb.finish_with_message(format!("Generated index file failed: {err}"));
         }
     }
+    match run_indexer().await {
+        Ok(_) => {}
+        Err(msg) => {
+            eprintln!("{msg}");
+        }
+    }
 
     println!("{} Done in {}", SPARKLE, HumanDuration(started.elapsed()));
 }
