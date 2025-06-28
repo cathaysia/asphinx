@@ -38,12 +38,10 @@
     "katex": "^0.16.21",
     "lucide-react": "^0.461.0",
     "mark.js": "^8.11.1",
-    "minisearch": "^7.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "swr": "^2.2.5",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
-    "use-debounce": "^10.0.4"
+    "use-debounce": "^10.0.5"
   }
 }

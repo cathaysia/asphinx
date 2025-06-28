@@ -26,6 +26,7 @@ use lazy_regex::regex;
 use tracing::*;
 
 use crate::{config::Config, generator::AdocGenerator, utils::GitInfo};
+use pagefind::runner::run_indexer;
 
 fn parse_index_file(file_path_str: String) -> Vec<String> {
     let mut result = Vec::<String>::new();
@@ -58,10 +59,12 @@ fn parse_index_file(file_path_str: String) -> Vec<String> {
 struct Args {
     #[arg(long, default_value_t = false)]
     minify: bool,
-    #[arg(long)]
+    #[arg(long, default_value = "")]
     theme: String,
     #[arg(short, long, default_value = "./asphinx.toml")]
     config: String,
+    #[arg(long, default_value = None)]
+    site: Option<String>,
 }
 
 static SPARKLE: Emoji<'_, '_> = Emoji("✨ ", ":-)");
@@ -70,6 +73,17 @@ static SPARKLE: Emoji<'_, '_> = Emoji("✨ ", ":-)");
 async fn main() {
     let _ = index_clear();
     let args = Args::parse();
+    if args.site.is_some() {
+        println!("xxx: {:?}", args.site);
+        match run_indexer().await {
+            Ok(_) => {}
+            Err(msg) => {
+                eprintln!("{msg}");
+            }
+        }
+        return;
+    }
+    assert!(!args.theme.is_empty(), "theme can not be empty");
     init_logger();
 
     let started = Instant::now();
@@ -214,6 +228,15 @@ async fn main() {
         Err(err) => {
             pb.finish_with_message(format!("Generated index file failed: {err}"));
         }
+    }
+    let cmd = std::env::args_os().next();
+    if let Some(cmd) = cmd {
+        let mut child = tokio::process::Command::new(cmd)
+            .arg("--site")
+            .arg("public")
+            .spawn()
+            .expect("Failed to restart server");
+        let _ = child.wait().await;
     }
 
     println!("{} Done in {}", SPARKLE, HumanDuration(started.elapsed()));

@@ -1,109 +1,171 @@
-import MiniSearch from 'minisearch';
-import { useMemo, useState } from 'react';
-import { Button } from './components/ui/button';
-
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import useSwr from 'swr';
+import { useCallback, useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
+import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
 import { Label } from './components/ui/label';
 import { ScrollArea } from './components/ui/scroll-area';
 import { Skeleton } from './components/ui/skeleton';
 
-type CacheType = [string, [string, string, string | null]][];
+interface SearchResultItem {
+  path: string;
+  content: string;
+  title: string;
+  time: Date | null;
+}
 
 export default function SearchBar() {
   const [search, setSearch] = useState('');
-  const [debounce] = useDebounce(search, 200);
-  const { data, error, isLoading } = useSwr<CacheType>(
-    '/cache.json',
-    async (input: RequestInfo | URL, init?: RequestInit) => {
-      const data = await fetch(input, init);
-      return data.json();
-    },
-  );
-  const miniSearch = useMemo(() => {
-    if (!data) {
-      return;
-    }
-    const v = data as CacheType;
-    const posts = v.map(item => {
-      const [path, [content, title, time]] = item;
-      return {
-        path: path,
-        content: content,
-        title: title,
-        time: time ? new Date(time) : null,
+  const [debouncedSearch] = useDebounce(search, 300);
+  const [results, setResults] = useState<SearchResultItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [pagefind, setPagefind] = useState<PagefindInstance | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const initPagefind = async () => {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval
+        const importPagefind = new Function(
+          'return import("/pagefind/pagefind.js")',
+        );
+        const pagefindModule = await importPagefind();
+
+        const pf = pagefindModule as PagefindInstance;
+
+        await pf.init();
+        setPagefind(pf);
+      } catch (err) {
+        console.error('Failed to initialize Pagefind:', err);
+        setError('search initialization failed');
+      }
+    };
+
+    initPagefind();
+  }, []);
+
+  const convertPagefindResult = useCallback(
+    (fragment: PagefindSearchFragment): SearchResultItem => {
+      const extractDate = (meta: Record<string, string>): Date | null => {
+        if (meta.date) {
+          const date = new Date(meta.date);
+          return Number.isNaN(date.getTime()) ? null : date;
+        }
+        return null;
       };
-    });
 
-    const miniSearch = new MiniSearch<{
-      path: string;
-      content: string;
-      title: string;
-      time: Date | null;
-    }>({
-      fields: ['title', 'content'],
-      idField: 'path',
-      storeFields: ['path', 'content', 'title', 'time'],
-      tokenize: text => {
-        text = text.toLowerCase();
-        // TODO: better CJK tokenizer
-        // NOTE: How to inject dependency (n-gram etc.) into here? `tokenize` will ignore top-level import somehow,
-        // and it can't be made async which means we can't dynamic import.
-        const segmenter =
-          Intl.Segmenter && new Intl.Segmenter('zh', { granularity: 'word' });
-        if (!segmenter) return [text]; // firefox?
-        return Array.from(segmenter.segment(text), ({ segment }) => segment);
-      },
-    });
-    miniSearch.addAll(posts);
-    return miniSearch;
-  }, [data]);
+      return {
+        path: fragment.url.replace(/^\//, ''),
+        content: fragment.excerpt.replace(/<\/?mark>/g, ''),
+        title:
+          fragment.meta.title ||
+          fragment.url.split('/').pop()?.replace('.html', '') ||
+          'Untitled',
+        time: extractDate(fragment.meta),
+      };
+    },
+    [],
+  );
 
-  const result = useMemo(() => {
-    if (!data || !miniSearch) {
-      return null;
+  const getDefaultResults = useCallback(async (): Promise<
+    SearchResultItem[]
+  > => {
+    if (!pagefind) {
+      return [];
     }
-    if (debounce.length === 0) {
-      const data1 = data.map(item => {
-        const [path, [content, title, time]] = item;
-        return {
-          path: path,
-          content: content,
-          title: title,
-          time: time ? new Date(time) : null,
-        };
+
+    try {
+      const searchResult = await pagefind.search('the', {});
+
+      if (searchResult.results.length === 0) {
+        return [];
+      }
+
+      const fragments = await Promise.all(
+        searchResult.results.slice(0, 10).map(result => result.data()),
+      );
+
+      const convertedResults = fragments.map(convertPagefindResult);
+
+      convertedResults.sort((a, b) => {
+        if (!a.time && !b.time) return 0;
+        if (!a.time) return 1;
+        if (!b.time) return -1;
+        return b.time.getTime() - a.time.getTime();
       });
 
-      data1.sort((a, b) => {
-        if (!a.time) {
-          return 1;
-        }
-        if (!b.time) {
-          return -1;
-        }
-        return a.time > b.time ? -1 : 1;
-      });
-      return data1;
+      return convertedResults;
+    } catch (err) {
+      console.error('Failed to get default results:', err);
+      return [];
     }
-    const res = miniSearch.search(debounce, {
-      combineWith: 'AND',
-      // don't split search word, user searching "泛函" shouldn't get "广泛" or "函数"
-      // XXX: This is a hack, we should probably use a better CJK tokenizer
-      tokenize: text => [text.toLowerCase()],
-      fuzzy(term) {
-        // disable fuzzy search if the term contains a CJK character
-        // so searching "函数式" will not contain results only matching "函数"
-        const cjkRange =
-          '\u2e80-\u2eff\u2f00-\u2fdf\u3040-\u309f\u30a0-\u30fa\u30fc-\u30ff\u3100-\u312f\u3200-\u32ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff';
-        const cjkWord = new RegExp(`[${cjkRange}]`);
-        if (cjkWord.test(term)) return false;
-        return true;
-      },
-    });
-    return res;
-  }, [data, debounce]);
+  }, [pagefind, convertPagefindResult]);
+
+  const performSearch = useCallback(
+    async (query: string) => {
+      if (!pagefind) {
+        return;
+      }
+
+      if (!query.trim()) {
+        setIsLoading(true);
+        setError(null);
+        const defaultResults = await getDefaultResults();
+        setResults(defaultResults);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        pagefind.preload(query);
+
+        const searchResult = await pagefind.search(query, {});
+
+        if (searchResult.results.length === 0) {
+          const defaultResults = await getDefaultResults();
+          setResults(defaultResults);
+          setIsLoading(false);
+          return;
+        }
+
+        const fragments = await Promise.all(
+          searchResult.results.slice(0, 10).map(result => result.data()),
+        );
+
+        const convertedResults = fragments.map(convertPagefindResult);
+
+        convertedResults.sort((a, b) => {
+          if (!a.time && !b.time) return 0;
+          if (!a.time) return 1;
+          if (!b.time) return -1;
+          return b.time.getTime() - a.time.getTime();
+        });
+
+        setResults(convertedResults);
+      } catch (err) {
+        console.error('Search failed:', err);
+        setError('search failed, please try again later');
+        setResults([]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [pagefind, convertPagefindResult, getDefaultResults],
+  );
+
+  useEffect(() => {
+    performSearch(debouncedSearch);
+  }, [debouncedSearch, performSearch]);
+
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearch(e.target.value);
+    },
+    [],
+  );
 
   return (
     <Dialog>
@@ -120,7 +182,7 @@ export default function SearchBar() {
           placeholder="type for search"
           type="search"
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={handleSearchChange}
         />
         <ScrollArea className="h-[320px]">
           {isLoading && (
@@ -133,45 +195,49 @@ export default function SearchBar() {
               <Skeleton className="h-16 w-full" />
             </div>
           )}
+          {error && (
+            <div className="flex max-w-[270px] flex-col gap-2 md:max-w-[460px]">
+              <div className="p-2 text-red-500 text-sm">{error}</div>
+            </div>
+          )}
           {!isLoading && !error && (
             <div className="flex max-w-[270px] flex-col gap-2 md:max-w-[460px]">
-              {result?.map(item => {
-                return (
-                  <div key={item.path} className="w-full">
-                    <a
-                      className="flex w-full flex-col items-start rounded border p-2 shadow"
-                      href={`/${item.path}`}
-                    >
-                      <Label className="w-full">
-                        <div className="flex min-w-0 justify-between overflow-x-hidden text-ellipsis whitespace-nowrap text-lg">
-                          <span>{item.title || item.path}</span>
-                          <span
-                            className="font-mono font-normal"
-                            title={
-                              item.time
-                                ? dateInYyyyMmDdHhMmSs(item.time)
-                                : undefined
-                            }
-                          >
-                            {item.time && dateInYyyyMmDd(item.time)}
-                          </span>
-                        </div>
-                      </Label>
-                      <Label className="line-clamp-2 w-full min-w-0 text-gray-600 text-sm">
-                        {item.content}
-                      </Label>
-                    </a>
-                  </div>
-                );
-              })}
+              {results.map((item, index) => (
+                <div key={`${item.path}-${index}`} className="w-full">
+                  <a
+                    className="flex w-full flex-col items-start rounded border p-2 shadow"
+                    href={`/${item.path}`}
+                  >
+                    <Label className="w-full">
+                      <div className="flex min-w-0 justify-between overflow-x-hidden text-ellipsis whitespace-nowrap text-lg">
+                        <span>{item.title}</span>
+                        <span
+                          className="font-mono font-normal"
+                          title={
+                            item.time
+                              ? dateInYyyyMmDdHhMmSs(item.time)
+                              : undefined
+                          }
+                        >
+                          {item.time && dateInYyyyMmDd(item.time)}
+                        </span>
+                      </div>
+                    </Label>
+                    <Label className="line-clamp-2 w-full min-w-0 text-gray-600 text-sm">
+                      {item.content}
+                    </Label>
+                  </a>
+                </div>
+              ))}
             </div>
           )}
         </ScrollArea>
-        {result ? (
+        {!isLoading && !error && (
           <Label className="font-mono text-muted-foreground text-sm">
-            total {result?.length}
+            total {results.length}
           </Label>
-        ) : (
+        )}
+        {isLoading && (
           <Label className="text-muted-foreground text-sm">&nbsp;</Label>
         )}
       </DialogContent>
@@ -184,29 +250,9 @@ function padTwoDigits(num: number) {
 }
 
 export function dateInYyyyMmDdHhMmSs(date: Date) {
-  // :::: Example Usage ::::
-  // The function takes a Date object as a parameter and formats the date as YYYY-MM-DD hh:mm:ss.
-  // 👇 2023-04-11 16:21:23 (yyyy-mm-dd hh:mm:ss)
-  //console.log(dateInYyyyMmDdHhMmSs(new Date()));
-
-  //  👇 2025-05-04 05:24:07 (yyyy-mm-dd hh:mm:ss)
-  // console.log(dateInYyyyMmDdHhMmSs(new Date('May 04, 2025 05:24:07')));
-  // Date divider
-  // 👇 01/04/2023 10:20:07 (MM/DD/YYYY hh:mm:ss)
-  // console.log(dateInYyyyMmDdHhMmSs(new Date(), "/"));
   return `${date.getFullYear()}/${padTwoDigits(date.getMonth() + 1)}/${padTwoDigits(date.getDate())} ${padTwoDigits(date.getHours())}:${padTwoDigits(date.getMinutes())}:${padTwoDigits(date.getSeconds())}`;
 }
 
 export function dateInYyyyMmDd(date: Date) {
-  // :::: Example Usage ::::
-  // The function takes a Date object as a parameter and formats the date as YYYY-MM-DD hh:mm:ss.
-  // 👇 2023-04-11 16:21:23 (yyyy-mm-dd hh:mm:ss)
-  //console.log(dateInYyyyMmDdHhMmSs(new Date()));
-
-  //  👇 2025-05-04 05:24:07 (yyyy-mm-dd hh:mm:ss)
-  // console.log(dateInYyyyMmDdHhMmSs(new Date('May 04, 2025 05:24:07')));
-  // Date divider
-  // 👇 01/04/2023 10:20:07 (MM/DD/YYYY hh:mm:ss)
-  // console.log(dateInYyyyMmDdHhMmSs(new Date(), "/"));
   return `${date.getFullYear()}/${padTwoDigits(date.getMonth() + 1)}/${padTwoDigits(date.getDate())}`;
 }
