@@ -1,0 +1,226 @@
+{
+  "root": [
+    {
+      "name": "getting-started",
+      "title": null,
+      "path": "getting-started",
+      "url": null,
+      "is_directory": true,
+      "children": [
+        {
+          "name": "basic-usage.adoc",
+          "title": "Basic Usage",
+          "path": "getting-started/basic-usage.adoc",
+          "url": "getting-started/basic-usage.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        },
+        {
+          "name": "index.adoc",
+          "title": "Getting Started",
+          "path": "getting-started/index.adoc",
+          "url": "getting-started/index.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        },
+        {
+          "name": "installation.adoc",
+          "title": "Installation",
+          "path": "getting-started/installation.adoc",
+          "url": "getting-started/installation.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        },
+        {
+          "name": "project-structure.adoc",
+          "title": "Project Structure",
+          "path": "getting-started/project-structure.adoc",
+          "url": "getting-started/project-structure.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        },
+        {
+          "name": "quick-start.adoc",
+          "title": "Quick Start",
+          "path": "getting-started/quick-start.adoc",
+          "url": "getting-started/quick-start.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        }
+      ],
+      "level": 0
+    },
+    {
+      "name": "user-guide",
+      "title": null,
+      "path": "user-guide",
+      "url": null,
+      "is_directory": true,
+      "children": [
+        {
+          "name": "index.adoc",
+          "title": "User Guide",
+          "path": "user-guide/index.adoc",
+          "url": "user-guide/index.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        }
+      ],
+      "level": 0
+    },
+    {
+      "name": "index.adoc",
+      "title": "Asphinx Documentation",
+      "path": "index.adoc",
+      "url": "index.html",
+      "is_directory": false,
+      "children": [],
+      "level": 0
+    }
+  ],
+  "flat_list": [
+    {
+      "name": "index.adoc",
+      "title": "User Guide",
+      "path": "user-guide/index.adoc",
+      "url": "user-guide/index.html",
+      "is_directory": false,
+      "children": [],
+      "level": 1
+    },
+    {
+      "name": "user-guide",
+      "title": null,
+      "path": "user-guide",
+      "url": null,
+      "is_directory": true,
+      "children": [
+        {
+          "name": "index.adoc",
+          "title": "User Guide",
+          "path": "user-guide/index.adoc",
+          "url": "user-guide/index.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        }
+      ],
+      "level": 0
+    },
+    {
+      "name": "index.adoc",
+      "title": "Asphinx Documentation",
+      "path": "index.adoc",
+      "url": "index.html",
+      "is_directory": false,
+      "children": [],
+      "level": 0
+    },
+    {
+      "name": "index.adoc",
+      "title": "Getting Started",
+      "path": "getting-started/index.adoc",
+      "url": "getting-started/index.html",
+      "is_directory": false,
+      "children": [],
+      "level": 1
+    },
+    {
+      "name": "project-structure.adoc",
+      "title": "Project Structure",
+      "path": "getting-started/project-structure.adoc",
+      "url": "getting-started/project-structure.html",
+      "is_directory": false,
+      "children": [],
+      "level": 1
+    },
+    {
+      "name": "quick-start.adoc",
+      "title": "Quick Start",
+      "path": "getting-started/quick-start.adoc",
+      "url": "getting-started/quick-start.html",
+      "is_directory": false,
+      "children": [],
+      "level": 1
+    },
+    {
+      "name": "installation.adoc",
+      "title": "Installation",
+      "path": "getting-started/installation.adoc",
+      "url": "getting-started/installation.html",
+      "is_directory": false,
+      "children": [],
+      "level": 1
+    },
+    {
+      "name": "basic-usage.adoc",
+      "title": "Basic Usage",
+      "path": "getting-started/basic-usage.adoc",
+      "url": "getting-started/basic-usage.html",
+      "is_directory": false,
+      "children": [],
+      "level": 1
+    },
+    {
+      "name": "getting-started",
+      "title": null,
+      "path": "getting-started",
+      "url": null,
+      "is_directory": true,
+      "children": [
+        {
+          "name": "index.adoc",
+          "title": "Getting Started",
+          "path": "getting-started/index.adoc",
+          "url": "getting-started/index.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        },
+        {
+          "name": "project-structure.adoc",
+          "title": "Project Structure",
+          "path": "getting-started/project-structure.adoc",
+          "url": "getting-started/project-structure.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        },
+        {
+          "name": "quick-start.adoc",
+          "title": "Quick Start",
+          "path": "getting-started/quick-start.adoc",
+          "url": "getting-started/quick-start.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        },
+        {
+          "name": "installation.adoc",
+          "title": "Installation",
+          "path": "getting-started/installation.adoc",
+          "url": "getting-started/installation.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        },
+        {
+          "name": "basic-usage.adoc",
+          "title": "Basic Usage",
+          "path": "getting-started/basic-usage.adoc",
+          "url": "getting-started/basic-usage.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        }
+      ],
+      "level": 0
+    }
+  ]
+}
