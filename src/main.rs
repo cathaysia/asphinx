@@ -10,22 +10,26 @@ use fs_more::{
     file::CollidingFileBehaviour,
 };
 use futures::{stream, StreamExt};
-use index::{index_clear, index_list};
+use index::index_clear;
 pub mod error;
+mod filetree;
 mod generator;
 mod index;
 mod utils;
-use tokio::{fs, time::Instant};
-use utils::cpu_num;
-
+use crate::index::index_list;
 use std::path;
+use tokio::fs;
+use tokio::time::Instant;
+use utils::cpu_num;
 
 use clap::Parser;
 use indicatif::{HumanDuration, MultiProgress, ProgressBar, ProgressStyle};
 use lazy_regex::regex;
 use tracing::*;
 
-use crate::{config::Config, generator::AdocGenerator, utils::GitInfo};
+use crate::{
+    config::Config, filetree::generate_filetree_json, generator::AdocGenerator, utils::GitInfo,
+};
 use pagefind::runner::run_indexer;
 
 fn parse_index_file(file_path_str: String) -> Vec<String> {
@@ -227,6 +231,24 @@ async fn main() {
         }
         Err(err) => {
             pb.finish_with_message(format!("Generated index file failed: {err}"));
+        }
+    }
+
+    let pb = mpb.add(ProgressBar::new_spinner());
+    pb.set_style(
+        ProgressStyle::default_spinner()
+            .template("{spinner:.green} [{elapsed_precise}] {msg}")
+            .unwrap(),
+    );
+    pb.set_message("Generating file tree...");
+    pb.enable_steady_tick(std::time::Duration::from_millis(100));
+
+    match generate_filetree_json("content", "public/filetree.json").await {
+        Ok(_) => {
+            pb.finish_with_message("Generated file tree.");
+        }
+        Err(err) => {
+            pb.finish_with_message(format!("Generated file tree failed: {err}"));
         }
     }
     let cmd = std::env::args_os().next();

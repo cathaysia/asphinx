@@ -59,32 +59,44 @@
         </div>
     </nav>
 
-    <div id="header" class="prose prose-zinc dark:prose-invert">
-        <div class="flex justify-between w-full gap-2 items-end">
-            <h1 class="mt-16">{{ title }}</h1>
-            <span class="font-mono">
-                {{ last_modify_date }}
-            </span>
+    <!-- File tree container for mobile -->
+    <div id="file_tree_mobile" class="md:hidden"></div>
+
+    <!-- Main layout container -->
+    <div class="flex">
+        <!-- File tree sidebar for desktop -->
+        <div id="file_tree_desktop" class="hidden md:block"></div>
+
+        <!-- Main content area -->
+        <div class="flex-1 min-w-0">
+            <div id="header" class="prose prose-zinc dark:prose-invert">
+                <div class="flex justify-between w-full gap-2 items-end">
+                    <h1 class="mt-16">{{ title }}</h1>
+                    <span class="font-mono">
+                        {{ last_modify_date }}
+                    </span>
+                </div>
+                {% if toc %}
+                <div id="toc" class="toc">
+                    <div id="toctitle">TOC</div>
+                    {{ toc }}
+                </div>
+                {% endif %}
+            </div>
+            {% if content %}
+            <div id="content">
+                <div class="prose prose-zinc max-w-full dark:prose-invert">
+                    {{ content }}
+                </div>
+            </div>
+            {% endif %}
+            {% if footnotes %}
+            <div id="footnotes">
+                {{ footnotes }}
+            </div>
+            {% endif %}
         </div>
-        {% if toc %}
-        <div id="toc" class="toc">
-            <div id="toctitle">TOC</div>
-            {{ toc }}
-        </div>
-        {% endif %}
     </div>
-    {% if content %}
-    <div id="content">
-        <div class="prose prose-zinc max-w-full dark:prose-invert">
-            {{ content }}
-        </div>
-    </div>
-    {% endif %}
-    {% if footnotes %}
-    <div id="footnotes">
-        {{ footnotes }}
-    </div>
-    {% endif %}
     {% if last_modify_date %}
     <div class="flex flex-col p-2 border-t">
         <div>Last moify: {{ last_modify_date }}</div>

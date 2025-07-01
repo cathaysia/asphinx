@@ -1,3 +1,4 @@
+import FileTree from '@/components/file-tree';
 import SearchBar from '@/search-bar';
 import { Moon, Sun } from 'lucide-react';
 import { useState } from 'react';
@@ -48,3 +49,17 @@ const searchBar = document.getElementById('search_bar');
 const bar = reactDom.createRoot(searchBar!);
 
 bar.render(<SearchBar />);
+
+// Initialize file tree for desktop
+const fileTreeDesktop = document.getElementById('file_tree_desktop');
+if (fileTreeDesktop) {
+  const desktopTree = reactDom.createRoot(fileTreeDesktop);
+  desktopTree.render(<FileTree />);
+}
+
+// Initialize file tree for mobile
+const fileTreeMobile = document.getElementById('file_tree_mobile');
+if (fileTreeMobile) {
+  const mobileTree = reactDom.createRoot(fileTreeMobile);
+  mobileTree.render(<FileTree />);
+}
