@@ -3130,9 +3130,9 @@ checksum = "b15813163c1d831bf4a13c3610c05c0d03b39feb07f7e09fa234dac9b15aaf39"
 
 [[package]]
 name = "pagefind"
-version = "1.3.0"
+version = "1.4.0-alpha.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5f4c1bacb19363ec8f8e916d2aa068ba34f61f1f7268439de2989874b408681f"
+checksum = "c99ffc735d77954d6a11c281416fb6b686a14ac8caecffb5c8d5fc19a606cb13"
 dependencies = [
  "actix-files",
  "actix-web",
