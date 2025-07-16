@@ -123,10 +123,10 @@
       "level": 0
     },
     {
-      "name": "index.adoc",
-      "title": "Getting Started",
-      "path": "getting-started/index.adoc",
-      "url": "getting-started/index.html",
+      "name": "installation.adoc",
+      "title": "Installation",
+      "path": "getting-started/installation.adoc",
+      "url": "getting-started/installation.html",
       "is_directory": false,
       "children": [],
       "level": 1
@@ -141,28 +141,28 @@
       "level": 1
     },
     {
-      "name": "quick-start.adoc",
-      "title": "Quick Start",
-      "path": "getting-started/quick-start.adoc",
-      "url": "getting-started/quick-start.html",
-      "is_directory": false,
-      "children": [],
-      "level": 1
-    },
-    {
-      "name": "installation.adoc",
-      "title": "Installation",
-      "path": "getting-started/installation.adoc",
-      "url": "getting-started/installation.html",
-      "is_directory": false,
-      "children": [],
-      "level": 1
-    },
-    {
       "name": "basic-usage.adoc",
       "title": "Basic Usage",
       "path": "getting-started/basic-usage.adoc",
       "url": "getting-started/basic-usage.html",
+      "is_directory": false,
+      "children": [],
+      "level": 1
+    },
+    {
+      "name": "index.adoc",
+      "title": "Getting Started",
+      "path": "getting-started/index.adoc",
+      "url": "getting-started/index.html",
+      "is_directory": false,
+      "children": [],
+      "level": 1
+    },
+    {
+      "name": "quick-start.adoc",
+      "title": "Quick Start",
+      "path": "getting-started/quick-start.adoc",
+      "url": "getting-started/quick-start.html",
       "is_directory": false,
       "children": [],
       "level": 1
@@ -175,10 +175,10 @@
       "is_directory": true,
       "children": [
         {
-          "name": "index.adoc",
-          "title": "Getting Started",
-          "path": "getting-started/index.adoc",
-          "url": "getting-started/index.html",
+          "name": "installation.adoc",
+          "title": "Installation",
+          "path": "getting-started/installation.adoc",
+          "url": "getting-started/installation.html",
           "is_directory": false,
           "children": [],
           "level": 1
@@ -193,28 +193,28 @@
           "level": 1
         },
         {
-          "name": "quick-start.adoc",
-          "title": "Quick Start",
-          "path": "getting-started/quick-start.adoc",
-          "url": "getting-started/quick-start.html",
-          "is_directory": false,
-          "children": [],
-          "level": 1
-        },
-        {
-          "name": "installation.adoc",
-          "title": "Installation",
-          "path": "getting-started/installation.adoc",
-          "url": "getting-started/installation.html",
-          "is_directory": false,
-          "children": [],
-          "level": 1
-        },
-        {
           "name": "basic-usage.adoc",
           "title": "Basic Usage",
           "path": "getting-started/basic-usage.adoc",
           "url": "getting-started/basic-usage.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        },
+        {
+          "name": "index.adoc",
+          "title": "Getting Started",
+          "path": "getting-started/index.adoc",
+          "url": "getting-started/index.html",
+          "is_directory": false,
+          "children": [],
+          "level": 1
+        },
+        {
+          "name": "quick-start.adoc",
+          "title": "Quick Start",
+          "path": "getting-started/quick-start.adoc",
+          "url": "getting-started/quick-start.html",
           "is_directory": false,
           "children": [],
           "level": 1
