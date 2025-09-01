@@ -23,7 +23,7 @@ tracing-subscriber = { version = "0.3.20", default-features = true, features = [
 ] }
 toml = "0.9.4"
 lazy-regex = "3.4.1"
-anyhow = "1.0.98"
+anyhow = "1.0.99"
 time = { version = "0.3.41", features = ["macros"] }
 tokio = { version = "1.47.1", features = ["full"] }
 thiserror = "2.0.12"
